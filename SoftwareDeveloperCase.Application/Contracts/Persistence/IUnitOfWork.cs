@@ -11,7 +11,7 @@ namespace SoftwareDeveloperCase.Application.Contracts.Persistence
         IUserRepository UserRepository { get; }
         IUserRoleRepository UserRoleRepository { get; }
 
-        IRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity;
+        IRepository<TEntity>? Repository<TEntity>() where TEntity : BaseEntity;
 
         Task<int> SaveChanges();
     }

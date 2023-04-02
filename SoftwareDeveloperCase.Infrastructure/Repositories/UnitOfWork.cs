@@ -11,12 +11,12 @@ namespace SoftwareDeveloperCase.Infrastructure.Repositories
 
         private readonly SoftwareDeveloperCaseDbContext _context;
 
-        private IDepartmentRepository _departmentRepository;
-        private IPermissionRepository _permissionRepository;
-        private IRolePermissionRepository _rolePermissionRepository;
-        private IRoleRepository _roleRepository;
-        private IUserRepository _userRepository;
-        private IUserRoleRepository _userRoleRepository;
+        private IDepartmentRepository? _departmentRepository;
+        private IPermissionRepository? _permissionRepository;
+        private IRolePermissionRepository? _rolePermissionRepository;
+        private IRoleRepository? _roleRepository;
+        private IUserRepository? _userRepository;
+        private IUserRoleRepository? _userRoleRepository;
 
         public IDepartmentRepository DepartmentRepository => _departmentRepository ?? new DepartmentRepository(_context);
         public IPermissionRepository PermissionRepository => _permissionRepository ?? new PermissionRepository(_context);
@@ -50,12 +50,9 @@ namespace SoftwareDeveloperCase.Infrastructure.Repositories
             _context.Dispose();
         }
 
-        public IRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity
+        public IRepository<TEntity>? Repository<TEntity>() where TEntity : BaseEntity
         {
-            if (_repositories == null)
-            {
-                _repositories = new Hashtable();
-            }
+            _repositories ??= new Hashtable();
 
             var type = typeof(TEntity).Name;
 
@@ -66,7 +63,7 @@ namespace SoftwareDeveloperCase.Infrastructure.Repositories
                 _repositories.Add(type, repositoryInstance);
             }
 
-            return (IRepository<TEntity>)_repositories[type];
+            return (IRepository<TEntity>)_repositories[type]!;
         }
     }
 }
