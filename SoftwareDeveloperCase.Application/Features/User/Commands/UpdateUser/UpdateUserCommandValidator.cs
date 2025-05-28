@@ -7,16 +7,17 @@ namespace SoftwareDeveloperCase.Application.Features.User.Commands.UpdateUser
         public UpdateUserCommandValidator()
         {
             RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("Name cannot be empty")
-                .NotNull().WithMessage("Name cannot be null");
+                .NotEmpty().WithMessage("{PropertyName} cannot be empty")
+                .NotNull().WithMessage("{PropertyName} cannot be null");
 
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Email cannot be empty")
-                .NotNull().WithMessage("Email cannot be null");
+                .NotEmpty().WithMessage("{PropertyName} cannot be empty")
+                .NotNull().WithMessage("{PropertyName} cannot be null")
+                .EmailAddress().WithMessage("{PropertyName} must be a valid email address");
 
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password cannot be empty")
-                .NotNull().WithMessage("Password cannot be null");
+                .NotEmpty().WithMessage("{PropertyName} cannot be empty")
+                .NotNull().WithMessage("{PropertyName} cannot be null");
         }
     }
 }
