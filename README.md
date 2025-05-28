@@ -38,25 +38,6 @@ dotnet test
 dotnet run --project SoftwareDeveloperCase.Api
 ```
 
-## 📋 Features
-
-### Current Features
-- ✅ User registration with email validation
-- ✅ Role management with hierarchy support
-- ✅ Permission assignment to roles
-- ✅ User role assignment
-- ✅ Email notifications to department managers
-- ✅ Clean Architecture implementation
-- ✅ CQRS pattern with MediatR
-- ✅ Input validation with FluentValidation
-
-### Pending Features
-- ⏳ JWT authentication
-- ⏳ Comprehensive unit test coverage
-- ⏳ Integration tests
-- ⏳ Web UI for user management
-- ⏳ API versioning
-- ⏳ Swagger documentation improvements
 
 ## 🧪 Testing
 
