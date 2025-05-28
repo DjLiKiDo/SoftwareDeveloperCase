@@ -1,4 +1,4 @@
-﻿using SoftwareDeveloperCase.Domain.Common;
+using SoftwareDeveloperCase.Domain.Common;
 using System.Linq.Expressions;
 
 namespace SoftwareDeveloperCase.Application.Contracts.Persistence

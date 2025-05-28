@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using SoftwareDeveloperCase.Application.Features.Role.Commands.AssignPermission;
 using SoftwareDeveloperCase.Application.Features.Role.Commands.InsertRole;
 using SoftwareDeveloperCase.Application.Features.User.Commands.AssignRole;

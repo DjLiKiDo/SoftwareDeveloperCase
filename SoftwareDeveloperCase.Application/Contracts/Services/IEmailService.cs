@@ -1,4 +1,4 @@
-﻿using SoftwareDeveloperCase.Application.Models;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Contracts.Services
 {

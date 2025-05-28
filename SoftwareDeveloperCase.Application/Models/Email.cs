@@ -1,4 +1,4 @@
-﻿namespace SoftwareDeveloperCase.Application.Models
+namespace SoftwareDeveloperCase.Application.Models
 {
     public class Email
     {

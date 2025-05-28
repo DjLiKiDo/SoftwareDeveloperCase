@@ -1,4 +1,4 @@
-﻿using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Domain.Entities;
 
 namespace SoftwareDeveloperCase.Application.Contracts.Persistence
 {

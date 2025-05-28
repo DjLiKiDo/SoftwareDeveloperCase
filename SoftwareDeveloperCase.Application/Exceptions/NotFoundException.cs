@@ -1,4 +1,4 @@
-﻿namespace SoftwareDeveloperCase.Application.Exceptions
+namespace SoftwareDeveloperCase.Application.Exceptions
 {
     public class NotFoundException : Exception
     {

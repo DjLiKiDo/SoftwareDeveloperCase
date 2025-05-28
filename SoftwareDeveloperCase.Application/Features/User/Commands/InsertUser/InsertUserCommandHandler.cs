@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
@@ -77,12 +77,13 @@ namespace SoftwareDeveloperCase.Application.Features.User.Commands.InsertUser
         private async Task AssignDefaultRoleAsync(Guid userId)
         {
             var defaultRole = await _unitOfWork.RoleRepository
-                .GetAsync(r => r.Name.Equals("Employee"));
+                .GetAsync(r => r.Name != null && r.Name.Equals("Employee"));
 
-            var defaultRoleId = defaultRole
-                .ToList()
-                .First()
-                .Id;
+            var defaultRoleList = defaultRole.ToList();
+            if (!defaultRoleList.Any())
+                return;
+
+            var defaultRoleId = defaultRoleList.First().Id;
 
             if (defaultRole is not null)
             {

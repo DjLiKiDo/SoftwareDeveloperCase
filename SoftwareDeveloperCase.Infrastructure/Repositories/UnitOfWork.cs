@@ -1,4 +1,4 @@
-﻿using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Domain.Common;
 using SoftwareDeveloperCase.Infrastructure.Persistence;
 using System.Collections;

@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SoftwareDeveloperCase.Application.Features.User.Commands.AssignRole;
 using SoftwareDeveloperCase.Application.Features.User.Commands.DeleteUser;

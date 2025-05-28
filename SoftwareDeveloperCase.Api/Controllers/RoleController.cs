@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SoftwareDeveloperCase.Application.Features.Role.Commands.AssignPermission;
 using SoftwareDeveloperCase.Application.Features.Role.Commands.InsertRole;

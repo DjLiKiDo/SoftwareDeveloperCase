@@ -69,7 +69,7 @@ public class RepositoryContractTests
         // Arrange
         var mock = new Mock<IRepository<User>>();
         var testUser = new User { Id = Guid.NewGuid(), Name = "Test" };
-        
+
         mock.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(testUser);
         mock.Setup(x => x.GetAllAsync()).ReturnsAsync(new[] { testUser });
         mock.Setup(x => x.InsertAsync(It.IsAny<User>())).ReturnsAsync(testUser);

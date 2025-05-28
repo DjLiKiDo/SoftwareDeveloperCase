@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 
 namespace SoftwareDeveloperCase.Application.Features.User.Commands.UpdateUser
 {

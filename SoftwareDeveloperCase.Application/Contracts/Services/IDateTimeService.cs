@@ -1,4 +1,4 @@
-﻿namespace SoftwareDeveloperCase.Application.Contracts.Services
+namespace SoftwareDeveloperCase.Application.Contracts.Services
 {
     public interface IDateTimeService
     {

@@ -1,4 +1,4 @@
-﻿namespace SoftwareDeveloperCase.Application.Features.User.Queries.GetUserPermissions
+namespace SoftwareDeveloperCase.Application.Features.User.Queries.GetUserPermissions
 {
     public class PermissionDto
     {

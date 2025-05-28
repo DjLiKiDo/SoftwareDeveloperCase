@@ -1,4 +1,4 @@
-﻿namespace SoftwareDeveloperCase.Api
+namespace SoftwareDeveloperCase.Api
 {
     public static class SwaggerConfiguration
     {

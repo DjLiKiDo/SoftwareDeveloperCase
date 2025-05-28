@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using System.Net.Mail;
 
@@ -26,8 +26,11 @@ namespace SoftwareDeveloperCase.Application.Features.User.Commands.InsertUser
                 .NotNull().WithMessage("{PropertyName} cannot be null");
         }
 
-        private async Task<bool> NotExistingEmail(string emailAddress, CancellationToken cancellationToken)
+        private async Task<bool> NotExistingEmail(string? emailAddress, CancellationToken cancellationToken)
         {
+            if (emailAddress is null)
+                return false;
+
             var users = await _unitOfWork.UserRepository
                 .GetAsync(u => u.Email!.Equals(emailAddress));
 

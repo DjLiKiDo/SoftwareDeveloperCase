@@ -1,4 +1,4 @@
-﻿namespace SoftwareDeveloperCase.Domain.Common
+namespace SoftwareDeveloperCase.Domain.Common
 {
     public abstract class BaseEntity
     {

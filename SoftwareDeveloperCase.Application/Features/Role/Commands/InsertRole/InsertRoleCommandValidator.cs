@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 
 namespace SoftwareDeveloperCase.Application.Features.Role.Commands.InsertRole
@@ -14,17 +14,18 @@ namespace SoftwareDeveloperCase.Application.Features.Role.Commands.InsertRole
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("{PropertyName} cannot be empty")
                 .NotNull().WithMessage("{PropertyName} cannot be null")
-                .Must(NotExistingName).WithMessage("{PropertyName} already registered.");
+                .MustAsync(NotExistingNameAsync).WithMessage("{PropertyName} already registered.");
         }
 
-        private bool NotExistingName(string? name)
+        private async Task<bool> NotExistingNameAsync(string? name, CancellationToken cancellationToken)
         {
-            return name is null ? 
-                false : 
-                !_unitOfWork.RoleRepository
-                .GetAsync(r => r.Name.Equals(name))
-                .Result
-                .Any();
+            if (name is null)
+                return false;
+
+            var roles = await _unitOfWork.RoleRepository
+                .GetAsync(r => r.Name != null && r.Name.Equals(name));
+
+            return !roles.Any();
         }
     }
 }

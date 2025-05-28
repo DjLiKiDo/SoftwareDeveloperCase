@@ -1,4 +1,4 @@
-﻿using SoftwareDeveloperCase.Application;
+using SoftwareDeveloperCase.Application;
 using SoftwareDeveloperCase.Infrastructure;
 
 namespace SoftwareDeveloperCase.Api

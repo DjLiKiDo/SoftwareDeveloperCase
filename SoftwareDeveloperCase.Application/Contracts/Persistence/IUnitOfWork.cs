@@ -1,4 +1,4 @@
-﻿using SoftwareDeveloperCase.Domain.Common;
+using SoftwareDeveloperCase.Domain.Common;
 
 namespace SoftwareDeveloperCase.Application.Contracts.Persistence
 {
