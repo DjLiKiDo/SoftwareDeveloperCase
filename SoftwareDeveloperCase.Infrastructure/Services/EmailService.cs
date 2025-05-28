@@ -51,10 +51,10 @@ public class EmailService : IEmailService
             _logger.LogInformation("Sending email to {To} with subject '{Subject}'", email.To, email.Subject);
 
             using var smtpClient = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort);
-            
+
             // Configure SMTP client
             smtpClient.EnableSsl = _emailSettings.EnableSsl;
-            
+
             if (!string.IsNullOrEmpty(_emailSettings.Username) && !string.IsNullOrEmpty(_emailSettings.Password))
             {
                 smtpClient.Credentials = new NetworkCredential(_emailSettings.Username, _emailSettings.Password);
@@ -70,7 +70,7 @@ public class EmailService : IEmailService
 
             // Send email
             await smtpClient.SendMailAsync(mailMessage, cancellationToken);
-            
+
             _logger.LogInformation("Email sent successfully to {To}", email.To);
             return true;
         }
