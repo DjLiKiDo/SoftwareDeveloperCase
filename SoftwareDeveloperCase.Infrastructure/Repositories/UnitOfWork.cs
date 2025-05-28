@@ -18,12 +18,12 @@ namespace SoftwareDeveloperCase.Infrastructure.Repositories
         private IUserRepository? _userRepository;
         private IUserRoleRepository? _userRoleRepository;
 
-        public IDepartmentRepository DepartmentRepository => _departmentRepository ?? new DepartmentRepository(_context);
-        public IPermissionRepository PermissionRepository => _permissionRepository ?? new PermissionRepository(_context);
-        public IRolePermissionRepository RolePermissionRepository => _rolePermissionRepository ?? new RolePermissionRepository(_context);
-        public IRoleRepository RoleRepository => _roleRepository ?? new RoleRepository(_context);
-        public IUserRepository UserRepository => _userRepository ?? new UserRepository(_context);
-        public IUserRoleRepository UserRoleRepository => _userRoleRepository ?? new UserRoleRepository(_context);
+        public IDepartmentRepository DepartmentRepository => _departmentRepository ??= new DepartmentRepository(_context);
+        public IPermissionRepository PermissionRepository => _permissionRepository ??= new PermissionRepository(_context);
+        public IRolePermissionRepository RolePermissionRepository => _rolePermissionRepository ??= new RolePermissionRepository(_context);
+        public IRoleRepository RoleRepository => _roleRepository ??= new RoleRepository(_context);
+        public IUserRepository UserRepository => _userRepository ??= new UserRepository(_context);
+        public IUserRoleRepository UserRoleRepository => _userRoleRepository ??= new UserRoleRepository(_context);
 
         public SoftwareDeveloperCaseDbContext SoftwareDeveloperCaseDbContext => _context;
 
