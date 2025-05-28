@@ -1,9 +1,8 @@
 using SoftwareDeveloperCase.Application.Models;
 
-namespace SoftwareDeveloperCase.Application.Contracts.Services
+namespace SoftwareDeveloperCase.Application.Contracts.Services;
+
+public interface IEmailService
 {
-    public interface IEmailService
-    {
-        Task<bool> SendEmail(Email email);
-    }
+    Task<bool> SendEmail(Email email, CancellationToken cancellationToken = default);
 }
