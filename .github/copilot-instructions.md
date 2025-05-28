@@ -1,6 +1,6 @@
 # GitHub Copilot Project Instructions
 
-Solution: **DotNetSkills**
+Solution: **SoftwareDeveloperCase**
 
 ## Tech Stack
 - **Framework**: .NET 9
@@ -75,3 +75,11 @@ Solution: **DotNetSkills**
 - Categorize changes: Added, Changed, Deprecated, Removed, Fixed, Security
 - Include issue/PR references when applicable
 - Move Unreleased entries to versioned sections upon release
+
+## Technical Debt Management
+- Monitor code quality metrics continuously
+- Document technical debt items in /docs/TECHNICAL_DEBT_REPORT.md
+- Review and update technical debt quarterly
+- Track debt reduction progress in sprint retrospectives
+- Include debt items in backlog with proper prioritization
+- Measure impact of debt reduction initiatives

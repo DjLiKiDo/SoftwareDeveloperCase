@@ -1,0 +1,1 @@
+Realiza un analisis completo de la solucion y genera un informe de deuda tecnica detallado con atreas accionables a realizar
