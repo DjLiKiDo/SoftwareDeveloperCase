@@ -1,0 +1,36 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":automergeDigest",
+    ":automergeBranchPush"
+  ],
+  "schedule": ["before 4am on monday"],
+  "timezone": "Europe/Madrid",
+  "packageRules": [
+    {
+      "matchManagers": ["nuget"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "matchManagers": ["nuget"],
+      "matchUpdateTypes": ["major"],
+      "reviewersFromCodeOwners": true
+    },
+    {
+      "matchPackagePatterns": ["Microsoft\\..*"],
+      "groupName": "Microsoft packages",
+      "automerge": true
+    }
+  ],
+  "nuget": {
+    "enabled": true
+  },
+  "github-actions": {
+    "enabled": true,
+    "automerge": true
+  }
+}
