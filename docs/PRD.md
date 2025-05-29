@@ -369,7 +369,7 @@
 - **Estimated Effort**: 3 hours
 - **Technical Constraints**: Use appsettings patterns
 - **Acceptance Criteria**: Easy environment switching
-- **Functional Requirements**: Dev/staging/prod configs
+- **Functional Requirements**: dev/staging/prod configs
 - **Quality Assurance**: Deployment testing
 - **GitHub Copilot Prompt**: 
   ```
