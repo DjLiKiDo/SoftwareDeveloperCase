@@ -1,4 +1,4 @@
-using SoftwareDeveloperCase.Api.Models;
+using Microsoft.AspNetCore.Mvc;
 using SoftwareDeveloperCase.Application.Exceptions;
 using System.Net;
 using System.Text.Json;
@@ -59,63 +59,93 @@ public class GlobalExceptionHandlingMiddleware
     /// <returns>A task representing the asynchronous operation.</returns>
     private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        context.Response.ContentType = "application/json";
+        context.Response.ContentType = "application/problem+json";
 
-        var response = exception switch
+        var problemDetails = exception switch
         {
-            ValidationException validationEx => new ErrorResponse
+            ValidationException validationEx => new ProblemDetails
             {
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
                 Title = "Validation Failed",
                 Status = (int)HttpStatusCode.BadRequest,
                 Detail = "One or more validation errors occurred.",
-                TraceId = context.TraceIdentifier,
-                Errors = validationEx.Errors
+                Instance = context.Request.Path,
+                Extensions =
+                {
+                    ["traceId"] = context.TraceIdentifier,
+                    ["errors"] = validationEx.Errors
+                }
             },
-            NotFoundException notFoundEx => new ErrorResponse
+            NotFoundException notFoundEx => new ProblemDetails
             {
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
                 Title = "Resource Not Found",
                 Status = (int)HttpStatusCode.NotFound,
                 Detail = notFoundEx.Message,
-                TraceId = context.TraceIdentifier
+                Instance = context.Request.Path,
+                Extensions =
+                {
+                    ["traceId"] = context.TraceIdentifier
+                }
             },
-            ArgumentNullException argumentNullEx => new ErrorResponse
+            ArgumentNullException argumentNullEx => new ProblemDetails
             {
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
                 Title = "Invalid Argument",
                 Status = (int)HttpStatusCode.BadRequest,
                 Detail = _environment.IsDevelopment() ? argumentNullEx.Message : "Required parameter is missing.",
-                TraceId = context.TraceIdentifier
+                Instance = context.Request.Path,
+                Extensions =
+                {
+                    ["traceId"] = context.TraceIdentifier
+                }
             },
-            ArgumentException argumentEx => new ErrorResponse
+            ArgumentException argumentEx => new ProblemDetails
             {
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
                 Title = "Invalid Argument",
                 Status = (int)HttpStatusCode.BadRequest,
                 Detail = _environment.IsDevelopment() ? argumentEx.Message : "Invalid request parameters.",
-                TraceId = context.TraceIdentifier
+                Instance = context.Request.Path,
+                Extensions =
+                {
+                    ["traceId"] = context.TraceIdentifier
+                }
             },
-            UnauthorizedAccessException => new ErrorResponse
+            UnauthorizedAccessException => new ProblemDetails
             {
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.2",
                 Title = "Unauthorized",
                 Status = (int)HttpStatusCode.Unauthorized,
                 Detail = "Access denied.",
-                TraceId = context.TraceIdentifier
+                Instance = context.Request.Path,
+                Extensions =
+                {
+                    ["traceId"] = context.TraceIdentifier
+                }
             },
-            _ => new ErrorResponse
+            _ => new ProblemDetails
             {
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
                 Title = "Internal Server Error",
                 Status = (int)HttpStatusCode.InternalServerError,
                 Detail = _environment.IsDevelopment()
                     ? exception.Message
                     : "An internal server error occurred. Please try again later.",
-                TraceId = context.TraceIdentifier
+                Instance = context.Request.Path,
+                Extensions =
+                {
+                    ["traceId"] = context.TraceIdentifier
+                }
             }
         };
 
-        context.Response.StatusCode = response.Status;
+        context.Response.StatusCode = problemDetails.Status ?? (int)HttpStatusCode.InternalServerError;
 
         _logger.LogWarning("Returning error response: {Status} - {Title} - TraceId: {TraceId}",
-            response.Status, response.Title, response.TraceId);
+            problemDetails.Status, problemDetails.Title, problemDetails.Extensions["traceId"]);
 
-        var jsonResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions
+        var jsonResponse = JsonSerializer.Serialize(problemDetails, new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = _environment.IsDevelopment()
