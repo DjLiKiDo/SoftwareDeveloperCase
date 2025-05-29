@@ -75,7 +75,7 @@ public class EmailServiceTests
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("SMTP server is not configured")),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("SMTP server is not configured")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -103,7 +103,7 @@ public class EmailServiceTests
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("From address is not configured")),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("From address is not configured")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -130,7 +130,7 @@ public class EmailServiceTests
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("To address is required")),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("To address is required")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -157,7 +157,7 @@ public class EmailServiceTests
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Email must have either subject or body")),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Email must have either subject or body")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -186,7 +186,7 @@ public class EmailServiceTests
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("SMTP error occurred")),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("SMTP error occurred")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
@@ -215,7 +215,7 @@ public class EmailServiceTests
             x => x.Log(
                 LogLevel.Warning,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Email sending was cancelled")),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Email sending was cancelled")),
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
