@@ -88,7 +88,11 @@ public class Task {
 PArtiendo de esta idea, vamos a modificar nuestro proyecto para adaptarlo a estos requisitos que te paso como referencia, sugiere lo que creas conveniente para un MVP
 
 
+
 El objetivo es crear la documentacion necesaria (PRD, MVP, BOARD) para implementar esta fase del proyecto, con una especificacion clara y una lista 
+
+Como tarea antes de comenzar la implementacion, hacer un analisis de deuda tecnica y añadir las tareas necesarias para abordar los problemas identificados debidamente priorizadas.
+Como tarea al finalizar y antes de desplegar el mvp, hacer un analisis de deuda tecnica y añadir las tareas necesarias para abordar los problemas identificados debidamente priorizadas.
 
 Each task should follow this format:
 - Task ID
