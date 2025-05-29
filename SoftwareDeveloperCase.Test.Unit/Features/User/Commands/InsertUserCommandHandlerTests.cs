@@ -67,15 +67,15 @@ public class InsertUserCommandHandlerTests
             DepartmentId = command.DepartmentId
         };
 
-        var employeeRole = new Role { Id = roleId, Name = "Employee" };
+        var employeeRole = new Domain.Entities.Role { Id = roleId, Name = "Employee" };
         var departmentManagers = new List<Domain.Entities.User>
         {
             new() { Email = "manager@example.com" }
         };
 
         _mockMapper.Setup(x => x.Map<Domain.Entities.User>(command)).Returns(user);
-        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Role, bool>>>()))
-            .ReturnsAsync(new List<Role> { employeeRole });
+        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Entities.Role, bool>>>()))
+            .ReturnsAsync(new List<Domain.Entities.Role> { employeeRole });
         _mockDepartmentRepository.Setup(x => x.GetManagersAsync(departmentId))
             .ReturnsAsync(departmentManagers);
         _mockUnitOfWork.Setup(x => x.SaveChanges()).ReturnsAsync(1);
@@ -105,8 +105,8 @@ public class InsertUserCommandHandlerTests
 
         var user = new Domain.Entities.User { Id = Guid.NewGuid() };
         _mockMapper.Setup(x => x.Map<Domain.Entities.User>(command)).Returns(user);
-        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Role, bool>>>()))
-            .ReturnsAsync(new List<Role>());
+        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Entities.Role, bool>>>()))
+            .ReturnsAsync(new List<Domain.Entities.Role>());
         _mockUnitOfWork.Setup(x => x.SaveChanges()).ReturnsAsync(0);
 
         // Act & Assert
@@ -141,8 +141,8 @@ public class InsertUserCommandHandlerTests
             DepartmentId = departmentId 
         };
         _mockMapper.Setup(x => x.Map<Domain.Entities.User>(command)).Returns(user);
-        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Role, bool>>>()))
-            .ReturnsAsync(new List<Role>());
+        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Entities.Role, bool>>>()))
+            .ReturnsAsync(new List<Domain.Entities.Role>());
         _mockDepartmentRepository.Setup(x => x.GetManagersAsync(departmentId))
             .ReturnsAsync(new List<Domain.Entities.User>());
         _mockUnitOfWork.Setup(x => x.SaveChanges()).ReturnsAsync(1);
@@ -180,8 +180,8 @@ public class InsertUserCommandHandlerTests
         };
 
         _mockMapper.Setup(x => x.Map<Domain.Entities.User>(command)).Returns(user);
-        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Role, bool>>>()))
-            .ReturnsAsync(new List<Role>());
+        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Entities.Role, bool>>>()))
+            .ReturnsAsync(new List<Domain.Entities.Role>());
         _mockDepartmentRepository.Setup(x => x.GetManagersAsync(departmentId))
             .ReturnsAsync(departmentManagers);
         _mockUnitOfWork.Setup(x => x.SaveChanges()).ReturnsAsync(1);
