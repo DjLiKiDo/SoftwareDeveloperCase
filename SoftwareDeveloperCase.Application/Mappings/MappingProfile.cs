@@ -9,8 +9,14 @@ using SoftwareDeveloperCase.Domain.Entities;
 
 namespace SoftwareDeveloperCase.Application.Mappings
 {
+    /// <summary>
+    /// AutoMapper profile for configuring object mappings between entities and DTOs/commands
+    /// </summary>
     public class MappingProfile : Profile
     {
+        /// <summary>
+        /// Initializes a new instance of the MappingProfile class and configures mappings
+        /// </summary>
         public MappingProfile()
         {
             CreateMap<Permission, PermissionDto>();

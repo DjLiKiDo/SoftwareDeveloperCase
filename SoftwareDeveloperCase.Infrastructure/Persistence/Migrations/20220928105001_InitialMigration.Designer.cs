@@ -15,6 +15,10 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.Migrations
     [Migration("20220928105001_InitialMigration")]
     partial class InitialMigration
     {
+        /// <summary>
+        /// Builds the target model for the initial migration defining the complete database schema.
+        /// </summary>
+        /// <param name="modelBuilder">The model builder used to construct the target model.</param>
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

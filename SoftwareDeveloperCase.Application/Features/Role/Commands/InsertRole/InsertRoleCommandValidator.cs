@@ -3,10 +3,17 @@ using SoftwareDeveloperCase.Application.Contracts.Persistence;
 
 namespace SoftwareDeveloperCase.Application.Features.Role.Commands.InsertRole
 {
+    /// <summary>
+    /// Validator for InsertRoleCommand to ensure business rules are satisfied
+    /// </summary>
     public class InsertRoleCommandValidator : AbstractValidator<InsertRoleCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
 
+        /// <summary>
+        /// Initializes a new instance of the InsertRoleCommandValidator class
+        /// </summary>
+        /// <param name="unitOfWork">The unit of work instance for data validation</param>
         public InsertRoleCommandValidator(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;

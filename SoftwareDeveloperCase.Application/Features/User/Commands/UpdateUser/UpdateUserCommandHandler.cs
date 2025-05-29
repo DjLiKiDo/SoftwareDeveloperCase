@@ -6,12 +6,21 @@ using SoftwareDeveloperCase.Application.Exceptions;
 
 namespace SoftwareDeveloperCase.Application.Features.User.Commands.UpdateUser
 {
-    public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
+    /// <summary>
+    /// Handler for processing update user commands
+    /// </summary>
+    public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Guid>
     {
         private readonly ILogger<UpdateUserCommandHandler> _logger;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
+        /// <summary>
+        /// Initializes a new instance of the UpdateUserCommandHandler class
+        /// </summary>
+        /// <param name="logger">The logger instance</param>
+        /// <param name="mapper">The AutoMapper instance</param>
+        /// <param name="unitOfWork">The unit of work instance</param>
         public UpdateUserCommandHandler(ILogger<UpdateUserCommandHandler> logger, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _logger = logger;
@@ -19,7 +28,13 @@ namespace SoftwareDeveloperCase.Application.Features.User.Commands.UpdateUser
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+        /// <summary>
+        /// Handles the update user command
+        /// </summary>
+        /// <param name="request">The update user command</param>
+        /// <param name="cancellationToken">Cancellation token for the operation</param>
+        /// <returns>The identifier of the updated user</returns>
+        public async Task<Guid> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             var userToUpdate = await _unitOfWork.UserRepository.GetByIdAsync(request.Id);
 
@@ -37,7 +52,7 @@ namespace SoftwareDeveloperCase.Application.Features.User.Commands.UpdateUser
 
             _logger.LogInformation($"Entity updated successfully --> Id: {userToUpdate.Id}");
 
-            return Unit.Value;
+            return userToUpdate.Id;
         }
     }
 }

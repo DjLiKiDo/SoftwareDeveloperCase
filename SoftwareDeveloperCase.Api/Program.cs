@@ -58,5 +58,8 @@ app.MapControllers();
 
 app.Run();
 
-// Make Program class accessible for testing
+/// <summary>
+/// The main program class for the API application. 
+/// This partial class declaration makes the Program class accessible for integration testing.
+/// </summary>
 public partial class Program { }

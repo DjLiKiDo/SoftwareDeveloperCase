@@ -2,8 +2,14 @@ using FluentValidation;
 
 namespace SoftwareDeveloperCase.Application.Features.User.Commands.UpdateUser
 {
+    /// <summary>
+    /// Validator for UpdateUserCommand to ensure business rules are satisfied
+    /// </summary>
     public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
     {
+        /// <summary>
+        /// Initializes a new instance of the UpdateUserCommandValidator class
+        /// </summary>
         public UpdateUserCommandValidator()
         {
             RuleFor(x => x.Name)

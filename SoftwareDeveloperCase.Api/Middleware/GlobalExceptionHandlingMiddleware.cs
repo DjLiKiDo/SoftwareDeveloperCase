@@ -15,6 +15,12 @@ public class GlobalExceptionHandlingMiddleware
     private readonly ILogger<GlobalExceptionHandlingMiddleware> _logger;
     private readonly IWebHostEnvironment _environment;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GlobalExceptionHandlingMiddleware"/> class.
+    /// </summary>
+    /// <param name="next">The next middleware in the pipeline.</param>
+    /// <param name="logger">The logger for recording exceptions.</param>
+    /// <param name="environment">The web host environment for determining error detail level.</param>
     public GlobalExceptionHandlingMiddleware(
         RequestDelegate next,
         ILogger<GlobalExceptionHandlingMiddleware> logger,

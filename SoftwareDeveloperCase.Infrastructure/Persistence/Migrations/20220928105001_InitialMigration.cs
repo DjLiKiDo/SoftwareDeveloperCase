@@ -4,8 +4,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SoftwareDeveloperCase.Infrastructure.Persistence.Migrations
 {
+    /// <summary>
+    /// Initial migration that creates the database schema with all required tables and relationships.
+    /// </summary>
     public partial class InitialMigration : Migration
     {
+        /// <summary>
+        /// Builds up the database schema by creating tables, indexes, and foreign key relationships.
+        /// </summary>
+        /// <param name="migrationBuilder">The migration builder used to create database objects.</param>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -246,6 +253,10 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.Migrations
                 column: "UserId");
         }
 
+        /// <summary>
+        /// Tears down the database schema by dropping all tables in reverse dependency order.
+        /// </summary>
+        /// <param name="migrationBuilder">The migration builder used to drop database objects.</param>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

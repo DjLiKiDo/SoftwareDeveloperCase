@@ -10,8 +10,17 @@ using SoftwareDeveloperCase.Infrastructure.Services;
 
 namespace SoftwareDeveloperCase.Infrastructure
 {
+    /// <summary>
+    /// Provides extension methods for configuring infrastructure services
+    /// </summary>
     public static class DependencyInjection
     {
+        /// <summary>
+        /// Adds infrastructure services to the dependency injection container
+        /// </summary>
+        /// <param name="services">The service collection to add services to</param>
+        /// <param name="configuration">The application configuration</param>
+        /// <returns>The service collection for method chaining</returns>
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IUserRepository, UserRepository>();

@@ -6,12 +6,21 @@ using SoftwareDeveloperCase.Application.Exceptions;
 
 namespace SoftwareDeveloperCase.Application.Features.User.Commands.DeleteUser
 {
-    public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand>
+    /// <summary>
+    /// Handler for processing delete user commands
+    /// </summary>
+    public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Guid>
     {
         private readonly ILogger<DeleteUserCommandHandler> _logger;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
+        /// <summary>
+        /// Initializes a new instance of the DeleteUserCommandHandler class
+        /// </summary>
+        /// <param name="logger">The logger instance</param>
+        /// <param name="mapper">The AutoMapper instance</param>
+        /// <param name="unitOfWork">The unit of work instance</param>
         public DeleteUserCommandHandler(ILogger<DeleteUserCommandHandler> logger, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _logger = logger;
@@ -19,7 +28,13 @@ namespace SoftwareDeveloperCase.Application.Features.User.Commands.DeleteUser
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Unit> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        /// <summary>
+        /// Handles the delete user command
+        /// </summary>
+        /// <param name="request">The delete user command</param>
+        /// <param name="cancellationToken">Cancellation token for the operation</param>
+        /// <returns>The identifier of the deleted user</returns>
+        public async Task<Guid> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
             var userToDelete = await _unitOfWork.UserRepository.GetByIdAsync(request.Id);
 
@@ -35,7 +50,7 @@ namespace SoftwareDeveloperCase.Application.Features.User.Commands.DeleteUser
 
             _logger.LogInformation($"Entity deleted successfully --> Id: {request.Id}");
 
-            return Unit.Value;
+            return request.Id;
         }
     }
 }

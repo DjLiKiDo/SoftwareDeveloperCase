@@ -7,17 +7,31 @@ using System.Net.Mail;
 
 namespace SoftwareDeveloperCase.Infrastructure.Services;
 
+/// <summary>
+/// Service implementation for sending email notifications
+/// </summary>
 public class EmailService : IEmailService
 {
     private readonly EmailSettings _emailSettings;
     private readonly ILogger<EmailService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the EmailService class
+    /// </summary>
+    /// <param name="emailSettings">The email configuration settings</param>
+    /// <param name="logger">The logger instance</param>
     public EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailService> logger)
     {
         _emailSettings = emailSettings.Value;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Sends an email message using SMTP
+    /// </summary>
+    /// <param name="email">The email message to send</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
+    /// <returns>True if the email was sent successfully, false otherwise</returns>
     public async Task<bool> SendEmail(Email email, CancellationToken cancellationToken = default)
     {
         try

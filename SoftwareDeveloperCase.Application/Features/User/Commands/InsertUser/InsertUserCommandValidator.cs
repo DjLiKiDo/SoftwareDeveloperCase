@@ -4,10 +4,17 @@ using System.Net.Mail;
 
 namespace SoftwareDeveloperCase.Application.Features.User.Commands.InsertUser
 {
+    /// <summary>
+    /// Validator for InsertUserCommand to ensure business rules are satisfied
+    /// </summary>
     public class InsertUserCommandValidator : AbstractValidator<InsertUserCommand>
     {
         private readonly IUnitOfWork _unitOfWork;
 
+        /// <summary>
+        /// Initializes a new instance of the InsertUserCommandValidator class
+        /// </summary>
+        /// <param name="unitOfWork">The unit of work instance for data validation</param>
         public InsertUserCommandValidator(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;

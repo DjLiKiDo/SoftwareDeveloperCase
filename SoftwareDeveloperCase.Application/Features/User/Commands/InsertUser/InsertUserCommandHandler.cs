@@ -9,6 +9,9 @@ using System.Linq.Expressions;
 
 namespace SoftwareDeveloperCase.Application.Features.User.Commands.InsertUser
 {
+    /// <summary>
+    /// Handler for processing insert user commands
+    /// </summary>
     public class InsertUserCommandHandler : IRequestHandler<InsertUserCommand, Guid>
     {
         private readonly ILogger<InsertUserCommandHandler> _logger;
@@ -16,6 +19,13 @@ namespace SoftwareDeveloperCase.Application.Features.User.Commands.InsertUser
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailService _emailService;
 
+        /// <summary>
+        /// Initializes a new instance of the InsertUserCommandHandler class
+        /// </summary>
+        /// <param name="logger">The logger instance</param>
+        /// <param name="mapper">The AutoMapper instance</param>
+        /// <param name="unitOfWork">The unit of work instance</param>
+        /// <param name="emailService">The email service for sending notifications</param>
         public InsertUserCommandHandler(ILogger<InsertUserCommandHandler> logger, IMapper mapper, IUnitOfWork unitOfWork, IEmailService emailService)
         {
             _logger = logger;
@@ -24,6 +34,12 @@ namespace SoftwareDeveloperCase.Application.Features.User.Commands.InsertUser
             _emailService = emailService;
         }
 
+        /// <summary>
+        /// Handles the insert user command
+        /// </summary>
+        /// <param name="request">The insert user command</param>
+        /// <param name="cancellationToken">Cancellation token for the operation</param>
+        /// <returns>The identifier of the created user</returns>
         public async Task<Guid> Handle(InsertUserCommand request, CancellationToken cancellationToken)
         {
             var user = _mapper.Map<Domain.Entities.User>(request);
