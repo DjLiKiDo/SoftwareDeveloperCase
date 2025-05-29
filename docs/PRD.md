@@ -271,6 +271,27 @@
   "I need to implement a global exception handling middleware for the API. The requirements are catching all unhandled exceptions, logging them with Serilog, returning consistent error responses with appropriate HTTP status codes (400 for validation, 404 for not found, 500 for server errors), and not exposing internal details in production. Please help me implement this as ASP.NET Core middleware."
   ```
 
+  ##### TASK-006.1: Migrate to ProblemDetails Standard
+- **Description**: Update error handling to use RFC 7807 ProblemDetails format
+- **Dependencies**: TASK-006
+- **Estimated Effort**: 2 hours
+- **Technical Constraints**: Must maintain existing error handling behavior
+- **Acceptance Criteria**: All error responses follow ProblemDetails format
+- **Functional Requirements**: 
+  - Replace ErrorResponse model with ProblemDetails
+  - Update GlobalExceptionHandlingMiddleware to return RFC 7807 compliant responses
+  - Include traceId and instance properties for debugging
+  - Configure proper content-type (application/problem+json)
+  - Maintain existing status code mapping (400 for validation, 404 for not found, 500 for server errors)
+- **Quality Assurance**: 
+  - Integration tests verify ProblemDetails format
+  - Swagger documentation shows correct error schemas
+  - Validate against RFC 7807 specification
+- **GitHub Copilot Prompt**: 
+  ```
+  "I need to migrate the existing error handling from custom ErrorResponse to RFC 7807 ProblemDetails standard. The requirements are updating GlobalExceptionHandlingMiddleware to return ProblemDetails objects, configuring ASP.NET Core ProblemDetails services, ensuring proper JSON serialization with application/problem+json content-type, including traceId for debugging, and maintaining current exception-to-status-code mapping. Please help me implement this migration while preserving existing functionality."
+  ```
+
 ### Phase 4: Security & Performance (Week 3)
 
 #### TASK-007: Add Input Sanitization
