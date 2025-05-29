@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Application.Models;
+using SoftwareDeveloperCase.Infrastructure.HealthChecks;
 using SoftwareDeveloperCase.Infrastructure.Persistence;
 using SoftwareDeveloperCase.Infrastructure.Repositories;
 using SoftwareDeveloperCase.Infrastructure.Repositories.Cached;
@@ -70,6 +71,11 @@ public static class DependencyInjection
 
         // Add caching services
         services.AddMemoryCache();
+
+        // Add health check services
+        services.AddHealthChecks()
+            .AddDbContextCheck<SoftwareDeveloperCaseDbContext>("database")
+            .AddCheck<EmailServiceHealthCheck>("email_service");
 
         return services;
     }

@@ -3,6 +3,7 @@ using SoftwareDeveloperCase.Api;
 using SoftwareDeveloperCase.Api.Middleware;
 using SoftwareDeveloperCase.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +56,17 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Map health check endpoints
+app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/ready", new HealthCheckOptions()
+{
+    Predicate = check => check.Tags.Contains("ready"),
+});
+app.MapHealthChecks("/health/live", new HealthCheckOptions()
+{
+    Predicate = _ => false,
+});
 
 app.Run();
 
