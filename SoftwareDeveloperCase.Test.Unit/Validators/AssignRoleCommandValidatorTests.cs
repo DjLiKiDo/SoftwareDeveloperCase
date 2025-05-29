@@ -155,7 +155,7 @@ public class AssignRoleCommandValidatorTests
 
         // Assert
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().HaveCountGreaterOrEqualTo(2);
+        result.Errors.Should().HaveCountGreaterThanOrEqualTo(2);
         result.Errors.Should().Contain(x => x.PropertyName == "UserId");
         result.Errors.Should().Contain(x => x.PropertyName == "RoleId");
     }

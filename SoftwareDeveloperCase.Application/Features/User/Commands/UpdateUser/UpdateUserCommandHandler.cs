@@ -4,55 +4,54 @@ using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Exceptions;
 
-namespace SoftwareDeveloperCase.Application.Features.User.Commands.UpdateUser
+namespace SoftwareDeveloperCase.Application.Features.User.Commands.UpdateUser;
+
+/// <summary>
+/// Handler for processing update user commands
+/// </summary>
+public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Guid>
 {
+    private readonly ILogger<UpdateUserCommandHandler> _logger;
+    private readonly IMapper _mapper;
+    private readonly IUnitOfWork _unitOfWork;
+
     /// <summary>
-    /// Handler for processing update user commands
+    /// Initializes a new instance of the UpdateUserCommandHandler class
     /// </summary>
-    public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Guid>
+    /// <param name="logger">The logger instance</param>
+    /// <param name="mapper">The AutoMapper instance</param>
+    /// <param name="unitOfWork">The unit of work instance</param>
+    public UpdateUserCommandHandler(ILogger<UpdateUserCommandHandler> logger, IMapper mapper, IUnitOfWork unitOfWork)
     {
-        private readonly ILogger<UpdateUserCommandHandler> _logger;
-        private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
+        _logger = logger;
+        _mapper = mapper;
+        _unitOfWork = unitOfWork;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the UpdateUserCommandHandler class
-        /// </summary>
-        /// <param name="logger">The logger instance</param>
-        /// <param name="mapper">The AutoMapper instance</param>
-        /// <param name="unitOfWork">The unit of work instance</param>
-        public UpdateUserCommandHandler(ILogger<UpdateUserCommandHandler> logger, IMapper mapper, IUnitOfWork unitOfWork)
+    /// <summary>
+    /// Handles the update user command
+    /// </summary>
+    /// <param name="request">The update user command</param>
+    /// <param name="cancellationToken">Cancellation token for the operation</param>
+    /// <returns>The identifier of the updated user</returns>
+    public async Task<Guid> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    {
+        var userToUpdate = await _unitOfWork.UserRepository.GetByIdAsync(request.Id);
+
+        if (userToUpdate is null)
         {
-            _logger = logger;
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
+            _logger.LogError($"Error retrieving entity from database. Entity not found --> Id: {request.Id}");
+            throw new NotFoundException(nameof(Domain.Entities.User), request.Id);
         }
 
-        /// <summary>
-        /// Handles the update user command
-        /// </summary>
-        /// <param name="request">The update user command</param>
-        /// <param name="cancellationToken">Cancellation token for the operation</param>
-        /// <returns>The identifier of the updated user</returns>
-        public async Task<Guid> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
-        {
-            var userToUpdate = await _unitOfWork.UserRepository.GetByIdAsync(request.Id);
+        _mapper.Map(request, userToUpdate, typeof(UpdateUserCommand), typeof(Domain.Entities.User));
 
-            if (userToUpdate is null)
-            {
-                _logger.LogError($"Error retrieving entity from database. Entity not found --> Id: {request.Id}");
-                throw new NotFoundException(nameof(Domain.Entities.User), request.Id);
-            }
+        _unitOfWork.UserRepository.Update(userToUpdate);
 
-            _mapper.Map(request, userToUpdate, typeof(UpdateUserCommand), typeof(Domain.Entities.User));
+        await _unitOfWork.SaveChanges();
 
-            _unitOfWork.UserRepository.Update(userToUpdate);
+        _logger.LogInformation($"Entity updated successfully --> Id: {userToUpdate.Id}");
 
-            await _unitOfWork.SaveChanges();
-
-            _logger.LogInformation($"Entity updated successfully --> Id: {userToUpdate.Id}");
-
-            return userToUpdate.Id;
-        }
+        return userToUpdate.Id;
     }
 }

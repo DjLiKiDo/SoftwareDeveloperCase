@@ -1,15 +1,14 @@
 using MediatR;
 
-namespace SoftwareDeveloperCase.Application.Features.User.Commands.DeleteUser
+namespace SoftwareDeveloperCase.Application.Features.User.Commands.DeleteUser;
+
+/// <summary>
+/// Command to delete a user
+/// </summary>
+public class DeleteUserCommand : IRequest<Guid>
 {
     /// <summary>
-    /// Command to delete a user
+    /// Gets or sets the user identifier to delete
     /// </summary>
-    public class DeleteUserCommand : IRequest<Guid>
-    {
-        /// <summary>
-        /// Gets or sets the user identifier to delete
-        /// </summary>
-        public Guid Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }

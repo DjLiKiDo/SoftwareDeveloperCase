@@ -4,7 +4,7 @@ Solution: **SoftwareDeveloperCase**
 
 ## Tech Stack
 - **Framework**: .NET 8
-- **Language**: C# 14
+- **Language**: C# 13
 - **Architecture**: Clean Architecture (Onion Architecture)
 - **API Style**: RESTful with OpenAPI/Swagger
 - **Database**: Entity Framework Core with SQL Server

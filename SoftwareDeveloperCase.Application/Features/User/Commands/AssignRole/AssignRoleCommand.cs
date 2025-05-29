@@ -1,20 +1,19 @@
 using MediatR;
 
-namespace SoftwareDeveloperCase.Application.Features.User.Commands.AssignRole
+namespace SoftwareDeveloperCase.Application.Features.User.Commands.AssignRole;
+
+/// <summary>
+/// Command to assign a role to a user
+/// </summary>
+public class AssignRoleCommand : IRequest<Guid>
 {
     /// <summary>
-    /// Command to assign a role to a user
+    /// Gets or sets the user identifier
     /// </summary>
-    public class AssignRoleCommand : IRequest<Guid>
-    {
-        /// <summary>
-        /// Gets or sets the user identifier
-        /// </summary>
-        public Guid UserId { get; set; }
+    public Guid UserId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the role identifier
-        /// </summary>
-        public Guid RoleId { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets the role identifier
+    /// </summary>
+    public Guid RoleId { get; set; }
 }

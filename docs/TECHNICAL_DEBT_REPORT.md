@@ -2,7 +2,7 @@
 
 **Project:** SoftwareDeveloperCase  
 **Date:** Generated on analysis date  
-**Framework:** .NET 8 / C# 14  
+**Framework:** .NET 8 / C# 13  
 **Architecture:** Clean Architecture (Onion)
 
 ---

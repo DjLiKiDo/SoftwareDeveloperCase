@@ -8,37 +8,36 @@ using SoftwareDeveloperCase.Infrastructure.Persistence;
 using SoftwareDeveloperCase.Infrastructure.Repositories;
 using SoftwareDeveloperCase.Infrastructure.Services;
 
-namespace SoftwareDeveloperCase.Infrastructure
+namespace SoftwareDeveloperCase.Infrastructure;
+
+/// <summary>
+/// Provides extension methods for configuring infrastructure services
+/// </summary>
+public static class DependencyInjection
 {
     /// <summary>
-    /// Provides extension methods for configuring infrastructure services
+    /// Adds infrastructure services to the dependency injection container
     /// </summary>
-    public static class DependencyInjection
+    /// <param name="services">The service collection to add services to</param>
+    /// <param name="configuration">The application configuration</param>
+    /// <returns>The service collection for method chaining</returns>
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        /// <summary>
-        /// Adds infrastructure services to the dependency injection container
-        /// </summary>
-        /// <param name="services">The service collection to add services to</param>
-        /// <param name="configuration">The application configuration</param>
-        /// <returns>The service collection for method chaining</returns>
-        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
-            services.AddDbContext<SoftwareDeveloperCaseDbContext>(options =>
-                options.UseInMemoryDatabase("SoftwareDeveloperCaseInMemoryDb")
-            );
+        services.AddDbContext<SoftwareDeveloperCaseDbContext>(options =>
+            options.UseInMemoryDatabase("SoftwareDeveloperCaseInMemoryDb")
+        );
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            services.AddScoped<EntitySaveChangesInterceptor>();
+        services.AddScoped<EntitySaveChangesInterceptor>();
 
-            services.AddSingleton<IDateTimeService, DateTimeService>();
+        services.AddSingleton<IDateTimeService, DateTimeService>();
 
-            services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SECTION_NAME));
-            services.AddTransient<IEmailService, EmailService>();
+        services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SECTION_NAME));
+        services.AddTransient<IEmailService, EmailService>();
 
-            return services;
-        }
+        return services;
     }
 }

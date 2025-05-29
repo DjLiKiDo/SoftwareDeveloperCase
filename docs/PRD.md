@@ -60,7 +60,7 @@
 
 ### Technical Requirements
 
-- **.NET 8 / C# 14** runtime environment
+- **.NET 8 / C# 13** runtime environment
 - **SQL Server** database (or compatible)
 - **SMTP Server** for email notifications
 - **HTTPS** enabled web server
