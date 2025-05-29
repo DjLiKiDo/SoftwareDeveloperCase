@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Comprehensive CI/CD Pipeline**: Multi-stage GitHub Actions workflow with 8 distinct jobs
+  - Test & Code Quality: Unit tests with coverage, code formatting verification, vulnerability scanning
+  - Build & Package: Release artifact generation with versioning
+  - Integration Tests: SQL Server container-based full stack testing
+  - Performance Tests: Basic load testing framework with API health checks
+  - Docker: Container image building and publishing to GitHub Container Registry
+  - Deployment: Staging and production deployment pipelines with environment protection
+  - Security: CodeQL analysis, dependency vulnerability scanning, Renovate for dependency updates
+- **Docker Support**: Multi-stage Dockerfile with security best practices and .dockerignore optimization
+- **Code Quality Enforcement**: Automated code formatting verification with `dotnet format`
+- **Security Scanning**: Package vulnerability detection and deprecated dependency warnings
+- **Test Coverage Reporting**: ReportGenerator integration with Codecov support
+- **Artifact Management**: Test results, coverage reports, and build artifacts with proper retention
+- **Environment Protection**: GitHub environments for staging and production with approval workflows
+- **Documentation**: Comprehensive CI/CD guide with troubleshooting and best practices
 - Comprehensive project documentation (PRD, MVP specification, Task Board)
 - Technical debt analysis and remediation plan
 - Project transformation roadmap from user/role system to project management API
@@ -16,9 +31,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - API endpoint planning for MVP features
 
 ### Changed
+- **Workflow Enhancement**: Removed duplicate `dotnet.yml` workflow in favor of comprehensive `ci-cd.yml`
+- **Build Optimization**: NuGet caching configuration improved for faster builds
+- **Security Improvements**: Container runs as non-root user, minimal attack surface
+- **Documentation Updates**: README enhanced with CI/CD section and Docker usage instructions
 - Project scope expanded to include team-based project management
 - README updated to reflect new project direction and features
 - Architecture documentation enhanced with new domain models
+
+### Fixed
+- **Code Formatting**: Resolved whitespace and final newline issues across all source files
+- **Workflow Validation**: Fixed Docker secrets configuration and environment setup issues
+- **Dependencies**: Removed invalid packages.lock.json references from NuGet caching
+
+### Security
+- **Vulnerability Scanning**: Automated detection of vulnerable and deprecated packages
+- **Container Security**: Non-privileged user execution in Docker containers
+- **Secret Management**: Proper GitHub secrets handling with conditional execution
+- **Dependency Monitoring**: Renovate integration for automated dependency updates
+
+### Infrastructure
+- **Multi-Registry Support**: GitHub Container Registry (default) with Docker Hub fallback
+- **Caching Strategy**: Docker layer caching and NuGet package caching for performance
+- **Service Integration**: SQL Server container for integration testing
+- **Deployment Ready**: Infrastructure for staging and production deployments
 
 ### Planned
 - Implementation of Team management functionality

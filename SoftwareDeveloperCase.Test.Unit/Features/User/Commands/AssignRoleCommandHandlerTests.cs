@@ -36,7 +36,7 @@ public class AssignRoleCommandHandlerTests
         var userRoleId = Guid.NewGuid();
         var userId = Guid.NewGuid();
         var roleId = Guid.NewGuid();
-        
+
         var command = new AssignRoleCommand
         {
             UserId = userId,
@@ -76,7 +76,7 @@ public class AssignRoleCommandHandlerTests
         // Arrange
         var userId = Guid.NewGuid();
         var roleId = Guid.NewGuid();
-        
+
         var command = new AssignRoleCommand
         {
             UserId = userId,
@@ -96,7 +96,7 @@ public class AssignRoleCommandHandlerTests
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
         exception.Message.Should().Be("The role has not been assigned");
-        
+
         _mockLogger.Verify(
             x => x.Log(
                 LogLevel.Error,
@@ -113,7 +113,7 @@ public class AssignRoleCommandHandlerTests
         // Arrange
         var userId = Guid.NewGuid();
         var roleId = Guid.NewGuid();
-        
+
         var command = new AssignRoleCommand
         {
             UserId = userId,
@@ -143,7 +143,7 @@ public class AssignRoleCommandHandlerTests
         // Arrange
         var userId = Guid.NewGuid();
         var roleId = Guid.NewGuid();
-        
+
         var command = new AssignRoleCommand
         {
             UserId = userId,
@@ -156,7 +156,7 @@ public class AssignRoleCommandHandlerTests
             UserId = userId,
             RoleId = roleId
         };
-        
+
         var sequence = new MockSequence();
 
         _mockMapper.Setup(x => x.Map<UserRole>(command)).Returns(userRole);

@@ -84,7 +84,7 @@ public class InsertRoleCommandHandlerTests
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
         exception.Message.Should().Be("The role was not inserted");
-        
+
         _mockLogger.Verify(
             x => x.Log(
                 LogLevel.Error,

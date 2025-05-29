@@ -251,6 +251,89 @@ Serilog__MinimumLevel__Default="Information"
    - Recreate with `dotnet ef migrations add Initial`
    - Update database
 
+## 🔄 CI/CD Pipeline
+
+This project includes a comprehensive GitHub Actions workflow that provides:
+
+### Features
+- **Multi-stage Testing**: Unit tests, integration tests, and performance tests
+- **Code Quality**: Format verification, vulnerability scanning, and code coverage
+- **Security**: Dependency vulnerability checks and CodeQL analysis
+- **Containerization**: Docker image building and publishing to GitHub Container Registry
+- **Deployment**: Automated staging and production deployment support
+- **Artifacts**: Test results, coverage reports, and build artifacts
+
+### Workflow Jobs
+
+1. **Test & Code Quality**: 
+   - Runs unit tests with coverage reporting
+   - Verifies code formatting with `dotnet format`
+   - Scans for vulnerable and deprecated packages
+   - Uploads test results and coverage reports
+
+2. **Build & Package**:
+   - Builds release artifacts
+   - Publishes API for deployment
+   - Uploads build artifacts
+
+3. **Integration Tests**:
+   - Runs with SQL Server container
+   - Tests full application stack
+   - Validates database interactions
+
+4. **Performance Tests**:
+   - Basic load testing framework
+   - API health checks
+   - Performance baseline validation
+
+5. **Docker**:
+   - Builds and pushes container images
+   - Uses GitHub Container Registry (ghcr.io)
+   - Implements proper caching strategies
+
+6. **Deployment**:
+   - Staging deployment (develop branch)
+   - Production deployment (main branch)
+   - Environment-specific configurations
+
+### Configuration
+
+#### Required Secrets (Optional)
+- `CODECOV_TOKEN`: For Codecov integration (optional)
+- `DOCKER_USERNAME`/`DOCKER_PASSWORD`: For Docker Hub (optional, uses GHCR by default)
+
+#### GitHub Environments
+To enable deployment protection rules, configure these environments in your repository:
+- `staging`: For develop branch deployments
+- `production`: For main branch deployments
+
+#### Workflow Triggers
+- **Push**: `main` and `develop` branches
+- **Pull Request**: `main` and `develop` branches  
+- **Release**: Published releases
+- **Manual**: `workflow_dispatch` for manual runs
+
+### Local Docker
+
+```bash
+# Build Docker image
+docker build -t softwaredevelopercase:latest -f SoftwareDeveloperCase.Api/Dockerfile .
+
+# Run container
+docker run -p 8080:8080 -p 8081:8081 \
+  -e ASPNETCORE_ENVIRONMENT=Development \
+  softwaredevelopercase:latest
+```
+
+### Code Quality Standards
+
+The CI pipeline enforces:
+- **Code Coverage**: Minimum 80% for Domain/Application layers
+- **Code Formatting**: Consistent style with `dotnet format`
+- **Security**: No vulnerable dependencies
+- **Testing**: All tests must pass
+- **Build**: Clean compilation without warnings
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -264,7 +347,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Documentation**: [/docs](./docs)
-**API Version**: v1
-**Last Updated**: [Current Date]
+**Documentation**: [/docs](./docs)  
+**API Version**: v1  
+**Last Updated**: May 2025
 

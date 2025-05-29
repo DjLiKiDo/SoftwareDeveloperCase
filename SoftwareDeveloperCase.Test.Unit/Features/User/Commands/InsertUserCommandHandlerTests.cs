@@ -49,7 +49,7 @@ public class InsertUserCommandHandlerTests
         var userId = Guid.NewGuid();
         var roleId = Guid.NewGuid();
         var departmentId = Guid.NewGuid();
-        
+
         var command = new InsertUserCommand
         {
             Name = "John Doe",
@@ -135,10 +135,10 @@ public class InsertUserCommandHandlerTests
             DepartmentId = departmentId
         };
 
-        var user = new Domain.Entities.User 
-        { 
+        var user = new Domain.Entities.User
+        {
             Id = Guid.NewGuid(),
-            DepartmentId = departmentId 
+            DepartmentId = departmentId
         };
         _mockMapper.Setup(x => x.Map<Domain.Entities.User>(command)).Returns(user);
         _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Entities.Role, bool>>>()))
@@ -169,10 +169,10 @@ public class InsertUserCommandHandlerTests
             DepartmentId = departmentId
         };
 
-        var user = new Domain.Entities.User 
-        { 
+        var user = new Domain.Entities.User
+        {
             Id = userId,
-            DepartmentId = departmentId 
+            DepartmentId = departmentId
         };
         var departmentManagers = new List<Domain.Entities.User>
         {

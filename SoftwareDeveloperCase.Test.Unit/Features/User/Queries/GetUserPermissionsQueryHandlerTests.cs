@@ -52,7 +52,7 @@ public class GetUserPermissionsQueryHandlerTests
         var query = new GetUserPermissionsQuery(userId);
 
         var user = new Domain.Entities.User { Id = userId };
-        
+
         var userRoles = new List<UserRole>
         {
             new() { UserId = userId, RoleId = roleId1 },

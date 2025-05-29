@@ -92,7 +92,7 @@ public class UpdateUserCommandHandlerTests
         // Act & Assert
         var exception = await Assert.ThrowsAsync<NotFoundException>(() => _handler.Handle(command, CancellationToken.None));
         exception.Message.Should().Be($"Entity \"User\" ({userId}) was not found.");
-        
+
         _mockLogger.Verify(
             x => x.Log(
                 LogLevel.Error,
@@ -101,7 +101,7 @@ public class UpdateUserCommandHandlerTests
                 It.IsAny<Exception>(),
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
-        
+
         _mockUserRepository.Verify(x => x.Update(It.IsAny<Domain.Entities.User>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.SaveChanges(), Times.Never);
     }

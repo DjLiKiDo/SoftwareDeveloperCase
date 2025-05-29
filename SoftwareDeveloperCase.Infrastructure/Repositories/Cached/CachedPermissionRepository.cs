@@ -27,14 +27,14 @@ internal class CachedPermissionRepository : IPermissionRepository
     public async Task<Permission?> GetByIdAsync(Guid id)
     {
         var cacheKey = CacheKeyService.GetEntityByIdKey(EntityTypeName, id);
-        
+
         if (_cache.TryGetValue(cacheKey, out Permission? cachedPermission))
         {
             return cachedPermission;
         }
 
         var permission = await _permissionRepository.GetByIdAsync(id);
-        
+
         if (permission != null)
         {
             _cache.Set(cacheKey, permission, CacheExpirationForSingleEntity);
@@ -46,7 +46,7 @@ internal class CachedPermissionRepository : IPermissionRepository
     public async Task<IEnumerable<Permission>> GetAllAsync()
     {
         var cacheKey = CacheKeyService.GetAllEntitiesKey(EntityTypeName);
-        
+
         if (_cache.TryGetValue(cacheKey, out IEnumerable<Permission>? cachedPermissions))
         {
             return cachedPermissions!;
@@ -85,28 +85,28 @@ internal class CachedPermissionRepository : IPermissionRepository
     public async Task<Permission> InsertAsync(Permission entity)
     {
         var result = await _permissionRepository.InsertAsync(entity);
-        
+
         // Invalidate cache after insert
         InvalidateCache();
-        
+
         return result;
     }
 
     public async Task<Permission> UpdateAsync(Permission entity)
     {
         var result = await _permissionRepository.UpdateAsync(entity);
-        
+
         // Invalidate cache after update
         InvalidateCache();
         InvalidateEntityCache(entity.Id);
-        
+
         return result;
     }
 
     public async Task DeleteAsync(Permission entity)
     {
         await _permissionRepository.DeleteAsync(entity);
-        
+
         // Invalidate cache after delete
         InvalidateCache();
         InvalidateEntityCache(entity.Id);
