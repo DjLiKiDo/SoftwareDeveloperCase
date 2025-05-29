@@ -1,5 +1,4 @@
-[] Use .NET 8 for all projects
-[] Update references to use latest compatible versions
+
 [] 
 [] 
 [] 

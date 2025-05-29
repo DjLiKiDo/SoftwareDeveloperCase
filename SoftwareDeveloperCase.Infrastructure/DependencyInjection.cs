@@ -17,7 +17,7 @@ namespace SoftwareDeveloperCase.Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddDbContext<SoftwareDeveloperCaseDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("ConnectionString"))
+                options.UseInMemoryDatabase("SoftwareDeveloperCaseInMemoryDb")
             );
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();

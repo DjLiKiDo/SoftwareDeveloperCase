@@ -13,7 +13,7 @@ This solution follows Clean Architecture principles with the following layers:
 ## 🚀 Getting Started
 
 ### Prerequisites
-- .NET 9 SDK
+- .NET 8 SDK
 - SQL Server (LocalDB or full instance)
 - Visual Studio 2022 or VS Code
 

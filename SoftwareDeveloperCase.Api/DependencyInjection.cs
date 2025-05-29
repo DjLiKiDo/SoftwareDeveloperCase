@@ -15,8 +15,6 @@ namespace SoftwareDeveloperCase.Api
                 .AddApplicationServices()
                 .AddInfrastructureServices(configuration);
 
-            services.AddLogging(logging => { logging.AddConsole(); });
-
             return services;
         }
     }

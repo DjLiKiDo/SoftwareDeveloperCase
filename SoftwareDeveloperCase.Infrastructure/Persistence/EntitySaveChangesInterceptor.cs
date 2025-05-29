@@ -6,7 +6,7 @@ using SoftwareDeveloperCase.Infrastructure.Persistence.Extensions;
 
 namespace SoftwareDeveloperCase.Infrastructure.Persistence
 {
-    internal class EntitySaveChangesInterceptor : SaveChangesInterceptor
+    public class EntitySaveChangesInterceptor : SaveChangesInterceptor
     {
         private readonly IDateTimeService _dateTimeService;
 

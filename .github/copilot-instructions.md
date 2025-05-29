@@ -3,7 +3,7 @@
 Solution: **SoftwareDeveloperCase**
 
 ## Tech Stack
-- **Framework**: .NET 9
+- **Framework**: .NET 8
 - **Language**: C# 14
 - **Architecture**: Clean Architecture (Onion Architecture)
 - **API Style**: RESTful with OpenAPI/Swagger
@@ -88,7 +88,7 @@ Solution: **SoftwareDeveloperCase**
 
 # SoftwareDeveloperCase - GitHub Copilot Instructions
 
-This is a .NET 9 Clean Architecture solution for managing users, roles, and permissions. Please follow these guidelines when contributing:
+This is a .NET 8 Clean Architecture solution for managing users, roles, and permissions. Please follow these guidelines when contributing:
 
 ## Architecture Overview
 - **Clean Architecture**: Domain → Application → Infrastructure → API

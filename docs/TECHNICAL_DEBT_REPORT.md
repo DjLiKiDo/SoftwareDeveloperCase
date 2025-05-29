@@ -2,7 +2,7 @@
 
 **Project:** SoftwareDeveloperCase  
 **Date:** Generated on analysis date  
-**Framework:** .NET 9 / C# 14  
+**Framework:** .NET 8 / C# 14  
 **Architecture:** Clean Architecture (Onion)
 
 ---
@@ -28,9 +28,10 @@ This report provides a comprehensive analysis of technical debt in the SoftwareD
 
 ```
 Domain Layer: 78% ✓
-Application Layer: 72% ⚠️
-Infrastructure Layer: 45% 🔴
-API Layer: 58% 🔴
+Application Layer: 75% ⚠️
+Infrastructure Layer: 52% ⚠️
+API Layer: 68% ⚠️
+Global Exception Middleware: 100% ✓ (Fully tested)
 ```
 
 ### 1.3 Cyclomatic Complexity Hot Spots
