@@ -1,14 +1,24 @@
-# SoftwareDeveloperCase
+# SoftwareDeveloperCase - Project Management API
 
-A Clean Architecture implementation for user, role, and permission management system.
+A comprehensive Clean Architecture implementation for team-based project and task management system.
+
+## 🎯 Project Overview
+
+This API provides a robust solution for managing teams, projects, and tasks with hierarchical organization, time tracking, and collaboration features. Built with Clean Architecture principles, it ensures maintainability, testability, and scalability.
 
 ## 🏗️ Architecture
 
 This solution follows Clean Architecture principles with the following layers:
-- **Domain**: Core business entities and logic
-- **Application**: Use cases and business rules
-- **Infrastructure**: Data access and external services
-- **API**: REST endpoints and HTTP concerns
+- **Domain**: Core business entities, enums, and business rules
+- **Application**: Use cases, DTOs, validators, and business logic
+- **Infrastructure**: Data persistence, external services, and identity
+- **API**: RESTful endpoints, middleware, and HTTP concerns
+
+### Key Patterns
+- **CQRS**: Command Query Responsibility Segregation using MediatR
+- **Repository Pattern**: With Unit of Work for data access
+- **Domain-Driven Design**: Rich domain models with business logic
+- **Dependency Injection**: IoC container for loose coupling
 
 ## 🚀 Getting Started
 
@@ -16,6 +26,7 @@ This solution follows Clean Architecture principles with the following layers:
 - .NET 8 SDK
 - SQL Server (LocalDB or full instance)
 - Visual Studio 2022 or VS Code
+- Git
 
 ### Installation
 ```bash
@@ -31,6 +42,9 @@ dotnet restore
 # Build the solution
 dotnet build
 
+# Run database migrations
+dotnet ef database update -p SoftwareDeveloperCase.Infrastructure -s SoftwareDeveloperCase.Api
+
 # Run tests
 dotnet test
 
@@ -38,6 +52,11 @@ dotnet test
 dotnet run --project SoftwareDeveloperCase.Api
 ```
 
+### Quick Start
+1. Register a new user via POST `/api/v1/auth/register`
+2. Login to get JWT token via POST `/api/v1/auth/login`
+3. Use the token in Authorization header: `Bearer {token}`
+4. Create a team, project, and start managing tasks!
 
 ## 🧪 Testing
 
@@ -51,6 +70,12 @@ Run with coverage:
 dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 ```
 
+Run specific test category:
+```bash
+dotnet test --filter Category=Unit
+dotnet test --filter Category=Integration
+```
+
 ## 📚 API Documentation
 
 When running locally, Swagger UI is available at:
@@ -58,45 +83,188 @@ When running locally, Swagger UI is available at:
 https://localhost:7001/swagger
 ```
 
-### Key Endpoints
+### Core Endpoints
 
-#### Users
-- `POST /api/v1/user` - Register a new user
-- `PUT /api/v1/user` - Update user information
-- `DELETE /api/v1/user/{id}` - Delete a user
-- `GET /api/v1/user/GetUserPermissions/{id}` - Get user permissions
-- `POST /api/v1/user/AssignRole` - Assign role to user
+#### Authentication
+- `POST /api/v1/auth/register` - Register new user
+- `POST /api/v1/auth/login` - Login with credentials
+- `POST /api/v1/auth/refresh` - Refresh access token
+- `POST /api/v1/auth/logout` - Logout and revoke tokens
 
-#### Roles
-- `POST /api/v1/role` - Create a new role
-- `POST /api/v1/role/AssignPermission` - Assign permission to role
+#### Teams
+- `GET /api/v1/teams` - List all teams (paginated)
+- `GET /api/v1/teams/{id}` - Get team details
+- `POST /api/v1/teams` - Create new team (Manager/Admin)
+- `PUT /api/v1/teams/{id}` - Update team
+- `DELETE /api/v1/teams/{id}` - Delete team
+- `POST /api/v1/teams/{id}/members` - Add team member
+- `DELETE /api/v1/teams/{id}/members/{userId}` - Remove member
+
+#### Projects
+- `GET /api/v1/projects` - List projects (filterable)
+- `GET /api/v1/projects/{id}` - Get project details
+- `POST /api/v1/projects` - Create new project
+- `PUT /api/v1/projects/{id}` - Update project
+- `DELETE /api/v1/projects/{id}` - Delete project
+- `PATCH /api/v1/projects/{id}/status` - Update status
+
+#### Tasks
+- `GET /api/v1/tasks` - List tasks (filterable)
+- `GET /api/v1/tasks/{id}` - Get task details
+- `POST /api/v1/tasks` - Create new task
+- `PUT /api/v1/tasks/{id}` - Update task
+- `DELETE /api/v1/tasks/{id}` - Delete task
+- `POST /api/v1/tasks/{id}/assign` - Assign task
+- `POST /api/v1/tasks/{id}/time` - Log time
+- `POST /api/v1/tasks/{id}/comments` - Add comment
+- `GET /api/v1/tasks/{id}/comments` - Get comments
+
+## 🏛️ Domain Model
+
+### Core Entities
+- **User**: System users with authentication
+- **Team**: Groups of users working together
+- **TeamMember**: User membership in teams
+- **Project**: Work containers with timelines
+- **Task**: Work items with hierarchy support
+- **TaskComment**: Collaboration on tasks
+
+### Enumerations
+- **Role**: Admin, Manager, Developer
+- **TeamRole**: Leader, Member
+- **MemberStatus**: Active, Inactive, OnLeave
+- **ProjectStatus**: Planning, Active, OnHold, Completed, Cancelled
+- **TaskStatus**: Todo, InProgress, InReview, Done, Blocked
+- **Priority**: Low, Medium, High, Critical
+
+## 🔒 Security
+
+- JWT Bearer authentication with refresh tokens
+- Role-based authorization (Admin, Manager, Developer)
+- Rate limiting per user/IP
+- Input validation and sanitization
+- HTTPS enforcement
+- Security headers implementation
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+3. Make your changes following coding standards
+4. Write/update tests as needed
+5. Update documentation
+6. Commit your changes (`git commit -m 'Add AmazingFeature'`)
+7. Push to the branch (`git push origin feature/AmazingFeature`)
+8. Open a Pull Request
+
+### Coding Standards
+- Follow Microsoft C# naming conventions
+- Use file-scoped namespaces
+- Write XML documentation for public APIs
+- Maintain 80% test coverage minimum
+- Run `dotnet format` before committing
+
+## 📊 Project Status
+
+**Current Version**: 1.0.0-preview (MVP)
+
+### Completed Features ✅
+- User authentication and authorization
+- Team management
+- Project lifecycle management
+- Task management with hierarchy
+- Basic time tracking
+- Task comments
+
+### Upcoming Features 🚧
+- Email notifications
+- File attachments
+- Advanced reporting
+- Real-time updates
+- Third-party integrations
 
 ## 📝 Technical Requirements
 
-<!-- Original requirements preserved for context -->
 ### Business Rules
-- A user has: name, email, department and password
-- A user can adopt one or more roles
-- There is a hierarchy of roles
-- By default there are two roles: Employee and Manager
-- Any role will also be an Employee
-- Users in a role have certain permissions: read, add, update and delete
-- By default a Manager can have all the permissions
-- By default an Employee can only have read permission
-- Notify the Manager when a user has been registered in their department
+- Users belong to one or more teams
+- Teams have capacity limits (default: 10)
+- Projects belong to a single team
+- Tasks can have subtasks (one level)
+- Time tracking is manual entry
+- All users can comment on accessible tasks
 
-### API Requirements
-- Register users with email uniqueness validation
-- Register roles with hierarchy support
-- Assign permissions to roles
-- Assign roles to users
-- Get user permissions based on roles
+### Performance Targets
+- API response time < 300ms (MVP)
+- Support 100 concurrent users (MVP)
+- 95% uptime SLA
+
+## 🔧 Configuration
+
+### Environment Variables
+```bash
+# Database
+ConnectionStrings__DefaultConnection="Server=...;Database=...;Trusted_Connection=true;"
+
+# JWT
+Jwt__Secret="your-secret-key-min-32-chars"
+Jwt__Issuer="your-issuer"
+Jwt__Audience="your-audience"
+Jwt__ExpirationMinutes="15"
+
+# Logging
+Serilog__MinimumLevel__Default="Information"
+```
+
+### appsettings.json Structure
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "Jwt": {
+    "ExpirationMinutes": 15,
+    "RefreshExpirationDays": 7
+  }
+}
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **Database Connection Failed**
+   - Verify SQL Server is running
+   - Check connection string
+   - Ensure database exists
+
+2. **JWT Token Invalid**
+   - Check token expiration
+   - Verify secret key matches
+   - Ensure bearer format
+
+3. **Migration Errors**
+   - Delete existing migrations
+   - Recreate with `dotnet ef migrations add Initial`
+   - Update database
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with Clean Architecture principles
+- Inspired by Domain-Driven Design
+- Following Microsoft best practices
+- Community feedback and contributions
+
+---
+
+**Documentation**: [/docs](./docs)
+**API Version**: v1
+**Last Updated**: [Current Date]
 
