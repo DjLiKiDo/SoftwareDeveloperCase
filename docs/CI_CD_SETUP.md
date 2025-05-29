@@ -134,6 +134,7 @@ docker build -t softwaredevelopercase:local -f SoftwareDeveloperCase.Api/Dockerf
 1. Check NuGet package compatibility
 2. Verify .NET version requirements
 3. Review compiler errors in logs
+4. **NuGet caching issues**: If you see "Dependencies lock file is not found", the built-in caching is looking for `packages.lock.json`. Our workflow uses custom NuGet caching instead.
 
 #### Test Failures  
 1. Check SQL Server container startup

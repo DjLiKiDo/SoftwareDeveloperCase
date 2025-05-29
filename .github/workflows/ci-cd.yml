@@ -30,7 +30,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-        cache: true  # Built-in NuGet caching
+        # Note: Using custom NuGet caching below instead of built-in cache
     
     # Advanced NuGet caching with custom location
     - name: Cache NuGet packages
@@ -119,7 +119,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-        cache: true
     
     - name: Cache NuGet packages
       uses: actions/cache@v4
@@ -182,7 +181,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-        cache: true
     
     - name: Cache NuGet packages
       uses: actions/cache@v4

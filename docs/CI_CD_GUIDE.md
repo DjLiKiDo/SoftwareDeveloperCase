@@ -219,6 +219,7 @@ For deployment protection rules:
 1. Check NuGet package conflicts
 2. Verify .NET version compatibility
 3. Review dependency versions
+4. **NuGet Lock File Error**: If seeing "Dependencies lock file is not found", this indicates the built-in `cache: true` setting is looking for `packages.lock.json`. Our workflow uses custom NuGet caching for better control.
 
 **Test Failures**:
 1. Check SQL Server connectivity
