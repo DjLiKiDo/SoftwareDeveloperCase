@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SoftwareDeveloperCase.Api.Models;
+using SoftwareDeveloperCase.Test.Unit.Models;
 using SoftwareDeveloperCase.Application.Exceptions;
 using SoftwareDeveloperCase.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -70,16 +70,16 @@ public class GlobalExceptionHandlingMiddlewareTests : IClassFixture<WebApplicati
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
         var content = await response.Content.ReadAsStringAsync();
-        var errorResponse = JsonSerializer.Deserialize<ErrorResponse>(content, _jsonOptions);
+        var problemDetails = JsonSerializer.Deserialize<TestProblemDetails>(content, _jsonOptions);
 
-        errorResponse.Should().NotBeNull();
-        errorResponse!.Title.Should().Be("Validation Failed");
-        errorResponse.Status.Should().Be(400);
-        errorResponse.Detail.Should().Be("One or more validation errors occurred.");
-        errorResponse.TraceId.Should().NotBeNull();
-        errorResponse.Errors.Should().NotBeNull();
-        errorResponse.Errors.Should().ContainKey("Name");
-        errorResponse.Errors.Should().ContainKey("Password");
+        problemDetails.Should().NotBeNull();
+        problemDetails!.Title.Should().Be("Validation Failed");
+        problemDetails.Status.Should().Be(400);
+        problemDetails.Detail.Should().Be("One or more validation errors occurred.");
+        problemDetails.TraceId.Should().NotBeNull();
+        problemDetails.Errors.Should().NotBeNull();
+        problemDetails.Errors.Should().ContainKey("Name");
+        problemDetails.Errors.Should().ContainKey("Password");
     }
 
     [Fact]
@@ -95,12 +95,12 @@ public class GlobalExceptionHandlingMiddlewareTests : IClassFixture<WebApplicati
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
         var content = await response.Content.ReadAsStringAsync();
-        var errorResponse = JsonSerializer.Deserialize<ErrorResponse>(content, _jsonOptions);
+        var problemDetails = JsonSerializer.Deserialize<TestProblemDetails>(content, _jsonOptions);
 
-        errorResponse.Should().NotBeNull();
-        errorResponse!.Title.Should().Be("Resource Not Found");
-        errorResponse.Status.Should().Be(404);
-        errorResponse.TraceId.Should().NotBeNull();
+        problemDetails.Should().NotBeNull();
+        problemDetails!.Title.Should().Be("Resource Not Found");
+        problemDetails.Status.Should().Be(404);
+        problemDetails.TraceId.Should().NotBeNull();
     }
 
     [Fact]
@@ -132,11 +132,11 @@ public class GlobalExceptionHandlingMiddlewareTests : IClassFixture<WebApplicati
 
         if (response.StatusCode == HttpStatusCode.InternalServerError)
         {
-            var errorResponse = JsonSerializer.Deserialize<ErrorResponse>(content, _jsonOptions);
-            errorResponse.Should().NotBeNull();
-            errorResponse!.Title.Should().Be("Internal Server Error");
-            errorResponse.Status.Should().Be(500);
-            errorResponse.TraceId.Should().NotBeNull();
+            var problemDetails = JsonSerializer.Deserialize<TestProblemDetails>(content, _jsonOptions);
+            problemDetails.Should().NotBeNull();
+            problemDetails!.Title.Should().Be("Internal Server Error");
+            problemDetails.Status.Should().Be(500);
+            problemDetails.TraceId.Should().NotBeNull();
         }
     }
 
@@ -163,10 +163,10 @@ public class GlobalExceptionHandlingMiddlewareTests : IClassFixture<WebApplicati
 
         // Verify response format
         var content = await response.Content.ReadAsStringAsync();
-        var errorResponse = JsonSerializer.Deserialize<ErrorResponse>(content, _jsonOptions);
+        var problemDetails = JsonSerializer.Deserialize<TestProblemDetails>(content, _jsonOptions);
 
-        errorResponse.Should().NotBeNull();
-        errorResponse!.TraceId.Should().NotBeNull();
+        problemDetails.Should().NotBeNull();
+        problemDetails!.TraceId.Should().NotBeNull();
     }
 
     [Fact]
@@ -197,11 +197,11 @@ public class GlobalExceptionHandlingMiddlewareTests : IClassFixture<WebApplicati
 
         if (response.StatusCode == HttpStatusCode.InternalServerError)
         {
-            var errorResponse = JsonSerializer.Deserialize<ErrorResponse>(content, _jsonOptions);
-            errorResponse.Should().NotBeNull();
-            errorResponse!.Detail.Should().Be("An internal server error occurred. Please try again later.");
-            errorResponse.Detail.Should().NotContain("Exception");
-            errorResponse.Detail.Should().NotContain("Stack trace");
+            var problemDetails = JsonSerializer.Deserialize<TestProblemDetails>(content, _jsonOptions);
+            problemDetails.Should().NotBeNull();
+            problemDetails!.Detail.Should().Be("An internal server error occurred. Please try again later.");
+            problemDetails.Detail.Should().NotContain("Exception");
+            problemDetails.Detail.Should().NotContain("Stack trace");
         }
     }
 
@@ -223,7 +223,7 @@ public class GlobalExceptionHandlingMiddlewareTests : IClassFixture<WebApplicati
 
         // Assert
         response.Content.Headers.ContentType.Should().NotBeNull();
-        response.Content.Headers.ContentType!.MediaType.Should().Be("application/json");
+        response.Content.Headers.ContentType!.MediaType.Should().Be("application/problem+json");
     }
 
     /// <summary>
