@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Global exception handling middleware for consistent error responses
 - Structured logging for exception handling with TraceId correlation
 - In-memory database support for development and testing environments
+- Health check endpoints for application monitoring
+  - `/health` endpoint returning simple health status (Healthy/Degraded/Unhealthy)
+  - `/health/detailed` endpoint returning detailed JSON with individual check results
+  - Database connectivity health check using Entity Framework Core
+  - Email service configuration health check with validation of SMTP settings
 
 ### Changed
 - Updated all project target frameworks from .NET 6.0 to .NET 8.0
