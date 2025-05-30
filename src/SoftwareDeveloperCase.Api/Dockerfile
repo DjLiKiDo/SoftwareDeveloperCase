@@ -11,19 +11,19 @@ WORKDIR /src
 
 # Copy solution file and project files
 COPY ["SoftwareDeveloperCase.sln", "./"]
-COPY ["SoftwareDeveloperCase.Api/SoftwareDeveloperCase.Api.csproj", "SoftwareDeveloperCase.Api/"]
-COPY ["SoftwareDeveloperCase.Application/SoftwareDeveloperCase.Application.csproj", "SoftwareDeveloperCase.Application/"]
-COPY ["SoftwareDeveloperCase.Domain/SoftwareDeveloperCase.Domain.csproj", "SoftwareDeveloperCase.Domain/"]
-COPY ["SoftwareDeveloperCase.Infrastructure/SoftwareDeveloperCase.Infrastructure.csproj", "SoftwareDeveloperCase.Infrastructure/"]
+COPY ["src/SoftwareDeveloperCase.Api/SoftwareDeveloperCase.Api.csproj", "src/SoftwareDeveloperCase.Api/"]
+COPY ["src/SoftwareDeveloperCase.Application/SoftwareDeveloperCase.Application.csproj", "src/SoftwareDeveloperCase.Application/"]
+COPY ["src/SoftwareDeveloperCase.Domain/SoftwareDeveloperCase.Domain.csproj", "src/SoftwareDeveloperCase.Domain/"]
+COPY ["src/SoftwareDeveloperCase.Infrastructure/SoftwareDeveloperCase.Infrastructure.csproj", "src/SoftwareDeveloperCase.Infrastructure/"]
 
 # Restore dependencies
-RUN dotnet restore "SoftwareDeveloperCase.Api/SoftwareDeveloperCase.Api.csproj"
+RUN dotnet restore "src/SoftwareDeveloperCase.Api/SoftwareDeveloperCase.Api.csproj"
 
 # Copy all source code
 COPY . .
 
 # Build the application
-WORKDIR "/src/SoftwareDeveloperCase.Api"
+WORKDIR "/src/src/SoftwareDeveloperCase.Api"
 RUN dotnet build "SoftwareDeveloperCase.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Publish the application

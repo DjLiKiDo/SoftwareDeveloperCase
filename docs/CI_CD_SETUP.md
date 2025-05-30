@@ -116,7 +116,7 @@ dotnet format --verify-no-changes
 dotnet list package --vulnerable
 
 # Build Docker image (if Docker installed)
-docker build -t softwaredevelopercase:local -f SoftwareDeveloperCase.Api/Dockerfile .
+docker build -t softwaredevelopercase:local -f src/SoftwareDeveloperCase.Api/Dockerfile .
 ```
 
 ## Monitoring Pipeline
