@@ -56,6 +56,30 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Map health check endpoints
+app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/detailed", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    ResponseWriter = async (context, report) =>
+    {
+        var result = new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(x => new
+            {
+                name = x.Key,
+                status = x.Value.Status.ToString(),
+                description = x.Value.Description,
+                data = x.Value.Data
+            }),
+            duration = report.TotalDuration
+        };
+
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(result));
+    }
+});
+
 app.Run();
 
 /// <summary>
