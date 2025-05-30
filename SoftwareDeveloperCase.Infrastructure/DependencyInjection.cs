@@ -2,9 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Application.Models;
+using SoftwareDeveloperCase.Application.Validation;
 using SoftwareDeveloperCase.Infrastructure.Persistence;
 using SoftwareDeveloperCase.Infrastructure.Repositories;
 using SoftwareDeveloperCase.Infrastructure.Repositories.Cached;
@@ -55,9 +57,36 @@ public static class DependencyInjection
             return new CachedDepartmentRepository(baseRepository, cache);
         });
 
-        services.AddDbContext<SoftwareDeveloperCaseDbContext>(options =>
-            options.UseInMemoryDatabase("SoftwareDeveloperCaseInMemoryDb")
-        );
+        services.AddDbContext<SoftwareDeveloperCaseDbContext>((serviceProvider, options) =>
+        {
+            var databaseSettings = serviceProvider.GetRequiredService<IOptions<DatabaseSettings>>().Value;
+
+            if (databaseSettings.UseInMemoryDatabase)
+            {
+                options.UseInMemoryDatabase("SoftwareDeveloperCaseInMemoryDb");
+            }
+            else
+            {
+                var connectionString = databaseSettings.ConnectionString ??
+                    Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING") ??
+                    configuration.GetConnectionString("ConnectionString");
+
+                options.UseSqlServer(connectionString, sqlOptions =>
+                {
+                    sqlOptions.CommandTimeout(databaseSettings.CommandTimeoutSeconds);
+                });
+            }
+
+            if (databaseSettings.EnableDetailedErrors)
+            {
+                options.EnableDetailedErrors();
+            }
+
+            if (databaseSettings.EnableSensitiveDataLogging)
+            {
+                options.EnableSensitiveDataLogging();
+            }
+        });
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -65,7 +94,20 @@ public static class DependencyInjection
 
         services.AddSingleton<IDateTimeService, DateTimeService>();
 
-        services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SECTION_NAME));
+        // Configure strongly-typed configuration with validation
+        services.Configure<DatabaseSettings>(configuration.GetSection(DatabaseSettings.SECTION_NAME));
+        // Note: Not using IValidateOptions for DatabaseSettings to prevent startup failures in tests
+
+        services.Configure<EmailSettings>(options =>
+        {
+            configuration.GetSection(EmailSettings.SECTION_NAME).Bind(options);
+
+            // Override with environment variables if available
+            options.Username = Environment.GetEnvironmentVariable("EMAIL_USERNAME") ?? options.Username;
+            options.Password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? options.Password;
+            options.FromAddress = Environment.GetEnvironmentVariable("EMAIL_FROM_ADDRESS") ?? options.FromAddress;
+        });
+        // Note: Not using IValidateOptions for EmailSettings to prevent startup failures in tests
         services.AddTransient<IEmailService, EmailService>();
 
         // Add caching services
