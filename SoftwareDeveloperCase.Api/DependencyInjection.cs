@@ -1,5 +1,7 @@
 using SoftwareDeveloperCase.Application;
 using SoftwareDeveloperCase.Infrastructure;
+using SoftwareDeveloperCase.Api.HealthChecks;
+using SoftwareDeveloperCase.Infrastructure.Persistence;
 
 namespace SoftwareDeveloperCase.Api;
 
@@ -19,6 +21,11 @@ public static class DependencyInjection
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+
+        // Add health checks
+        services.AddHealthChecks()
+            .AddDbContextCheck<SoftwareDeveloperCaseDbContext>("database")
+            .AddCheck<EmailServiceHealthCheck>("email_service");
 
         services
             .AddApplicationServices()
