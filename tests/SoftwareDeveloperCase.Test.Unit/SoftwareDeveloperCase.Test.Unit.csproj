@@ -25,12 +25,11 @@
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\SoftwareDeveloperCase.Infrastructure\SoftwareDeveloperCase.Infrastructure.csproj" />
-    <ProjectReference Include="..\SoftwareDeveloperCase.Application\SoftwareDeveloperCase.Application.csproj" />
-    <ProjectReference Include="..\SoftwareDeveloperCase.Domain\SoftwareDeveloperCase.Domain.csproj" />
-    <ProjectReference Include="..\SoftwareDeveloperCase.Api\SoftwareDeveloperCase.Api.csproj" />
+    <ProjectReference Include="..\..\src\SoftwareDeveloperCase.Infrastructure\SoftwareDeveloperCase.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\SoftwareDeveloperCase.Application\SoftwareDeveloperCase.Application.csproj" />
+    <ProjectReference Include="..\..\src\SoftwareDeveloperCase.Domain\SoftwareDeveloperCase.Domain.csproj" />
+    <ProjectReference Include="..\..\src\SoftwareDeveloperCase.Api\SoftwareDeveloperCase.Api.csproj" />
   </ItemGroup>
 
 </Project>
