@@ -12,13 +12,13 @@ Solution: **SoftwareDeveloperCase**
 - **Validation**: FluentValidation
 - **Mapping**: AutoMapper
 - **Logging**: Serilog with structured logging
-- **Authentication**: JWT Bearer tokens
+- **Authentication**: JWT Bearer tokens with refresh token support
 - **Dependency Injection**: Microsoft.Extensions.DependencyInjection
 
 ## Architecture Layers
-1. **Domain**: Entities, Value Objects, Domain Events, Interfaces
+1. **Domain**: Entities, Value Objects, Domain Events, Interfaces, Enums
 2. **Application**: Use Cases, DTOs, Interfaces, Validators, Mappings
-3. **Infrastructure**: Data Access, External Services, Identity
+3. **Infrastructure**: Data Access, External Services, Identity, Caching
 4. **API**: Controllers, Middleware, Filters, Program.cs
 
 ## Coding Standards
@@ -51,7 +51,8 @@ Solution: **SoftwareDeveloperCase**
 - Return consistent response formats using `Result<T>` pattern
 - Use proper HTTP status codes
 - Implement request/response logging
-- Version APIs using URL path versioning
+- Version APIs using URL path versioning (/api/v1/)
+- Support pagination for list endpoints
 
 ## Security
 - Validate all inputs using FluentValidation
@@ -61,6 +62,7 @@ Solution: **SoftwareDeveloperCase**
 - Enable CORS with specific origins
 - Use HTTPS only
 - Implement audit logging for sensitive operations
+- JWT with refresh token support
 
 ---
 
@@ -88,7 +90,7 @@ Solution: **SoftwareDeveloperCase**
 
 # SoftwareDeveloperCase - GitHub Copilot Instructions
 
-This is a .NET 8 Clean Architecture solution for managing users, roles, and permissions. Please follow these guidelines when contributing:
+This is a .NET 8 Clean Architecture solution for project management, including team collaboration, task tracking, and time management.
 
 ## Architecture Overview
 - **Clean Architecture**: Domain → Application → Infrastructure → API
@@ -102,6 +104,7 @@ This is a .NET 8 Clean Architecture solution for managing users, roles, and perm
 - Run `dotnet format` to ensure consistent code formatting
 - Run `dotnet test` to ensure all tests pass
 - Update CHANGELOG.md for any user-facing changes
+- Update API documentation if endpoints change
 
 ### Development Flow
 - Build: `dotnet build`
@@ -113,7 +116,27 @@ This is a .NET 8 Clean Architecture solution for managing users, roles, and perm
 - `SoftwareDeveloperCase.Application/`: Use cases, DTOs, validators, mappings
 - `SoftwareDeveloperCase.Infrastructure/`: Data access, external services
 - `SoftwareDeveloperCase.Api/`: REST API controllers and configuration
-- `SoftwareDeveloperCase.Test.Unit/`: Unit tests (needs implementation)
+- `SoftwareDeveloperCase.Test.Unit/`: Unit tests
+- `SoftwareDeveloperCase.Test.Integration/`: Integration tests
+
+## Domain Model Overview
+
+### Core Entities
+- **User**: System users with authentication and role assignment
+- **Role**: User roles (Admin, Manager, Developer)
+- **Team**: Groups of users working on projects
+- **TeamMember**: Relationship between users and teams
+- **Project**: Work containers with status and timeline
+- **Task**: Work items with hierarchy, assignment, and time tracking
+- **TaskComment**: Collaboration on tasks
+
+### Key Enumerations
+- **Role**: Admin, Manager, Developer
+- **TeamRole**: Leader, Member
+- **MemberStatus**: Active, Inactive, OnLeave
+- **ProjectStatus**: Planning, Active, OnHold, Completed, Cancelled
+- **TaskStatus**: Todo, InProgress, InReview, Done, Blocked
+- **Priority**: Low, Medium, High, Critical
 
 ## Key Guidelines
 1. Use file-scoped namespaces
@@ -126,6 +149,8 @@ This is a .NET 8 Clean Architecture solution for managing users, roles, and perm
 8. Write unit tests for all business logic
 9. Use async/await for all database operations
 10. Implement CancellationToken support in async methods
+11. Support pagination for list endpoints
+12. Implement proper authorization checks
 
 ## Testing Requirements
 - Minimum 80% code coverage for Domain and Application layers
@@ -134,14 +159,25 @@ This is a .NET 8 Clean Architecture solution for managing users, roles, and perm
 - Use Moq for mocking dependencies
 - Follow AAA pattern (Arrange, Act, Assert)
 - Test naming: MethodName_StateUnderTest_ExpectedBehavior
+- Integration tests for all API endpoints
 
 ## Common Tasks
 - To add a new feature: Create command/query in Application layer, implement handler, add controller action
 - To add validation: Create validator class inheriting from AbstractValidator<T>
 - To add mapping: Update MappingProfile with new mappings
 - To add repository: Create interface in Application, implement in Infrastructure
+- To add new entity: Create in Domain, add to DbContext, create migration
 
 ## Database
 - Entity Framework Core with SQL Server
 - Migrations: `dotnet ef migrations add <name> -p SoftwareDeveloperCase.Infrastructure -s SoftwareDeveloperCase.Api`
 - Update database: `dotnet ef database update -p SoftwareDeveloperCase.Infrastructure -s SoftwareDeveloperCase.Api`
+
+## API Conventions
+- Use plural nouns for resource names
+- Use HTTP verbs appropriately (GET, POST, PUT, PATCH, DELETE)
+- Return 201 Created with Location header for resource creation
+- Return 204 No Content for successful operations with no response body
+- Use query parameters for filtering and pagination
+- Use PATCH for partial updates
+- Nest resources logically (e.g., /projects/{id}/tasks)
