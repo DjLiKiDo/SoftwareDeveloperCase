@@ -27,14 +27,14 @@ internal class CachedRoleRepository : IRoleRepository
     public async Task<Role?> GetByIdAsync(Guid id)
     {
         var cacheKey = CacheKeyService.GetEntityByIdKey(EntityTypeName, id);
-        
+
         if (_cache.TryGetValue(cacheKey, out Role? cachedRole))
         {
             return cachedRole;
         }
 
         var role = await _roleRepository.GetByIdAsync(id);
-        
+
         if (role != null)
         {
             _cache.Set(cacheKey, role, CacheExpirationForSingleEntity);
@@ -46,7 +46,7 @@ internal class CachedRoleRepository : IRoleRepository
     public async Task<IEnumerable<Role>> GetAllAsync()
     {
         var cacheKey = CacheKeyService.GetAllEntitiesKey(EntityTypeName);
-        
+
         if (_cache.TryGetValue(cacheKey, out IEnumerable<Role>? cachedRoles))
         {
             return cachedRoles!;
@@ -85,28 +85,28 @@ internal class CachedRoleRepository : IRoleRepository
     public async Task<Role> InsertAsync(Role entity)
     {
         var result = await _roleRepository.InsertAsync(entity);
-        
+
         // Invalidate cache after insert
         InvalidateCache();
-        
+
         return result;
     }
 
     public async Task<Role> UpdateAsync(Role entity)
     {
         var result = await _roleRepository.UpdateAsync(entity);
-        
+
         // Invalidate cache after update
         InvalidateCache();
         InvalidateEntityCache(entity.Id);
-        
+
         return result;
     }
 
     public async Task DeleteAsync(Role entity)
     {
         await _roleRepository.DeleteAsync(entity);
-        
+
         // Invalidate cache after delete
         InvalidateCache();
         InvalidateEntityCache(entity.Id);

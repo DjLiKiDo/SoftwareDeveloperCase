@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace SoftwareDeveloperCase.Application.Models;
 
 /// <summary>
@@ -13,11 +15,13 @@ public class EmailSettings
     /// <summary>
     /// Gets or sets the SMTP server address
     /// </summary>
+    [Required]
     public string? SmtpServer { get; set; }
 
     /// <summary>
     /// Gets or sets the SMTP server port
     /// </summary>
+    [Range(1, 65535)]
     public int SmtpPort { get; set; } = 587;
 
     /// <summary>
@@ -38,10 +42,13 @@ public class EmailSettings
     /// <summary>
     /// Gets or sets the sender email address
     /// </summary>
+    [Required]
+    [EmailAddress]
     public string? FromAddress { get; set; }
 
     /// <summary>
     /// Gets or sets the sender display name
     /// </summary>
+    [Required]
     public string? FromName { get; set; }
 }

@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using System.Net;
 using FluentAssertions;
 using Xunit;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Test.Unit.Api;
 
@@ -46,7 +48,18 @@ public class HealthCheckTests : IClassFixture<WebApplicationFactory<Program>>
     public async Task HealthCheck_ShouldReturnDegradedStatus_WhenEmailServiceNotConfigured()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var factory = _factory.WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureAppConfiguration((context, config) =>
+            {
+                config.AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["EmailSettings:SmtpServer"] = "", // Empty SMTP server to trigger degraded state
+                    ["EmailSettings:FromAddress"] = ""
+                });
+            });
+        });
+        var client = factory.CreateClient();
 
         // Act
         var response = await client.GetAsync("/health");
@@ -64,7 +77,18 @@ public class HealthCheckTests : IClassFixture<WebApplicationFactory<Program>>
     public async Task HealthCheckDetailed_ShouldReturnJsonWithHealthDetails()
     {
         // Arrange
-        var client = _factory.CreateClient();
+        var factory = _factory.WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureAppConfiguration((context, config) =>
+            {
+                config.AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["EmailSettings:SmtpServer"] = "", // Empty SMTP server to trigger degraded state
+                    ["EmailSettings:FromAddress"] = ""
+                });
+            });
+        });
+        var client = factory.CreateClient();
 
         // Act
         var response = await client.GetAsync("/health/detailed");

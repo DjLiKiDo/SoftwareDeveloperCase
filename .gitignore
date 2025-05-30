@@ -55,3 +55,11 @@ nunit-*.xml
 
 # Custom
 .github/.DS_Store
+
+# Environment variables (sensitive data)
+.env
+.env.local
+.env.*.local
+
+# User secrets (if used)
+secrets.json

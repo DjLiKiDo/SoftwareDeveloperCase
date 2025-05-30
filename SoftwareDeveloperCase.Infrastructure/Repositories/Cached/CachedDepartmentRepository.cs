@@ -27,14 +27,14 @@ internal class CachedDepartmentRepository : IDepartmentRepository
     public async Task<Department?> GetByIdAsync(Guid id)
     {
         var cacheKey = CacheKeyService.GetEntityByIdKey(EntityTypeName, id);
-        
+
         if (_cache.TryGetValue(cacheKey, out Department? cachedDepartment))
         {
             return cachedDepartment;
         }
 
         var department = await _departmentRepository.GetByIdAsync(id);
-        
+
         if (department != null)
         {
             _cache.Set(cacheKey, department, CacheExpirationForSingleEntity);
@@ -46,7 +46,7 @@ internal class CachedDepartmentRepository : IDepartmentRepository
     public async Task<IEnumerable<Department>> GetAllAsync()
     {
         var cacheKey = CacheKeyService.GetAllEntitiesKey(EntityTypeName);
-        
+
         if (_cache.TryGetValue(cacheKey, out IEnumerable<Department>? cachedDepartments))
         {
             return cachedDepartments!;
@@ -85,7 +85,7 @@ internal class CachedDepartmentRepository : IDepartmentRepository
     public async Task<List<User>> GetManagersAsync(Guid departmentId)
     {
         var cacheKey = $"{EntityTypeName.ToLowerInvariant()}:managers:{departmentId}";
-        
+
         if (_cache.TryGetValue(cacheKey, out List<User>? cachedManagers))
         {
             return cachedManagers!;
@@ -100,29 +100,29 @@ internal class CachedDepartmentRepository : IDepartmentRepository
     public async Task<Department> InsertAsync(Department entity)
     {
         var result = await _departmentRepository.InsertAsync(entity);
-        
+
         // Invalidate cache after insert
         InvalidateCache();
-        
+
         return result;
     }
 
     public async Task<Department> UpdateAsync(Department entity)
     {
         var result = await _departmentRepository.UpdateAsync(entity);
-        
+
         // Invalidate cache after update
         InvalidateCache();
         InvalidateEntityCache(entity.Id);
         InvalidateManagersCache(entity.Id);
-        
+
         return result;
     }
 
     public async Task DeleteAsync(Department entity)
     {
         await _departmentRepository.DeleteAsync(entity);
-        
+
         // Invalidate cache after delete
         InvalidateCache();
         InvalidateEntityCache(entity.Id);
