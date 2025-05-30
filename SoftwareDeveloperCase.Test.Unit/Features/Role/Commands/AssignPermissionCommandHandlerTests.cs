@@ -36,7 +36,7 @@ public class AssignPermissionCommandHandlerTests
         var rolePermissionId = Guid.NewGuid();
         var roleId = Guid.NewGuid();
         var permissionId = Guid.NewGuid();
-        
+
         var command = new AssignPermissionCommand
         {
             RoleId = roleId,
@@ -76,7 +76,7 @@ public class AssignPermissionCommandHandlerTests
         // Arrange
         var roleId = Guid.NewGuid();
         var permissionId = Guid.NewGuid();
-        
+
         var command = new AssignPermissionCommand
         {
             RoleId = roleId,
@@ -96,7 +96,7 @@ public class AssignPermissionCommandHandlerTests
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
         exception.Message.Should().Be("The permission has not been assigned");
-        
+
         _mockLogger.Verify(
             x => x.Log(
                 LogLevel.Error,
@@ -113,7 +113,7 @@ public class AssignPermissionCommandHandlerTests
         // Arrange
         var roleId = Guid.NewGuid();
         var permissionId = Guid.NewGuid();
-        
+
         var command = new AssignPermissionCommand
         {
             RoleId = roleId,
@@ -143,7 +143,7 @@ public class AssignPermissionCommandHandlerTests
         // Arrange
         var roleId = Guid.NewGuid();
         var permissionId = Guid.NewGuid();
-        
+
         var command = new AssignPermissionCommand
         {
             RoleId = roleId,
@@ -156,7 +156,7 @@ public class AssignPermissionCommandHandlerTests
             RoleId = roleId,
             PermissionId = permissionId
         };
-        
+
         var sequence = new MockSequence();
 
         _mockMapper.Setup(x => x.Map<RolePermission>(command)).Returns(rolePermission);

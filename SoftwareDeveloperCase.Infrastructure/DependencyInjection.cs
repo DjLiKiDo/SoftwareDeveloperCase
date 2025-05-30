@@ -60,17 +60,17 @@ public static class DependencyInjection
         services.AddDbContext<SoftwareDeveloperCaseDbContext>((serviceProvider, options) =>
         {
             var databaseSettings = serviceProvider.GetRequiredService<IOptions<DatabaseSettings>>().Value;
-            
+
             if (databaseSettings.UseInMemoryDatabase)
             {
                 options.UseInMemoryDatabase("SoftwareDeveloperCaseInMemoryDb");
             }
             else
             {
-                var connectionString = databaseSettings.ConnectionString ?? 
-                    Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING") ?? 
+                var connectionString = databaseSettings.ConnectionString ??
+                    Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING") ??
                     configuration.GetConnectionString("ConnectionString");
-                
+
                 options.UseSqlServer(connectionString, sqlOptions =>
                 {
                     sqlOptions.CommandTimeout(databaseSettings.CommandTimeoutSeconds);
@@ -101,7 +101,7 @@ public static class DependencyInjection
         services.Configure<EmailSettings>(options =>
         {
             configuration.GetSection(EmailSettings.SECTION_NAME).Bind(options);
-            
+
             // Override with environment variables if available
             options.Username = Environment.GetEnvironmentVariable("EMAIL_USERNAME") ?? options.Username;
             options.Password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? options.Password;
