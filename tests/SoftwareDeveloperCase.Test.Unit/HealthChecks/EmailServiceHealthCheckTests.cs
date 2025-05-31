@@ -17,7 +17,7 @@ public class EmailServiceHealthCheckTests
     /// Tests that health check returns degraded when SMTP server is not configured
     /// </summary>
     [Fact]
-    public async Task CheckHealthAsync_ShouldReturnDegraded_WhenSmtpServerNotConfigured()
+    public async System.Threading.Tasks.Task CheckHealthAsync_ShouldReturnDegraded_WhenSmtpServerNotConfigured()
     {
         // Arrange
         var emailSettings = new EmailSettings
@@ -45,7 +45,7 @@ public class EmailServiceHealthCheckTests
     /// Tests that health check returns degraded when from address is not configured
     /// </summary>
     [Fact]
-    public async Task CheckHealthAsync_ShouldReturnDegraded_WhenFromAddressNotConfigured()
+    public async System.Threading.Tasks.Task CheckHealthAsync_ShouldReturnDegraded_WhenFromAddressNotConfigured()
     {
         // Arrange
         var emailSettings = new EmailSettings
@@ -73,7 +73,7 @@ public class EmailServiceHealthCheckTests
     /// Tests that health check returns healthy when email service is properly configured
     /// </summary>
     [Fact]
-    public async Task CheckHealthAsync_ShouldReturnHealthy_WhenEmailServiceProperlyConfigured()
+    public async System.Threading.Tasks.Task CheckHealthAsync_ShouldReturnHealthy_WhenEmailServiceProperlyConfigured()
     {
         // Arrange
         var emailSettings = new EmailSettings
@@ -113,7 +113,7 @@ public class EmailServiceHealthCheckTests
     /// Tests that health check returns unhealthy when an exception occurs
     /// </summary>
     [Fact]
-    public async Task CheckHealthAsync_ShouldReturnUnhealthy_WhenExceptionOccurs()
+    public async System.Threading.Tasks.Task CheckHealthAsync_ShouldReturnUnhealthy_WhenExceptionOccurs()
     {
         // Arrange
         var mockOptions = new Mock<IOptions<EmailSettings>>();

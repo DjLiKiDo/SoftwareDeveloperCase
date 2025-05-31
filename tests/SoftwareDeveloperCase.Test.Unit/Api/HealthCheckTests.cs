@@ -29,7 +29,7 @@ public class HealthCheckTests : IClassFixture<WebApplicationFactory<Program>>
     /// Tests that the health check endpoint returns OK status
     /// </summary>
     [Fact]
-    public async Task HealthCheck_ShouldReturnOk()
+    public async System.Threading.Tasks.Task HealthCheck_ShouldReturnOk()
     {
         // Arrange
         var client = _factory.CreateClient();
@@ -45,7 +45,7 @@ public class HealthCheckTests : IClassFixture<WebApplicationFactory<Program>>
     /// Tests that the health check endpoint returns health status content
     /// </summary>
     [Fact]
-    public async Task HealthCheck_ShouldReturnDegradedStatus_WhenEmailServiceNotConfigured()
+    public async System.Threading.Tasks.Task HealthCheck_ShouldReturnDegradedStatus_WhenEmailServiceNotConfigured()
     {
         // Arrange
         var factory = _factory.WithWebHostBuilder(builder =>
@@ -74,7 +74,7 @@ public class HealthCheckTests : IClassFixture<WebApplicationFactory<Program>>
     /// Tests that the detailed health check endpoint returns JSON with health check details
     /// </summary>
     [Fact]
-    public async Task HealthCheckDetailed_ShouldReturnJsonWithHealthDetails()
+    public async System.Threading.Tasks.Task HealthCheckDetailed_ShouldReturnJsonWithHealthDetails()
     {
         // Arrange
         var factory = _factory.WithWebHostBuilder(builder =>

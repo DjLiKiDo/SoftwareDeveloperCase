@@ -54,7 +54,7 @@ public class EmailServiceTests
     }
 
     [Fact]
-    public async Task SendEmail_WithMissingSmtpServer_ShouldReturnFalseAndLogError()
+    public async System.Threading.Tasks.Task SendEmail_WithMissingSmtpServer_ShouldReturnFalseAndLogError()
     {
         // Arrange
         _emailSettings.SmtpServer = null;
@@ -82,7 +82,7 @@ public class EmailServiceTests
     }
 
     [Fact]
-    public async Task SendEmail_WithMissingFromAddress_ShouldReturnFalseAndLogError()
+    public async System.Threading.Tasks.Task SendEmail_WithMissingFromAddress_ShouldReturnFalseAndLogError()
     {
         // Arrange
         _emailSettings.FromAddress = null;
@@ -110,7 +110,7 @@ public class EmailServiceTests
     }
 
     [Fact]
-    public async Task SendEmail_WithMissingToAddress_ShouldReturnFalseAndLogError()
+    public async System.Threading.Tasks.Task SendEmail_WithMissingToAddress_ShouldReturnFalseAndLogError()
     {
         // Arrange
         var emailService = new EmailService(_mockOptions.Object, _mockLogger.Object);
@@ -137,7 +137,7 @@ public class EmailServiceTests
     }
 
     [Fact]
-    public async Task SendEmail_WithMissingSubjectAndBody_ShouldReturnFalseAndLogError()
+    public async System.Threading.Tasks.Task SendEmail_WithMissingSubjectAndBody_ShouldReturnFalseAndLogError()
     {
         // Arrange
         var emailService = new EmailService(_mockOptions.Object, _mockLogger.Object);
@@ -164,7 +164,7 @@ public class EmailServiceTests
     }
 
     [Fact]
-    public async Task SendEmail_WithValidEmailButInvalidSmtp_ShouldReturnFalseAndLogSmtpError()
+    public async System.Threading.Tasks.Task SendEmail_WithValidEmailButInvalidSmtp_ShouldReturnFalseAndLogSmtpError()
     {
         // Arrange
         // Use an invalid SMTP server to trigger SMTP exception
@@ -193,7 +193,7 @@ public class EmailServiceTests
     }
 
     [Fact]
-    public async Task SendEmail_WithCancellationToken_ShouldHandleCancellation()
+    public async System.Threading.Tasks.Task SendEmail_WithCancellationToken_ShouldHandleCancellation()
     {
         // Arrange
         var emailService = new EmailService(_mockOptions.Object, _mockLogger.Object);

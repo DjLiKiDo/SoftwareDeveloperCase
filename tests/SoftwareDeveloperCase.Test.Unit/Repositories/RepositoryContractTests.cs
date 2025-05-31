@@ -1,7 +1,9 @@
 using FluentAssertions;
 using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
+using Task = System.Threading.Tasks.Task;
 using Xunit;
 
 namespace SoftwareDeveloperCase.Test.Unit.Repositories;
@@ -64,7 +66,7 @@ public class RepositoryContractTests
     }
 
     [Fact]
-    public async Task IRepository_ShouldHaveAllRequiredMethods()
+    public async System.Threading.Tasks.Task IRepository_ShouldHaveAllRequiredMethods()
     {
         // Arrange
         var mock = new Mock<IRepository<User>>();

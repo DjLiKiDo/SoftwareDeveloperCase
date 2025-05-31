@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Application.Validation;
@@ -56,6 +58,13 @@ public static class DependencyInjection
             var cache = provider.GetRequiredService<IMemoryCache>();
             return new CachedDepartmentRepository(baseRepository, cache);
         });
+
+        // Register Core repositories
+        services.AddScoped<ITeamRepository, TeamRepository>();
+        services.AddScoped<ITeamMemberRepository, TeamMemberRepository>();
+        services.AddScoped<IProjectRepository, ProjectRepository>();
+        services.AddScoped<ITaskRepository, TaskRepository>();
+        services.AddScoped<ITaskCommentRepository, TaskCommentRepository>();
 
         services.AddDbContext<SoftwareDeveloperCaseDbContext>((serviceProvider, options) =>
         {

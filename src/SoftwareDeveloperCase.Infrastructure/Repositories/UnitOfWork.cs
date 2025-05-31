@@ -1,4 +1,6 @@
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
 using SoftwareDeveloperCase.Domain.Common;
 using SoftwareDeveloperCase.Infrastructure.Persistence;
 using System.Collections;
@@ -18,12 +20,26 @@ internal class UnitOfWork : IUnitOfWork
     private IUserRepository? _userRepository;
     private IUserRoleRepository? _userRoleRepository;
 
+    // Core domain repositories
+    private ITeamRepository? _teamRepository;
+    private ITeamMemberRepository? _teamMemberRepository;
+    private IProjectRepository? _projectRepository;
+    private ITaskRepository? _taskRepository;
+    private ITaskCommentRepository? _taskCommentRepository;
+
     public IDepartmentRepository DepartmentRepository => _departmentRepository ??= new DepartmentRepository(_context);
     public IPermissionRepository PermissionRepository => _permissionRepository ??= new PermissionRepository(_context);
     public IRolePermissionRepository RolePermissionRepository => _rolePermissionRepository ??= new RolePermissionRepository(_context);
     public IRoleRepository RoleRepository => _roleRepository ??= new RoleRepository(_context);
     public IUserRepository UserRepository => _userRepository ??= new UserRepository(_context);
     public IUserRoleRepository UserRoleRepository => _userRoleRepository ??= new UserRoleRepository(_context);
+
+    // Core domain repositories
+    public ITeamRepository TeamRepository => _teamRepository ??= new TeamRepository(_context);
+    public ITeamMemberRepository TeamMemberRepository => _teamMemberRepository ??= new TeamMemberRepository(_context);
+    public IProjectRepository ProjectRepository => _projectRepository ??= new ProjectRepository(_context);
+    public ITaskRepository TaskRepository => _taskRepository ??= new TaskRepository(_context);
+    public ITaskCommentRepository TaskCommentRepository => _taskCommentRepository ??= new TaskCommentRepository(_context);
 
     public SoftwareDeveloperCaseDbContext SoftwareDeveloperCaseDbContext => _context;
 
@@ -37,6 +53,19 @@ internal class UnitOfWork : IUnitOfWork
         try
         {
             return await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            // TODO: Log error
+            throw new Exception($"Unit Of Work error --> {ex.Message}");
+        }
+    }
+    
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await _context.SaveChangesAsync(cancellationToken);
         }
         catch (Exception ex)
         {

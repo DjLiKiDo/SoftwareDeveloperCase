@@ -1,5 +1,5 @@
 using FluentAssertions;
-using SoftwareDeveloperCase.Application.Features.User.Commands.UpdateUser;
+using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.UpdateUser;
 using Xunit;
 
 namespace SoftwareDeveloperCase.Test.Unit.Validators;

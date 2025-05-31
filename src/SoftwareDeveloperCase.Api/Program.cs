@@ -1,6 +1,7 @@
 using Serilog;
 using SoftwareDeveloperCase.Api;
 using SoftwareDeveloperCase.Api.Middleware;
+using SoftwareDeveloperCase.Api.Filters;
 using SoftwareDeveloperCase.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,6 +35,9 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure middleware pipeline
+app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseMiddleware<SecurityHeadersMiddleware>();
+app.UseMiddleware<RateLimitingMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 // Add Serilog request logging

@@ -1,11 +1,12 @@
 using AutoMapper;
-using SoftwareDeveloperCase.Application.Features.Role.Commands.AssignPermission;
-using SoftwareDeveloperCase.Application.Features.Role.Commands.InsertRole;
-using SoftwareDeveloperCase.Application.Features.User.Commands.AssignRole;
-using SoftwareDeveloperCase.Application.Features.User.Commands.InsertUser;
-using SoftwareDeveloperCase.Application.Features.User.Commands.UpdateUser;
-using SoftwareDeveloperCase.Application.Features.User.Queries.GetUserPermissions;
-using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Application.Features.Identity.Roles.Commands.AssignPermission;
+using SoftwareDeveloperCase.Application.Features.Identity.Roles.Commands.InsertRole;
+using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.AssignRole;
+using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.InsertUser;
+using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.UpdateUser;
+using SoftwareDeveloperCase.Application.Features.Identity.Users.Queries.GetUserPermissions;
+using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
 
 namespace SoftwareDeveloperCase.Application.Mappings;
 

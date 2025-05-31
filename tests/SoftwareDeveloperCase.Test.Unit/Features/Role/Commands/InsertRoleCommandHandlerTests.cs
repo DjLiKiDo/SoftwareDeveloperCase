@@ -3,9 +3,11 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Application.Features.Role.Commands.InsertRole;
-using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Application.Features.Identity.Roles.Commands.InsertRole;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
 using Xunit;
+using Task = System.Threading.Tasks.Task;
+using RoleEntity = SoftwareDeveloperCase.Domain.Entities.Identity.Role;
 
 namespace SoftwareDeveloperCase.Test.Unit.Features.Role.Commands;
 
@@ -30,7 +32,7 @@ public class InsertRoleCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldInsertRoleSuccessfully_WhenValidCommandProvided()
+    public async System.Threading.Tasks.Task Handle_ShouldInsertRoleSuccessfully_WhenValidCommandProvided()
     {
         // Arrange
         var roleId = Guid.NewGuid();
@@ -40,14 +42,14 @@ public class InsertRoleCommandHandlerTests
             ParentRoleId = null
         };
 
-        var role = new Domain.Entities.Role
+        var role = new RoleEntity
         {
             Id = roleId,
             Name = command.Name,
             ParentRoleId = command.ParentRoleId
         };
 
-        _mockMapper.Setup(x => x.Map<Domain.Entities.Role>(command)).Returns(role);
+        _mockMapper.Setup(x => x.Map<RoleEntity>(command)).Returns(role);
         _mockUnitOfWork.Setup(x => x.SaveChanges()).ReturnsAsync(1);
 
         // Act
@@ -68,7 +70,7 @@ public class InsertRoleCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowException_WhenSaveChangesFails()
+    public async System.Threading.Tasks.Task Handle_ShouldThrowException_WhenSaveChangesFails()
     {
         // Arrange
         var command = new InsertRoleCommand
@@ -77,8 +79,8 @@ public class InsertRoleCommandHandlerTests
             ParentRoleId = null
         };
 
-        var role = new Domain.Entities.Role { Id = Guid.NewGuid() };
-        _mockMapper.Setup(x => x.Map<Domain.Entities.Role>(command)).Returns(role);
+        var role = new RoleEntity { Id = Guid.NewGuid() };
+        _mockMapper.Setup(x => x.Map<RoleEntity>(command)).Returns(role);
         _mockUnitOfWork.Setup(x => x.SaveChanges()).ReturnsAsync(0);
 
         // Act & Assert
@@ -96,7 +98,7 @@ public class InsertRoleCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldMapCommandToRole_WhenCalled()
+    public async System.Threading.Tasks.Task Handle_ShouldMapCommandToRole_WhenCalled()
     {
         // Arrange
         var command = new InsertRoleCommand
@@ -105,25 +107,25 @@ public class InsertRoleCommandHandlerTests
             ParentRoleId = Guid.NewGuid()
         };
 
-        var role = new Domain.Entities.Role
+        var role = new RoleEntity
         {
             Id = Guid.NewGuid(),
             Name = command.Name,
             ParentRoleId = command.ParentRoleId
         };
 
-        _mockMapper.Setup(x => x.Map<Domain.Entities.Role>(command)).Returns(role);
+        _mockMapper.Setup(x => x.Map<RoleEntity>(command)).Returns(role);
         _mockUnitOfWork.Setup(x => x.SaveChanges()).ReturnsAsync(1);
 
         // Act
         await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        _mockMapper.Verify(x => x.Map<Domain.Entities.Role>(command), Times.Once);
+        _mockMapper.Verify(x => x.Map<RoleEntity>(command), Times.Once);
     }
 
     [Fact]
-    public async Task Handle_ShouldCallRepositoryMethods_InCorrectOrder()
+    public async System.Threading.Tasks.Task Handle_ShouldCallRepositoryMethods_InCorrectOrder()
     {
         // Arrange
         var command = new InsertRoleCommand
@@ -132,10 +134,10 @@ public class InsertRoleCommandHandlerTests
             ParentRoleId = null
         };
 
-        var role = new Domain.Entities.Role { Id = Guid.NewGuid() };
+        var role = new RoleEntity { Id = Guid.NewGuid() };
         var sequence = new MockSequence();
 
-        _mockMapper.Setup(x => x.Map<Domain.Entities.Role>(command)).Returns(role);
+        _mockMapper.Setup(x => x.Map<RoleEntity>(command)).Returns(role);
         _mockRoleRepository.InSequence(sequence).Setup(x => x.Insert(role));
         _mockUnitOfWork.InSequence(sequence).Setup(x => x.SaveChanges()).ReturnsAsync(1);
 
@@ -148,14 +150,14 @@ public class InsertRoleCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnRoleId_WhenRoleInsertedSuccessfully()
+    public async System.Threading.Tasks.Task Handle_ShouldReturnRoleId_WhenRoleInsertedSuccessfully()
     {
         // Arrange
         var roleId = Guid.NewGuid();
         var command = new InsertRoleCommand { Name = "Manager" };
-        var role = new Domain.Entities.Role { Id = roleId };
+        var role = new RoleEntity { Id = roleId };
 
-        _mockMapper.Setup(x => x.Map<Domain.Entities.Role>(command)).Returns(role);
+        _mockMapper.Setup(x => x.Map<RoleEntity>(command)).Returns(role);
         _mockUnitOfWork.Setup(x => x.SaveChanges()).ReturnsAsync(1);
 
         // Act
@@ -166,7 +168,7 @@ public class InsertRoleCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldHandleHierarchicalRole_WhenParentRoleIdProvided()
+    public async System.Threading.Tasks.Task Handle_ShouldHandleHierarchicalRole_WhenParentRoleIdProvided()
     {
         // Arrange
         var roleId = Guid.NewGuid();
@@ -177,14 +179,14 @@ public class InsertRoleCommandHandlerTests
             ParentRoleId = parentRoleId
         };
 
-        var role = new Domain.Entities.Role
+        var role = new RoleEntity
         {
             Id = roleId,
             Name = command.Name,
             ParentRoleId = parentRoleId
         };
 
-        _mockMapper.Setup(x => x.Map<Domain.Entities.Role>(command)).Returns(role);
+        _mockMapper.Setup(x => x.Map<RoleEntity>(command)).Returns(role);
         _mockUnitOfWork.Setup(x => x.SaveChanges()).ReturnsAsync(1);
 
         // Act
@@ -192,6 +194,6 @@ public class InsertRoleCommandHandlerTests
 
         // Assert
         result.Should().Be(roleId);
-        _mockRoleRepository.Verify(x => x.Insert(It.Is<Domain.Entities.Role>(r => r.ParentRoleId == parentRoleId)), Times.Once);
+        _mockRoleRepository.Verify(x => x.Insert(It.Is<RoleEntity>(r => r.ParentRoleId == parentRoleId)), Times.Once);
     }
 }

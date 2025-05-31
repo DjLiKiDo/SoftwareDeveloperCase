@@ -4,8 +4,12 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Exceptions;
-using SoftwareDeveloperCase.Application.Features.User.Commands.UpdateUser;
+using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.UpdateUser;
+using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.ValueObjects;
 using Xunit;
+using Task = System.Threading.Tasks.Task;
+using UserEntity = SoftwareDeveloperCase.Domain.Entities.Core.User;
 
 namespace SoftwareDeveloperCase.Test.Unit.Features.User.Commands;
 
@@ -30,7 +34,7 @@ public class UpdateUserCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldUpdateUserSuccessfully_WhenValidCommandProvided()
+    public async System.Threading.Tasks.Task Handle_ShouldUpdateUserSuccessfully_WhenValidCommandProvided()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -38,16 +42,16 @@ public class UpdateUserCommandHandlerTests
         {
             Id = userId,
             Name = "Updated Name",
-            Email = "updated@example.com",
+            Email = new Email("updated@example.com"),
             Password = "newpassword123",
             DepartmentId = Guid.NewGuid()
         };
 
-        var existingUser = new Domain.Entities.User
+        var existingUser = new UserEntity
         {
             Id = userId,
             Name = "Original Name",
-            Email = "original@example.com"
+            Email = new Email("original@example.com")
         };
 
         _mockUserRepository.Setup(x => x.GetByIdAsync(userId))
@@ -59,7 +63,7 @@ public class UpdateUserCommandHandlerTests
 
         // Assert
         result.Should().Be(userId);
-        _mockMapper.Verify(x => x.Map(command, existingUser, typeof(UpdateUserCommand), typeof(Domain.Entities.User)), Times.Once);
+        _mockMapper.Verify(x => x.Map(command, existingUser, typeof(UpdateUserCommand), typeof(UserEntity)), Times.Once);
         _mockUserRepository.Verify(x => x.Update(existingUser), Times.Once);
         _mockUnitOfWork.Verify(x => x.SaveChanges(), Times.Once);
         _mockLogger.Verify(
@@ -73,7 +77,7 @@ public class UpdateUserCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowNotFoundException_WhenUserDoesNotExist()
+    public async System.Threading.Tasks.Task Handle_ShouldThrowNotFoundException_WhenUserDoesNotExist()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -81,13 +85,13 @@ public class UpdateUserCommandHandlerTests
         {
             Id = userId,
             Name = "Updated Name",
-            Email = "updated@example.com",
+            Email = new Email("updated@example.com"),
             Password = "newpassword123",
             DepartmentId = Guid.NewGuid()
         };
 
         _mockUserRepository.Setup(x => x.GetByIdAsync(userId))
-            .ReturnsAsync((Domain.Entities.User?)null);
+            .ReturnsAsync((UserEntity?)null);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<NotFoundException>(() => _handler.Handle(command, CancellationToken.None));
@@ -102,12 +106,12 @@ public class UpdateUserCommandHandlerTests
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
 
-        _mockUserRepository.Verify(x => x.Update(It.IsAny<Domain.Entities.User>()), Times.Never);
+        _mockUserRepository.Verify(x => x.Update(It.IsAny<UserEntity>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.SaveChanges(), Times.Never);
     }
 
     [Fact]
-    public async Task Handle_ShouldMapCommandToUser_WhenUserExists()
+    public async System.Threading.Tasks.Task Handle_ShouldMapCommandToUser_WhenUserExists()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -116,16 +120,16 @@ public class UpdateUserCommandHandlerTests
         {
             Id = userId,
             Name = "Updated Name",
-            Email = "updated@example.com",
+            Email = new Email("updated@example.com"),
             Password = "newpassword123",
             DepartmentId = departmentId
         };
 
-        var existingUser = new Domain.Entities.User
+        var existingUser = new UserEntity
         {
             Id = userId,
             Name = "Original Name",
-            Email = "original@example.com",
+            Email = new Email("original@example.com"),
             DepartmentId = Guid.NewGuid()
         };
 
@@ -137,11 +141,11 @@ public class UpdateUserCommandHandlerTests
         await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        _mockMapper.Verify(x => x.Map(command, existingUser, typeof(UpdateUserCommand), typeof(Domain.Entities.User)), Times.Once);
+        _mockMapper.Verify(x => x.Map(command, existingUser, typeof(UpdateUserCommand), typeof(UserEntity)), Times.Once);
     }
 
     [Fact]
-    public async Task Handle_ShouldCallRepositoryMethods_InCorrectOrder()
+    public async System.Threading.Tasks.Task Handle_ShouldCallRepositoryMethods_InCorrectOrder()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -149,12 +153,12 @@ public class UpdateUserCommandHandlerTests
         {
             Id = userId,
             Name = "Updated Name",
-            Email = "updated@example.com",
+            Email = new Email("updated@example.com"),
             Password = "newpassword123",
             DepartmentId = Guid.NewGuid()
         };
 
-        var existingUser = new Domain.Entities.User { Id = userId };
+        var existingUser = new UserEntity { Id = userId };
         var sequence = new MockSequence();
 
         _mockUserRepository.InSequence(sequence).Setup(x => x.GetByIdAsync(userId))

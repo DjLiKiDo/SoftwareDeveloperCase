@@ -1,9 +1,10 @@
 using FluentAssertions;
 using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Application.Features.Role.Commands.AssignPermission;
-using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Application.Features.Identity.Roles.Commands.AssignPermission;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
 using Xunit;
+using Task = System.Threading.Tasks.Task;
 
 namespace SoftwareDeveloperCase.Test.Unit.Validators;
 
@@ -27,7 +28,7 @@ public class AssignPermissionCommandValidatorTests
     }
 
     [Fact]
-    public async Task AssignPermissionCommandValidator_ShouldBeValid_WhenBothRoleAndPermissionExist()
+    public async System.Threading.Tasks.Task AssignPermissionCommandValidator_ShouldBeValid_WhenBothRoleAndPermissionExist()
     {
         // Arrange
         var roleId = Guid.NewGuid();
@@ -53,7 +54,7 @@ public class AssignPermissionCommandValidatorTests
     }
 
     [Fact]
-    public async Task AssignPermissionCommandValidator_ShouldHaveError_WhenRoleIdIsEmpty()
+    public async System.Threading.Tasks.Task AssignPermissionCommandValidator_ShouldHaveError_WhenRoleIdIsEmpty()
     {
         // Arrange
         var command = new AssignPermissionCommand
@@ -71,7 +72,7 @@ public class AssignPermissionCommandValidatorTests
     }
 
     [Fact]
-    public async Task AssignPermissionCommandValidator_ShouldHaveError_WhenPermissionIdIsEmpty()
+    public async System.Threading.Tasks.Task AssignPermissionCommandValidator_ShouldHaveError_WhenPermissionIdIsEmpty()
     {
         // Arrange
         var command = new AssignPermissionCommand
@@ -89,7 +90,7 @@ public class AssignPermissionCommandValidatorTests
     }
 
     [Fact]
-    public async Task AssignPermissionCommandValidator_ShouldHaveError_WhenRoleDoesNotExist()
+    public async System.Threading.Tasks.Task AssignPermissionCommandValidator_ShouldHaveError_WhenRoleDoesNotExist()
     {
         // Arrange
         var roleId = Guid.NewGuid();
@@ -115,7 +116,7 @@ public class AssignPermissionCommandValidatorTests
     }
 
     [Fact]
-    public async Task AssignPermissionCommandValidator_ShouldHaveError_WhenPermissionDoesNotExist()
+    public async System.Threading.Tasks.Task AssignPermissionCommandValidator_ShouldHaveError_WhenPermissionDoesNotExist()
     {
         // Arrange
         var roleId = Guid.NewGuid();
@@ -141,7 +142,7 @@ public class AssignPermissionCommandValidatorTests
     }
 
     [Fact]
-    public async Task AssignPermissionCommandValidator_ShouldHaveMultipleErrors_WhenBothIdsAreEmpty()
+    public async System.Threading.Tasks.Task AssignPermissionCommandValidator_ShouldHaveMultipleErrors_WhenBothIdsAreEmpty()
     {
         // Arrange
         var command = new AssignPermissionCommand
@@ -161,7 +162,7 @@ public class AssignPermissionCommandValidatorTests
     }
 
     [Fact]
-    public async Task AssignPermissionCommandValidator_ShouldHaveMultipleErrors_WhenBothEntitiesDoNotExist()
+    public async System.Threading.Tasks.Task AssignPermissionCommandValidator_ShouldHaveMultipleErrors_WhenBothEntitiesDoNotExist()
     {
         // Arrange
         var roleId = Guid.NewGuid();

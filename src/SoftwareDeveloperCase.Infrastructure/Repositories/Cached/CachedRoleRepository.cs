@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Caching.Memory;
-using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Domain.Common;
-using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
 using SoftwareDeveloperCase.Infrastructure.Services;
 using System.Linq.Expressions;
 
@@ -24,7 +24,7 @@ internal class CachedRoleRepository : IRoleRepository
         _cache = cache;
     }
 
-    public async Task<Role?> GetByIdAsync(Guid id)
+    public async Task<Role?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var cacheKey = CacheKeyService.GetEntityByIdKey(EntityTypeName, id);
 
@@ -33,7 +33,7 @@ internal class CachedRoleRepository : IRoleRepository
             return cachedRole;
         }
 
-        var role = await _roleRepository.GetByIdAsync(id);
+        var role = await _roleRepository.GetByIdAsync(id, cancellationToken);
 
         if (role != null)
         {
@@ -43,7 +43,7 @@ internal class CachedRoleRepository : IRoleRepository
         return role;
     }
 
-    public async Task<IEnumerable<Role>> GetAllAsync()
+    public async Task<IEnumerable<Role>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var cacheKey = CacheKeyService.GetAllEntitiesKey(EntityTypeName);
 
@@ -52,39 +52,41 @@ internal class CachedRoleRepository : IRoleRepository
             return cachedRoles!;
         }
 
-        var roles = await _roleRepository.GetAllAsync();
+        var roles = await _roleRepository.GetAllAsync(cancellationToken);
         _cache.Set(cacheKey, roles, CacheExpirationForCollections);
 
         return roles;
     }
 
-    public async Task<IEnumerable<Role>> GetAsync(Expression<Func<Role, bool>> predicate)
+    public async Task<IEnumerable<Role>> GetAsync(Expression<Func<Role, bool>> predicate, CancellationToken cancellationToken = default)
     {
         // For filtered queries, we don't cache as the combinations are endless
-        return await _roleRepository.GetAsync(predicate);
+        return await _roleRepository.GetAsync(predicate, cancellationToken);
     }
 
     public async Task<IEnumerable<Role>> GetAsync(Expression<Func<Role, bool>>? predicate = null,
         Func<IQueryable<Role>, IOrderedQueryable<Role>>? orderBy = null,
         string? includeString = null,
-        bool disableTracking = true)
+        bool disableTracking = true,
+        CancellationToken cancellationToken = default)
     {
         // For complex queries, we don't cache as the combinations are endless
-        return await _roleRepository.GetAsync(predicate, orderBy, includeString, disableTracking);
+        return await _roleRepository.GetAsync(predicate, orderBy, includeString, disableTracking, cancellationToken);
     }
 
     public async Task<IEnumerable<Role>> GetAsync(Expression<Func<Role, bool>>? predicate = null,
         Func<IQueryable<Role>, IOrderedQueryable<Role>>? orderBy = null,
         List<Expression<Func<Role, object>>>? includes = null,
-        bool disableTracking = true)
+        bool disableTracking = true,
+        CancellationToken cancellationToken = default)
     {
         // For complex queries, we don't cache as the combinations are endless
-        return await _roleRepository.GetAsync(predicate, orderBy, includes, disableTracking);
+        return await _roleRepository.GetAsync(predicate, orderBy, includes, disableTracking, cancellationToken);
     }
 
-    public async Task<Role> InsertAsync(Role entity)
+    public async Task<Role> InsertAsync(Role entity, CancellationToken cancellationToken = default)
     {
-        var result = await _roleRepository.InsertAsync(entity);
+        var result = await _roleRepository.InsertAsync(entity, cancellationToken);
 
         // Invalidate cache after insert
         InvalidateCache();
@@ -92,9 +94,9 @@ internal class CachedRoleRepository : IRoleRepository
         return result;
     }
 
-    public async Task<Role> UpdateAsync(Role entity)
+    public async Task<Role> UpdateAsync(Role entity, CancellationToken cancellationToken = default)
     {
-        var result = await _roleRepository.UpdateAsync(entity);
+        var result = await _roleRepository.UpdateAsync(entity, cancellationToken);
 
         // Invalidate cache after update
         InvalidateCache();
@@ -103,9 +105,9 @@ internal class CachedRoleRepository : IRoleRepository
         return result;
     }
 
-    public async Task DeleteAsync(Role entity)
+    public async Task DeleteAsync(Role entity, CancellationToken cancellationToken = default)
     {
-        await _roleRepository.DeleteAsync(entity);
+        await _roleRepository.DeleteAsync(entity, cancellationToken);
 
         // Invalidate cache after delete
         InvalidateCache();
@@ -128,6 +130,21 @@ internal class CachedRoleRepository : IRoleRepository
     {
         _roleRepository.Delete(entity);
         // Note: Cache invalidation will happen when UnitOfWork.SaveChanges is called
+    }
+
+    public IQueryable<Role> GetQueryable()
+    {
+        return _roleRepository.GetQueryable();
+    }
+    
+    public async Task<int> CountAsync(IQueryable<Role> query, CancellationToken cancellationToken = default)
+    {
+        return await _roleRepository.CountAsync(query, cancellationToken);
+    }
+    
+    public async Task<IReadOnlyList<Role>> GetPagedAsync(IQueryable<Role> query, int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return await _roleRepository.GetPagedAsync(query, skip, take, cancellationToken);
     }
 
     /// <summary>

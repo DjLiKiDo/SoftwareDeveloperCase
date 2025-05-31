@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Caching.Memory;
-using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Domain.Common;
-using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
 using SoftwareDeveloperCase.Infrastructure.Services;
 using System.Linq.Expressions;
 
@@ -24,7 +24,7 @@ internal class CachedPermissionRepository : IPermissionRepository
         _cache = cache;
     }
 
-    public async Task<Permission?> GetByIdAsync(Guid id)
+    public async Task<Permission?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var cacheKey = CacheKeyService.GetEntityByIdKey(EntityTypeName, id);
 
@@ -33,7 +33,7 @@ internal class CachedPermissionRepository : IPermissionRepository
             return cachedPermission;
         }
 
-        var permission = await _permissionRepository.GetByIdAsync(id);
+        var permission = await _permissionRepository.GetByIdAsync(id, cancellationToken);
 
         if (permission != null)
         {
@@ -43,7 +43,7 @@ internal class CachedPermissionRepository : IPermissionRepository
         return permission;
     }
 
-    public async Task<IEnumerable<Permission>> GetAllAsync()
+    public async Task<IEnumerable<Permission>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var cacheKey = CacheKeyService.GetAllEntitiesKey(EntityTypeName);
 
@@ -52,39 +52,41 @@ internal class CachedPermissionRepository : IPermissionRepository
             return cachedPermissions!;
         }
 
-        var permissions = await _permissionRepository.GetAllAsync();
+        var permissions = await _permissionRepository.GetAllAsync(cancellationToken);
         _cache.Set(cacheKey, permissions, CacheExpirationForCollections);
 
         return permissions;
     }
 
-    public async Task<IEnumerable<Permission>> GetAsync(Expression<Func<Permission, bool>> predicate)
+    public async Task<IEnumerable<Permission>> GetAsync(Expression<Func<Permission, bool>> predicate, CancellationToken cancellationToken = default)
     {
         // For filtered queries, we don't cache as the combinations are endless
-        return await _permissionRepository.GetAsync(predicate);
+        return await _permissionRepository.GetAsync(predicate, cancellationToken);
     }
 
     public async Task<IEnumerable<Permission>> GetAsync(Expression<Func<Permission, bool>>? predicate = null,
         Func<IQueryable<Permission>, IOrderedQueryable<Permission>>? orderBy = null,
         string? includeString = null,
-        bool disableTracking = true)
+        bool disableTracking = true,
+        CancellationToken cancellationToken = default)
     {
         // For complex queries, we don't cache as the combinations are endless
-        return await _permissionRepository.GetAsync(predicate, orderBy, includeString, disableTracking);
+        return await _permissionRepository.GetAsync(predicate, orderBy, includeString, disableTracking, cancellationToken);
     }
 
     public async Task<IEnumerable<Permission>> GetAsync(Expression<Func<Permission, bool>>? predicate = null,
         Func<IQueryable<Permission>, IOrderedQueryable<Permission>>? orderBy = null,
         List<Expression<Func<Permission, object>>>? includes = null,
-        bool disableTracking = true)
+        bool disableTracking = true,
+        CancellationToken cancellationToken = default)
     {
         // For complex queries, we don't cache as the combinations are endless
-        return await _permissionRepository.GetAsync(predicate, orderBy, includes, disableTracking);
+        return await _permissionRepository.GetAsync(predicate, orderBy, includes, disableTracking, cancellationToken);
     }
 
-    public async Task<Permission> InsertAsync(Permission entity)
+    public async Task<Permission> InsertAsync(Permission entity, CancellationToken cancellationToken = default)
     {
-        var result = await _permissionRepository.InsertAsync(entity);
+        var result = await _permissionRepository.InsertAsync(entity, cancellationToken);
 
         // Invalidate cache after insert
         InvalidateCache();
@@ -92,9 +94,9 @@ internal class CachedPermissionRepository : IPermissionRepository
         return result;
     }
 
-    public async Task<Permission> UpdateAsync(Permission entity)
+    public async Task<Permission> UpdateAsync(Permission entity, CancellationToken cancellationToken = default)
     {
-        var result = await _permissionRepository.UpdateAsync(entity);
+        var result = await _permissionRepository.UpdateAsync(entity, cancellationToken);
 
         // Invalidate cache after update
         InvalidateCache();
@@ -103,9 +105,9 @@ internal class CachedPermissionRepository : IPermissionRepository
         return result;
     }
 
-    public async Task DeleteAsync(Permission entity)
+    public async Task DeleteAsync(Permission entity, CancellationToken cancellationToken = default)
     {
-        await _permissionRepository.DeleteAsync(entity);
+        await _permissionRepository.DeleteAsync(entity, cancellationToken);
 
         // Invalidate cache after delete
         InvalidateCache();
@@ -130,6 +132,21 @@ internal class CachedPermissionRepository : IPermissionRepository
         // Note: Cache invalidation will happen when UnitOfWork.SaveChanges is called
     }
 
+    public IQueryable<Permission> GetQueryable()
+    {
+        return _permissionRepository.GetQueryable();
+    }
+    
+    public async Task<int> CountAsync(IQueryable<Permission> query, CancellationToken cancellationToken = default)
+    {
+        return await _permissionRepository.CountAsync(query, cancellationToken);
+    }
+    
+    public async Task<IReadOnlyList<Permission>> GetPagedAsync(IQueryable<Permission> query, int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return await _permissionRepository.GetPagedAsync(query, skip, take, cancellationToken);
+    }
+    
     /// <summary>
     /// Invalidates all cached permissions
     /// </summary>

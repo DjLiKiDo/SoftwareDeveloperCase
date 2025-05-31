@@ -3,9 +3,10 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Application.Features.User.Commands.AssignRole;
-using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.AssignRole;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
 using Xunit;
+using Task = System.Threading.Tasks.Task;
 
 namespace SoftwareDeveloperCase.Test.Unit.Features.User.Commands;
 
@@ -30,7 +31,7 @@ public class AssignRoleCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldAssignRoleSuccessfully_WhenValidCommandProvided()
+    public async System.Threading.Tasks.Task Handle_ShouldAssignRoleSuccessfully_WhenValidCommandProvided()
     {
         // Arrange
         var userRoleId = Guid.NewGuid();
@@ -71,7 +72,7 @@ public class AssignRoleCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowException_WhenSaveChangesFails()
+    public async System.Threading.Tasks.Task Handle_ShouldThrowException_WhenSaveChangesFails()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -108,7 +109,7 @@ public class AssignRoleCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldMapCommandToUserRole_WhenCalled()
+    public async System.Threading.Tasks.Task Handle_ShouldMapCommandToUserRole_WhenCalled()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -138,7 +139,7 @@ public class AssignRoleCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldCallRepositoryMethods_InCorrectOrder()
+    public async System.Threading.Tasks.Task Handle_ShouldCallRepositoryMethods_InCorrectOrder()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -172,7 +173,7 @@ public class AssignRoleCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnUserRoleId_WhenRoleAssignedSuccessfully()
+    public async System.Threading.Tasks.Task Handle_ShouldReturnUserRoleId_WhenRoleAssignedSuccessfully()
     {
         // Arrange
         var userRoleId = Guid.NewGuid();

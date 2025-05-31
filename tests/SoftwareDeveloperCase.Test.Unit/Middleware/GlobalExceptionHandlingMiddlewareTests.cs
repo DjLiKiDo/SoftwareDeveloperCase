@@ -51,7 +51,7 @@ public class GlobalExceptionHandlingMiddlewareTests : IClassFixture<WebApplicati
     }
 
     [Fact]
-    public async Task Middleware_ShouldReturnValidationError_WhenValidationExceptionIsThrown()
+    public async System.Threading.Tasks.Task Middleware_ShouldReturnValidationError_WhenValidationExceptionIsThrown()
     {
         // Arrange - Create a user with invalid data to trigger validation
         var invalidUserRequest = new
@@ -83,7 +83,7 @@ public class GlobalExceptionHandlingMiddlewareTests : IClassFixture<WebApplicati
     }
 
     [Fact]
-    public async Task Middleware_ShouldReturnNotFoundError_WhenResourceNotFound()
+    public async System.Threading.Tasks.Task Middleware_ShouldReturnNotFoundError_WhenResourceNotFound()
     {
         // Arrange - Try to get a non-existent user
         var nonExistentUserId = Guid.NewGuid();
@@ -104,7 +104,7 @@ public class GlobalExceptionHandlingMiddlewareTests : IClassFixture<WebApplicati
     }
 
     [Fact]
-    public async Task Middleware_ShouldReturnInternalServerError_WhenUnexpectedExceptionOccurs()
+    public async System.Threading.Tasks.Task Middleware_ShouldReturnInternalServerError_WhenUnexpectedExceptionOccurs()
     {
         // Arrange - This will test the default exception handling
         // We'll make a request that might cause an internal error
@@ -141,7 +141,7 @@ public class GlobalExceptionHandlingMiddlewareTests : IClassFixture<WebApplicati
     }
 
     [Fact]
-    public async Task Middleware_ShouldLogErrors_WhenExceptionOccurs()
+    public async System.Threading.Tasks.Task Middleware_ShouldLogErrors_WhenExceptionOccurs()
     {
         // Arrange
         var loggerProvider = _factory.Services.GetRequiredService<ILoggerProvider>();
@@ -170,7 +170,7 @@ public class GlobalExceptionHandlingMiddlewareTests : IClassFixture<WebApplicati
     }
 
     [Fact]
-    public async Task Middleware_ShouldNotExposeInternalDetails_InProductionEnvironment()
+    public async System.Threading.Tasks.Task Middleware_ShouldNotExposeInternalDetails_InProductionEnvironment()
     {
         // Arrange - Create factory with Production environment
         var productionFactory = _factory.WithWebHostBuilder(builder =>
@@ -206,7 +206,7 @@ public class GlobalExceptionHandlingMiddlewareTests : IClassFixture<WebApplicati
     }
 
     [Fact]
-    public async Task Middleware_ShouldSetCorrectContentType_ForErrorResponses()
+    public async System.Threading.Tasks.Task Middleware_ShouldSetCorrectContentType_ForErrorResponses()
     {
         // Arrange
         var invalidRequest = new

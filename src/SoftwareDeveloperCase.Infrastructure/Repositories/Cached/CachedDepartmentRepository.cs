@@ -1,9 +1,11 @@
 using Microsoft.Extensions.Caching.Memory;
-using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Domain.Common;
-using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities.Lookups;
 using SoftwareDeveloperCase.Infrastructure.Services;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace SoftwareDeveloperCase.Infrastructure.Repositories.Cached;
 
@@ -24,7 +26,7 @@ internal class CachedDepartmentRepository : IDepartmentRepository
         _cache = cache;
     }
 
-    public async Task<Department?> GetByIdAsync(Guid id)
+    public async Task<Department?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var cacheKey = CacheKeyService.GetEntityByIdKey(EntityTypeName, id);
 
@@ -33,7 +35,7 @@ internal class CachedDepartmentRepository : IDepartmentRepository
             return cachedDepartment;
         }
 
-        var department = await _departmentRepository.GetByIdAsync(id);
+        var department = await _departmentRepository.GetByIdAsync(id, cancellationToken);
 
         if (department != null)
         {
@@ -43,7 +45,7 @@ internal class CachedDepartmentRepository : IDepartmentRepository
         return department;
     }
 
-    public async Task<IEnumerable<Department>> GetAllAsync()
+    public async Task<IEnumerable<Department>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var cacheKey = CacheKeyService.GetAllEntitiesKey(EntityTypeName);
 
@@ -52,34 +54,36 @@ internal class CachedDepartmentRepository : IDepartmentRepository
             return cachedDepartments!;
         }
 
-        var departments = await _departmentRepository.GetAllAsync();
+        var departments = await _departmentRepository.GetAllAsync(cancellationToken);
         _cache.Set(cacheKey, departments, CacheExpirationForCollections);
 
         return departments;
     }
 
-    public async Task<IEnumerable<Department>> GetAsync(Expression<Func<Department, bool>> predicate)
+    public async Task<IEnumerable<Department>> GetAsync(Expression<Func<Department, bool>> predicate, CancellationToken cancellationToken = default)
     {
         // For filtered queries, we don't cache as the combinations are endless
-        return await _departmentRepository.GetAsync(predicate);
+        return await _departmentRepository.GetAsync(predicate, cancellationToken);
     }
 
     public async Task<IEnumerable<Department>> GetAsync(Expression<Func<Department, bool>>? predicate = null,
         Func<IQueryable<Department>, IOrderedQueryable<Department>>? orderBy = null,
         string? includeString = null,
-        bool disableTracking = true)
+        bool disableTracking = true,
+        CancellationToken cancellationToken = default)
     {
         // For complex queries, we don't cache as the combinations are endless
-        return await _departmentRepository.GetAsync(predicate, orderBy, includeString, disableTracking);
+        return await _departmentRepository.GetAsync(predicate, orderBy, includeString, disableTracking, cancellationToken);
     }
 
     public async Task<IEnumerable<Department>> GetAsync(Expression<Func<Department, bool>>? predicate = null,
         Func<IQueryable<Department>, IOrderedQueryable<Department>>? orderBy = null,
         List<Expression<Func<Department, object>>>? includes = null,
-        bool disableTracking = true)
+        bool disableTracking = true,
+        CancellationToken cancellationToken = default)
     {
         // For complex queries, we don't cache as the combinations are endless
-        return await _departmentRepository.GetAsync(predicate, orderBy, includes, disableTracking);
+        return await _departmentRepository.GetAsync(predicate, orderBy, includes, disableTracking, cancellationToken);
     }
 
     public async Task<List<User>> GetManagersAsync(Guid departmentId)
@@ -97,9 +101,9 @@ internal class CachedDepartmentRepository : IDepartmentRepository
         return managers;
     }
 
-    public async Task<Department> InsertAsync(Department entity)
+    public async Task<Department> InsertAsync(Department entity, CancellationToken cancellationToken = default)
     {
-        var result = await _departmentRepository.InsertAsync(entity);
+        var result = await _departmentRepository.InsertAsync(entity, cancellationToken);
 
         // Invalidate cache after insert
         InvalidateCache();
@@ -107,9 +111,9 @@ internal class CachedDepartmentRepository : IDepartmentRepository
         return result;
     }
 
-    public async Task<Department> UpdateAsync(Department entity)
+    public async Task<Department> UpdateAsync(Department entity, CancellationToken cancellationToken = default)
     {
-        var result = await _departmentRepository.UpdateAsync(entity);
+        var result = await _departmentRepository.UpdateAsync(entity, cancellationToken);
 
         // Invalidate cache after update
         InvalidateCache();
@@ -119,9 +123,9 @@ internal class CachedDepartmentRepository : IDepartmentRepository
         return result;
     }
 
-    public async Task DeleteAsync(Department entity)
+    public async System.Threading.Tasks.Task DeleteAsync(Department entity, CancellationToken cancellationToken = default)
     {
-        await _departmentRepository.DeleteAsync(entity);
+        await _departmentRepository.DeleteAsync(entity, cancellationToken);
 
         // Invalidate cache after delete
         InvalidateCache();
@@ -164,6 +168,21 @@ internal class CachedDepartmentRepository : IDepartmentRepository
         _cache.Remove(CacheKeyService.GetEntityByIdKey(EntityTypeName, id));
     }
 
+    public IQueryable<Department> GetQueryable()
+    {
+        return _departmentRepository.GetQueryable();
+    }
+    
+    public async Task<int> CountAsync(IQueryable<Department> query, CancellationToken cancellationToken = default)
+    {
+        return await _departmentRepository.CountAsync(query, cancellationToken);
+    }
+    
+    public async Task<IReadOnlyList<Department>> GetPagedAsync(IQueryable<Department> query, int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return await _departmentRepository.GetPagedAsync(query, skip, take, cancellationToken);
+    }
+    
     /// <summary>
     /// Invalidates cached managers for a department
     /// </summary>

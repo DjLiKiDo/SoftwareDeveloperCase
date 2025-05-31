@@ -4,8 +4,12 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Exceptions;
-using SoftwareDeveloperCase.Application.Features.User.Commands.DeleteUser;
+using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.DeleteUser;
+using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.ValueObjects;
 using Xunit;
+using Task = System.Threading.Tasks.Task;
+using UserEntity = SoftwareDeveloperCase.Domain.Entities.Core.User;
 
 namespace SoftwareDeveloperCase.Test.Unit.Features.User.Commands;
 
@@ -30,17 +34,17 @@ public class DeleteUserCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldDeleteUserSuccessfully_WhenValidCommandProvided()
+    public async System.Threading.Tasks.Task Handle_ShouldDeleteUserSuccessfully_WhenValidCommandProvided()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var command = new DeleteUserCommand { Id = userId };
 
-        var existingUser = new Domain.Entities.User
+        var existingUser = new UserEntity
         {
             Id = userId,
             Name = "Test User",
-            Email = "test@example.com"
+            Email = new Email("test@example.com")
         };
 
         _mockUserRepository.Setup(x => x.GetByIdAsync(userId))
@@ -65,14 +69,14 @@ public class DeleteUserCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowNotFoundException_WhenUserDoesNotExist()
+    public async System.Threading.Tasks.Task Handle_ShouldThrowNotFoundException_WhenUserDoesNotExist()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var command = new DeleteUserCommand { Id = userId };
 
         _mockUserRepository.Setup(x => x.GetByIdAsync(userId))
-            .ReturnsAsync((Domain.Entities.User?)null);
+            .ReturnsAsync((UserEntity?)null);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<NotFoundException>(() => _handler.Handle(command, CancellationToken.None));
@@ -87,17 +91,17 @@ public class DeleteUserCommandHandlerTests
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.Once);
 
-        _mockUserRepository.Verify(x => x.Delete(It.IsAny<Domain.Entities.User>()), Times.Never);
+        _mockUserRepository.Verify(x => x.Delete(It.IsAny<UserEntity>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.SaveChanges(), Times.Never);
     }
 
     [Fact]
-    public async Task Handle_ShouldCallRepositoryMethods_InCorrectOrder()
+    public async System.Threading.Tasks.Task Handle_ShouldCallRepositoryMethods_InCorrectOrder()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var command = new DeleteUserCommand { Id = userId };
-        var existingUser = new Domain.Entities.User { Id = userId };
+        var existingUser = new UserEntity { Id = userId };
         var sequence = new MockSequence();
 
         _mockUserRepository.InSequence(sequence).Setup(x => x.GetByIdAsync(userId))
@@ -115,12 +119,12 @@ public class DeleteUserCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnRequestId_WhenUserDeletedSuccessfully()
+    public async System.Threading.Tasks.Task Handle_ShouldReturnRequestId_WhenUserDeletedSuccessfully()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var command = new DeleteUserCommand { Id = userId };
-        var existingUser = new Domain.Entities.User { Id = userId };
+        var existingUser = new UserEntity { Id = userId };
 
         _mockUserRepository.Setup(x => x.GetByIdAsync(userId))
             .ReturnsAsync(existingUser);

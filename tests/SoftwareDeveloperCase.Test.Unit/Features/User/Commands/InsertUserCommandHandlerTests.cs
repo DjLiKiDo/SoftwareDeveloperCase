@@ -4,10 +4,16 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Services;
-using SoftwareDeveloperCase.Application.Features.User.Commands.InsertUser;
+using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.InsertUser;
 using SoftwareDeveloperCase.Application.Models;
-using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
+using Task = System.Threading.Tasks.Task;
 using Xunit;
+using UserEntity = SoftwareDeveloperCase.Domain.Entities.Core.User;
+using RoleEntity = SoftwareDeveloperCase.Domain.Entities.Identity.Role;
+using DomainEmail = SoftwareDeveloperCase.Domain.ValueObjects.Email;
+using ApplicationEmail = SoftwareDeveloperCase.Application.Models.Email;
 
 namespace SoftwareDeveloperCase.Test.Unit.Features.User.Commands;
 
@@ -43,7 +49,7 @@ public class InsertUserCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldInsertUserSuccessfully_WhenValidCommandProvided()
+    public async System.Threading.Tasks.Task Handle_ShouldInsertUserSuccessfully_WhenValidCommandProvided()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -53,29 +59,29 @@ public class InsertUserCommandHandlerTests
         var command = new InsertUserCommand
         {
             Name = "John Doe",
-            Email = "john.doe@example.com",
+            Email = new DomainEmail("john.doe@example.com"),
             Password = "password123",
             DepartmentId = departmentId
         };
 
-        var user = new Domain.Entities.User
+        var user = new UserEntity
         {
             Id = userId,
             Name = command.Name,
-            Email = command.Email,
+            Email = new DomainEmail(command.Email),
             Password = command.Password,
             DepartmentId = command.DepartmentId
         };
 
-        var employeeRole = new Domain.Entities.Role { Id = roleId, Name = "Employee" };
-        var departmentManagers = new List<Domain.Entities.User>
+        var employeeRole = new RoleEntity { Id = roleId, Name = "Employee" };
+        var departmentManagers = new List<UserEntity>
         {
-            new() { Email = "manager@example.com" }
+            new() { Email = new DomainEmail("manager@example.com") }
         };
 
-        _mockMapper.Setup(x => x.Map<Domain.Entities.User>(command)).Returns(user);
-        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Entities.Role, bool>>>()))
-            .ReturnsAsync(new List<Domain.Entities.Role> { employeeRole });
+        _mockMapper.Setup(x => x.Map<UserEntity>(command)).Returns(user);
+        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<RoleEntity, bool>>>()))
+            .ReturnsAsync(new List<RoleEntity> { employeeRole });
         _mockDepartmentRepository.Setup(x => x.GetManagersAsync(departmentId))
             .ReturnsAsync(departmentManagers);
         _mockUnitOfWork.Setup(x => x.SaveChanges()).ReturnsAsync(1);
@@ -88,25 +94,25 @@ public class InsertUserCommandHandlerTests
         _mockUserRepository.Verify(x => x.Insert(user), Times.Once);
         _mockUserRoleRepository.Verify(x => x.Insert(It.Is<UserRole>(ur => ur.UserId == userId && ur.RoleId == roleId)), Times.Once);
         _mockUnitOfWork.Verify(x => x.SaveChanges(), Times.Once);
-        _mockEmailService.Verify(x => x.SendEmail(It.IsAny<Email>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mockEmailService.Verify(x => x.SendEmail(It.IsAny<ApplicationEmail>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowException_WhenSaveChangesFails()
+    public async System.Threading.Tasks.Task Handle_ShouldThrowException_WhenSaveChangesFails()
     {
         // Arrange
         var command = new InsertUserCommand
         {
             Name = "John Doe",
-            Email = "john.doe@example.com",
+            Email = new DomainEmail("john.doe@example.com"),
             Password = "password123",
             DepartmentId = Guid.NewGuid()
         };
 
-        var user = new Domain.Entities.User { Id = Guid.NewGuid() };
-        _mockMapper.Setup(x => x.Map<Domain.Entities.User>(command)).Returns(user);
-        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Entities.Role, bool>>>()))
-            .ReturnsAsync(new List<Domain.Entities.Role>());
+        var user = new UserEntity { Id = Guid.NewGuid() };
+        _mockMapper.Setup(x => x.Map<UserEntity>(command)).Returns(user);
+        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<RoleEntity, bool>>>()))
+            .ReturnsAsync(new List<RoleEntity>());
         _mockUnitOfWork.Setup(x => x.SaveChanges()).ReturnsAsync(0);
 
         // Act & Assert
@@ -123,28 +129,28 @@ public class InsertUserCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldNotAssignRole_WhenEmployeeRoleDoesNotExist()
+    public async System.Threading.Tasks.Task Handle_ShouldNotAssignRole_WhenEmployeeRoleDoesNotExist()
     {
         // Arrange
         var departmentId = Guid.NewGuid();
         var command = new InsertUserCommand
         {
             Name = "John Doe",
-            Email = "john.doe@example.com",
+            Email = new DomainEmail("john.doe@example.com"),
             Password = "password123",
             DepartmentId = departmentId
         };
 
-        var user = new Domain.Entities.User
+        var user = new UserEntity
         {
             Id = Guid.NewGuid(),
             DepartmentId = departmentId
         };
-        _mockMapper.Setup(x => x.Map<Domain.Entities.User>(command)).Returns(user);
-        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Entities.Role, bool>>>()))
-            .ReturnsAsync(new List<Domain.Entities.Role>());
+        _mockMapper.Setup(x => x.Map<UserEntity>(command)).Returns(user);
+        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<RoleEntity, bool>>>()))
+            .ReturnsAsync(new List<RoleEntity>());
         _mockDepartmentRepository.Setup(x => x.GetManagersAsync(departmentId))
-            .ReturnsAsync(new List<Domain.Entities.User>());
+            .ReturnsAsync(new List<UserEntity>());
         _mockUnitOfWork.Setup(x => x.SaveChanges()).ReturnsAsync(1);
 
         // Act
@@ -156,7 +162,7 @@ public class InsertUserCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldContinueWhenEmailFails()
+    public async System.Threading.Tasks.Task Handle_ShouldContinueWhenEmailFails()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -164,28 +170,28 @@ public class InsertUserCommandHandlerTests
         var command = new InsertUserCommand
         {
             Name = "John Doe",
-            Email = "john.doe@example.com",
+            Email = new DomainEmail("john.doe@example.com"),
             Password = "password123",
             DepartmentId = departmentId
         };
 
-        var user = new Domain.Entities.User
+        var user = new UserEntity
         {
             Id = userId,
             DepartmentId = departmentId
         };
-        var departmentManagers = new List<Domain.Entities.User>
+        var departmentManagers = new List<UserEntity>
         {
-            new() { Email = "manager@example.com" }
+            new() { Email = new DomainEmail("manager@example.com") }
         };
 
-        _mockMapper.Setup(x => x.Map<Domain.Entities.User>(command)).Returns(user);
-        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Domain.Entities.Role, bool>>>()))
-            .ReturnsAsync(new List<Domain.Entities.Role>());
+        _mockMapper.Setup(x => x.Map<UserEntity>(command)).Returns(user);
+        _mockRoleRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<RoleEntity, bool>>>()))
+            .ReturnsAsync(new List<RoleEntity>());
         _mockDepartmentRepository.Setup(x => x.GetManagersAsync(departmentId))
             .ReturnsAsync(departmentManagers);
         _mockUnitOfWork.Setup(x => x.SaveChanges()).ReturnsAsync(1);
-        _mockEmailService.Setup(x => x.SendEmail(It.IsAny<Email>(), It.IsAny<CancellationToken>()))
+        _mockEmailService.Setup(x => x.SendEmail(It.IsAny<ApplicationEmail>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Email service error"));
 
         // Act

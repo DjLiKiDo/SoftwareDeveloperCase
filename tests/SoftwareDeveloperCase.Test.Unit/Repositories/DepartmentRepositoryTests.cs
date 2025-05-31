@@ -1,7 +1,9 @@
 using FluentAssertions;
 using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities.Lookups;
+using Task = System.Threading.Tasks.Task;
 using Xunit;
 
 namespace SoftwareDeveloperCase.Test.Unit.Repositories;
@@ -38,7 +40,7 @@ public class DepartmentRepositoryTests
     }
 
     [Fact]
-    public async Task GetManagersAsync_MockImplementation_ShouldReturnExpectedResult()
+    public async System.Threading.Tasks.Task GetManagersAsync_MockImplementation_ShouldReturnExpectedResult()
     {
         // Arrange
         var departmentId = Guid.NewGuid();

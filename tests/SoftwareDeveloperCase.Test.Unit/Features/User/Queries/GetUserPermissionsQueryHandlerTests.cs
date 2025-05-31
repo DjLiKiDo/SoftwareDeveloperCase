@@ -3,9 +3,13 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Application.Features.User.Queries.GetUserPermissions;
-using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Application.Features.Identity.Users.Queries.GetUserPermissions;
+using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
+using SoftwareDeveloperCase.Domain.ValueObjects;
+using Task = System.Threading.Tasks.Task;
 using Xunit;
+using UserEntity = SoftwareDeveloperCase.Domain.Entities.Core.User;
 
 namespace SoftwareDeveloperCase.Test.Unit.Features.User.Queries;
 
@@ -39,7 +43,7 @@ public class GetUserPermissionsQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnUserPermissions_WhenUserHasRolesAndPermissions()
+    public async System.Threading.Tasks.Task Handle_ShouldReturnUserPermissions_WhenUserHasRolesAndPermissions()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -51,7 +55,7 @@ public class GetUserPermissionsQueryHandlerTests
 
         var query = new GetUserPermissionsQuery(userId);
 
-        var user = new Domain.Entities.User { Id = userId };
+        var user = new UserEntity { Id = userId };
 
         var userRoles = new List<UserRole>
         {
@@ -104,13 +108,13 @@ public class GetUserPermissionsQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnEmptyList_WhenUserHasNoRoles()
+    public async System.Threading.Tasks.Task Handle_ShouldReturnEmptyList_WhenUserHasNoRoles()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var query = new GetUserPermissionsQuery(userId);
 
-        var user = new Domain.Entities.User { Id = userId };
+        var user = new UserEntity { Id = userId };
         var emptyUserRoles = new List<UserRole>();
         var emptyPermissions = new List<Permission>();
         var emptyPermissionDtos = new List<PermissionDto>();
@@ -135,14 +139,14 @@ public class GetUserPermissionsQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnEmptyList_WhenUserRolesHaveNoPermissions()
+    public async System.Threading.Tasks.Task Handle_ShouldReturnEmptyList_WhenUserRolesHaveNoPermissions()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var roleId = Guid.NewGuid();
         var query = new GetUserPermissionsQuery(userId);
 
-        var user = new Domain.Entities.User { Id = userId };
+        var user = new UserEntity { Id = userId };
         var userRoles = new List<UserRole>
         {
             new() { UserId = userId, RoleId = roleId }
@@ -171,13 +175,13 @@ public class GetUserPermissionsQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldCallRepositoriesInCorrectOrder()
+    public async System.Threading.Tasks.Task Handle_ShouldCallRepositoriesInCorrectOrder()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var query = new GetUserPermissionsQuery(userId);
 
-        var user = new Domain.Entities.User { Id = userId };
+        var user = new UserEntity { Id = userId };
         var userRoles = new List<UserRole>();
         var rolePermissions = new List<RolePermission>();
         var permissions = new List<Permission>();
@@ -208,7 +212,7 @@ public class GetUserPermissionsQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldDeduplicatePermissions_WhenMultipleRolesHaveSamePermission()
+    public async System.Threading.Tasks.Task Handle_ShouldDeduplicatePermissions_WhenMultipleRolesHaveSamePermission()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -217,7 +221,7 @@ public class GetUserPermissionsQueryHandlerTests
         var permissionId = Guid.NewGuid();
         var query = new GetUserPermissionsQuery(userId);
 
-        var user = new Domain.Entities.User { Id = userId };
+        var user = new UserEntity { Id = userId };
         var userRoles = new List<UserRole>
         {
             new() { UserId = userId, RoleId = roleId1 },

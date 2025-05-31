@@ -3,9 +3,10 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Application.Features.Role.Commands.AssignPermission;
-using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Application.Features.Identity.Roles.Commands.AssignPermission;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
 using Xunit;
+using Task = System.Threading.Tasks.Task;
 
 namespace SoftwareDeveloperCase.Test.Unit.Features.Role.Commands;
 
@@ -30,7 +31,7 @@ public class AssignPermissionCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldAssignPermissionSuccessfully_WhenValidCommandProvided()
+    public async System.Threading.Tasks.Task Handle_ShouldAssignPermissionSuccessfully_WhenValidCommandProvided()
     {
         // Arrange
         var rolePermissionId = Guid.NewGuid();
@@ -71,7 +72,7 @@ public class AssignPermissionCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowException_WhenSaveChangesFails()
+    public async System.Threading.Tasks.Task Handle_ShouldThrowException_WhenSaveChangesFails()
     {
         // Arrange
         var roleId = Guid.NewGuid();
@@ -108,7 +109,7 @@ public class AssignPermissionCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldMapCommandToRolePermission_WhenCalled()
+    public async System.Threading.Tasks.Task Handle_ShouldMapCommandToRolePermission_WhenCalled()
     {
         // Arrange
         var roleId = Guid.NewGuid();
@@ -138,7 +139,7 @@ public class AssignPermissionCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldCallRepositoryMethods_InCorrectOrder()
+    public async System.Threading.Tasks.Task Handle_ShouldCallRepositoryMethods_InCorrectOrder()
     {
         // Arrange
         var roleId = Guid.NewGuid();
@@ -172,7 +173,7 @@ public class AssignPermissionCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnRolePermissionId_WhenPermissionAssignedSuccessfully()
+    public async System.Threading.Tasks.Task Handle_ShouldReturnRolePermissionId_WhenPermissionAssignedSuccessfully()
     {
         // Arrange
         var rolePermissionId = Guid.NewGuid();

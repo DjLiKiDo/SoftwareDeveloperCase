@@ -1,8 +1,10 @@
 using FluentAssertions;
 using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Application.Features.User.Commands.AssignRole;
-using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.AssignRole;
+using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
+using Task = System.Threading.Tasks.Task;
 using Xunit;
 
 namespace SoftwareDeveloperCase.Test.Unit.Validators;
@@ -27,7 +29,7 @@ public class AssignRoleCommandValidatorTests
     }
 
     [Fact]
-    public async Task AssignRoleCommandValidator_ShouldBeValid_WhenBothUserAndRoleExist()
+    public async System.Threading.Tasks.Task AssignRoleCommandValidator_ShouldBeValid_WhenBothUserAndRoleExist()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -53,7 +55,7 @@ public class AssignRoleCommandValidatorTests
     }
 
     [Fact]
-    public async Task AssignRoleCommandValidator_ShouldHaveError_WhenUserIdIsEmpty()
+    public async System.Threading.Tasks.Task AssignRoleCommandValidator_ShouldHaveError_WhenUserIdIsEmpty()
     {
         // Arrange
         var command = new AssignRoleCommand
@@ -71,7 +73,7 @@ public class AssignRoleCommandValidatorTests
     }
 
     [Fact]
-    public async Task AssignRoleCommandValidator_ShouldHaveError_WhenRoleIdIsEmpty()
+    public async System.Threading.Tasks.Task AssignRoleCommandValidator_ShouldHaveError_WhenRoleIdIsEmpty()
     {
         // Arrange
         var command = new AssignRoleCommand
@@ -89,7 +91,7 @@ public class AssignRoleCommandValidatorTests
     }
 
     [Fact]
-    public async Task AssignRoleCommandValidator_ShouldHaveError_WhenUserDoesNotExist()
+    public async System.Threading.Tasks.Task AssignRoleCommandValidator_ShouldHaveError_WhenUserDoesNotExist()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -115,7 +117,7 @@ public class AssignRoleCommandValidatorTests
     }
 
     [Fact]
-    public async Task AssignRoleCommandValidator_ShouldHaveError_WhenRoleDoesNotExist()
+    public async System.Threading.Tasks.Task AssignRoleCommandValidator_ShouldHaveError_WhenRoleDoesNotExist()
     {
         // Arrange
         var userId = Guid.NewGuid();
@@ -141,7 +143,7 @@ public class AssignRoleCommandValidatorTests
     }
 
     [Fact]
-    public async Task AssignRoleCommandValidator_ShouldHaveMultipleErrors_WhenBothIdsAreEmpty()
+    public async System.Threading.Tasks.Task AssignRoleCommandValidator_ShouldHaveMultipleErrors_WhenBothIdsAreEmpty()
     {
         // Arrange
         var command = new AssignRoleCommand
