@@ -51,14 +51,6 @@ public static class DependencyInjection
             return new CachedPermissionRepository(baseRepository, cache);
         });
 
-        services.AddScoped<DepartmentRepository>();
-        services.AddScoped<IDepartmentRepository>(provider =>
-        {
-            var baseRepository = provider.GetRequiredService<DepartmentRepository>();
-            var cache = provider.GetRequiredService<IMemoryCache>();
-            return new CachedDepartmentRepository(baseRepository, cache);
-        });
-
         // Register Core repositories
         services.AddScoped<ITeamRepository, TeamRepository>();
         services.AddScoped<ITeamMemberRepository, TeamMemberRepository>();

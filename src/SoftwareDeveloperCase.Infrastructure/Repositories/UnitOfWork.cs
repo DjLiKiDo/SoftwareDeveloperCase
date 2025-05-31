@@ -13,7 +13,6 @@ internal class UnitOfWork : IUnitOfWork
 
     private readonly SoftwareDeveloperCaseDbContext _context;
 
-    private IDepartmentRepository? _departmentRepository;
     private IPermissionRepository? _permissionRepository;
     private IRolePermissionRepository? _rolePermissionRepository;
     private IRoleRepository? _roleRepository;
@@ -27,7 +26,6 @@ internal class UnitOfWork : IUnitOfWork
     private ITaskRepository? _taskRepository;
     private ITaskCommentRepository? _taskCommentRepository;
 
-    public IDepartmentRepository DepartmentRepository => _departmentRepository ??= new DepartmentRepository(_context);
     public IPermissionRepository PermissionRepository => _permissionRepository ??= new PermissionRepository(_context);
     public IRolePermissionRepository RolePermissionRepository => _rolePermissionRepository ??= new RolePermissionRepository(_context);
     public IRoleRepository RoleRepository => _roleRepository ??= new RoleRepository(_context);

@@ -9,5 +9,4 @@ public record UserRegisteredEvent(
     Guid UserId,
     string UserName,
     string Email,
-    Guid DepartmentId,
     DateTime RegisteredAt);

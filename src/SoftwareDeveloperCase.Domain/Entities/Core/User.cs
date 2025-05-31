@@ -1,7 +1,6 @@
 using SoftwareDeveloperCase.Domain.Common;
 using SoftwareDeveloperCase.Domain.ValueObjects;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
-using SoftwareDeveloperCase.Domain.Entities.Lookups;
 
 namespace SoftwareDeveloperCase.Domain.Entities.Core;
 
@@ -29,16 +28,6 @@ public class User : BaseEntity
     /// Gets or sets a value indicating whether the user is active.
     /// </summary>
     public bool IsActive { get; set; } = true;
-
-    /// <summary>
-    /// Gets or sets the identifier of the department the user belongs to.
-    /// </summary>
-    public Guid DepartmentId { get; set; }
-
-    /// <summary>
-    /// Gets or sets the department the user belongs to.
-    /// </summary>
-    public Department Department { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the collection of user-role associations.

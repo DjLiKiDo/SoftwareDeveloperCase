@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Domain.Entities.Core;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
-using SoftwareDeveloperCase.Domain.Entities.Lookups;
 using SoftwareDeveloperCase.Domain.ValueObjects;
 using SoftwareDeveloperCase.Infrastructure.Persistence.Extensions;
 
@@ -30,11 +29,6 @@ public class SoftwareDeveloperCaseDbContext : DbContext
     /// Gets or sets the Permissions database set
     /// </summary>
     public DbSet<Permission>? Permissions { get; set; }
-
-    /// <summary>
-    /// Gets or sets the Departments database set
-    /// </summary>
-    public DbSet<Department>? Departments { get; set; }
 
     /// <summary>
     /// Gets or sets the UserRoles database set
@@ -69,6 +63,25 @@ public class SoftwareDeveloperCaseDbContext : DbContext
     public DbSet<TaskComment>? TaskComments { get; set; }
 
     /// <summary>
+    /// Initializes a new instance of the SoftwareDeveloperCaseDbContext class (for design-time operations)
+    /// </summary>
+    public SoftwareDeveloperCaseDbContext() : this(new DbContextOptions<SoftwareDeveloperCaseDbContext>())
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the SoftwareDeveloperCaseDbContext class (for design-time operations)
+    /// </summary>
+    /// <param name="options">The database context options</param>
+    public SoftwareDeveloperCaseDbContext(DbContextOptions<SoftwareDeveloperCaseDbContext> options)
+        : base(options)
+    {
+        // Create default implementations for design-time operations
+        _dateTimeService = new DesignTimeService();
+        _entitySaveChangesInterceptor = new EntitySaveChangesInterceptor(_dateTimeService);
+    }
+
+    /// <summary>
     /// Initializes a new instance of the SoftwareDeveloperCaseDbContext class
     /// </summary>
     /// <param name="options">The database context options</param>
@@ -79,6 +92,14 @@ public class SoftwareDeveloperCaseDbContext : DbContext
     {
         _dateTimeService = dateTimeService;
         _entitySaveChangesInterceptor = entitySaveChangesInterceptor;
+    }
+
+    /// <summary>
+    /// Simple implementation of IDateTimeService for design-time operations
+    /// </summary>
+    private class DesignTimeService : IDateTimeService
+    {
+        public DateTime Now => DateTime.UtcNow;
     }
 
     /// <summary>
@@ -95,6 +116,33 @@ public class SoftwareDeveloperCaseDbContext : DbContext
                 value => new Email(value))
             .HasMaxLength(255);
 
+        // Configure TaskHierarchy value object as owned entity
+        modelBuilder.Entity<Domain.Entities.Core.Task>()
+            .OwnsOne(t => t.Hierarchy, hierarchy =>
+            {
+                hierarchy.Property(h => h.Level)
+                    .HasColumnName("HierarchyLevel")
+                    .IsRequired();
+                
+                hierarchy.Property(h => h.Path)
+                    .HasColumnName("HierarchyPath")
+                    .HasMaxLength(500)
+                    .IsRequired();
+                
+                hierarchy.Property(h => h.Order)
+                    .HasColumnName("HierarchyOrder")
+                    .IsRequired();
+            });
+
+        // Configure Task decimal properties with precision and scale
+        modelBuilder.Entity<Domain.Entities.Core.Task>()
+            .Property(t => t.EstimatedHours)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Domain.Entities.Core.Task>()
+            .Property(t => t.ActualHours)
+            .HasPrecision(18, 2);
+
         modelBuilder.UseSingularTableNameConvention();
 
         modelBuilder.SeedDataBase(_dateTimeService);
@@ -108,6 +156,12 @@ public class SoftwareDeveloperCaseDbContext : DbContext
     /// <param name="optionsBuilder">The options builder used to configure the context.</param>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        // Configure database provider for design-time if not already configured
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=SoftwareDeveloperCaseDb;Trusted_Connection=true;MultipleActiveResultSets=true");
+        }
+
         optionsBuilder.AddInterceptors(_entitySaveChangesInterceptor);
 
         base.OnConfiguring(optionsBuilder);

@@ -26,9 +26,4 @@ public class UpdateUserCommand : IRequest<Guid>
     /// Gets or sets the user password
     /// </summary>
     public string? Password { get; set; }
-
-    /// <summary>
-    /// Gets or sets the department identifier
-    /// </summary>
-    public Guid DepartmentId { get; set; }
 }

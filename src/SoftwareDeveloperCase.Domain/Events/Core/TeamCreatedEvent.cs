@@ -8,5 +8,4 @@ namespace SoftwareDeveloperCase.Domain.Events.Core;
 public record TeamCreatedEvent(
     Guid TeamId,
     string TeamName,
-    Guid DepartmentId,
     DateTime CreatedAt);

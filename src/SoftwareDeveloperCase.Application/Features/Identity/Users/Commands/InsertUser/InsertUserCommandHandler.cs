@@ -59,36 +59,7 @@ public class InsertUserCommandHandler : IRequestHandler<InsertUserCommand, Guid>
 
         _logger.LogInformation($"New user registered (Id: {user.Id})");
 
-        await SendEmail(user);
-
         return user.Id;
-    }
-
-    private async Task SendEmail(UserEntity user)
-    {
-        var departmentManagers = await _unitOfWork.DepartmentRepository.GetManagersAsync(user.DepartmentId);
-
-        var managerEmailList = departmentManagers.Select(dm => dm.Email).ToList();
-
-        var addresses = string.Empty;
-
-        managerEmailList.ForEach(address => addresses += $"{address};");
-
-        var email = new Email
-        {
-            To = addresses,
-            Subject = "A new user has been registered in your department.",
-            Body = $"Say hi! to your new colleague {user.Name}"
-        };
-
-        try
-        {
-            await _emailService.SendEmail(email);
-        }
-        catch (Exception)
-        {
-            _logger.LogError("Error trying to send new user registration notification.");
-        }
     }
 
     private async Task AssignDefaultRoleAsync(Guid userId)

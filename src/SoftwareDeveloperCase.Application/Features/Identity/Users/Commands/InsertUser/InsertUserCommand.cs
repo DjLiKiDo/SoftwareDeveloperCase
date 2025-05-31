@@ -21,9 +21,4 @@ public class InsertUserCommand : IRequest<Guid>
     /// User's password
     /// </summary>
     public string? Password { get; set; }
-
-    /// <summary>
-    /// Department ID where the user belongs
-    /// </summary>
-    public Guid DepartmentId { get; set; }
 }

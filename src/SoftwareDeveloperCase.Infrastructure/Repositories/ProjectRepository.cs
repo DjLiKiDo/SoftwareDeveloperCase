@@ -56,9 +56,9 @@ internal class ProjectRepository : Repository<Project>, IProjectRepository
     {
         var projects = await _context.Projects!
             .Include(p => p.Team)
-                .ThenInclude(t => t!.Members) // Added null-forgiving operator
+                .ThenInclude(t => t!.TeamMembers) // Changed from Members to TeamMembers
             .Include(p => p.Tasks)
-            .Where(p => p.Team!.Members.Any(tm => tm.UserId == userId) || // Added null-forgiving operator
+            .Where(p => p.Team!.TeamMembers.Any(tm => tm.UserId == userId) || // Changed from Members to TeamMembers
                        p.Tasks.Any(t => t.AssignedToId == userId)) // Changed to AssignedToId
             .ToListAsync(cancellationToken);
         return projects.AsReadOnly();
@@ -74,7 +74,7 @@ internal class ProjectRepository : Repository<Project>, IProjectRepository
     {
         return await _context.Projects!
             .Include(p => p.Team)
-            .ThenInclude(t => t!.Members) // Added null-forgiving operator
+            .ThenInclude(t => t!.TeamMembers) // Changed from Members to TeamMembers
             .ThenInclude(tm => tm.User)
             .Include(p => p.Tasks)
             .ThenInclude(t => t.AssignedTo) // Changed to AssignedTo

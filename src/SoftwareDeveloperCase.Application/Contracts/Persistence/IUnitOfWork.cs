@@ -11,11 +11,6 @@ public interface IUnitOfWork : IDisposable
 {
     #region Identity Repositories
     /// <summary>
-    /// Gets the repository for Department entities
-    /// </summary>
-    IDepartmentRepository DepartmentRepository { get; }
-
-    /// <summary>
     /// Gets the repository for Permission entities
     /// </summary>
     IPermissionRepository PermissionRepository { get; }
