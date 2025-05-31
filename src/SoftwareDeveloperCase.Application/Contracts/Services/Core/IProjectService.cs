@@ -1,4 +1,6 @@
-using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities.Project;
+using SoftwareDeveloperCase.Domain.Entities.Task;
+using SoftwareDeveloperCase.Domain.Entities.Team;
 using SoftwareDeveloperCase.Domain.Enums.Core;
 
 namespace SoftwareDeveloperCase.Application.Contracts.Services.Core;
@@ -56,66 +58,4 @@ public interface IProjectService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>True if archived successfully, false otherwise</returns>
     Task<bool> ArchiveProjectAsync(int projectId, CancellationToken cancellationToken = default);
-}
-
-/// <summary>
-/// DTO for project health information
-/// </summary>
-public class ProjectHealthDto
-{
-    public int ProjectId { get; set; }
-    public string ProjectName { get; set; } = string.Empty;
-    public ProjectStatus Status { get; set; }
-    public decimal ProgressPercentage { get; set; }
-    public bool IsOnSchedule { get; set; }
-    public bool IsOnBudget { get; set; }
-    public int OverdueTasks { get; set; }
-    public int HighPriorityTasks { get; set; }
-    public int BlockedTasks { get; set; }
-    public decimal TeamUtilization { get; set; }
-    public ProjectHealthLevel HealthLevel { get; set; }
-    public List<string> HealthIssues { get; set; } = [];
-    public List<string> Recommendations { get; set; } = [];
-}
-
-/// <summary>
-/// DTO for project timeline analytics
-/// </summary>
-public class ProjectTimelineDto
-{
-    public int ProjectId { get; set; }
-    public string ProjectName { get; set; } = string.Empty;
-    public DateTime StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
-    public DateTime? EstimatedCompletionDate { get; set; }
-    public int TotalDays { get; set; }
-    public int DaysElapsed { get; set; }
-    public int DaysRemaining { get; set; }
-    public decimal ProgressPercentage { get; set; }
-    public bool IsDelayed { get; set; }
-    public int DelayDays { get; set; }
-    public List<ProjectMilestoneDto> Milestones { get; set; } = [];
-}
-
-/// <summary>
-/// DTO for project milestones
-/// </summary>
-public class ProjectMilestoneDto
-{
-    public string Name { get; set; } = string.Empty;
-    public DateTime DueDate { get; set; }
-    public bool IsCompleted { get; set; }
-    public DateTime? CompletionDate { get; set; }
-    public string Description { get; set; } = string.Empty;
-}
-
-/// <summary>
-/// Enumeration for project health levels
-/// </summary>
-public enum ProjectHealthLevel
-{
-    Excellent,
-    Good,
-    Warning,
-    Critical
 }

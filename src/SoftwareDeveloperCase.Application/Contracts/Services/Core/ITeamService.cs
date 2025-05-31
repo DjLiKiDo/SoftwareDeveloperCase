@@ -1,4 +1,4 @@
-using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities.Team;
 
 namespace SoftwareDeveloperCase.Application.Contracts.Services.Core;
 
@@ -41,37 +41,4 @@ public interface ITeamService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Team performance metrics</returns>
     Task<TeamPerformanceDto> GetTeamPerformanceAsync(int teamId, DateTime startDate, DateTime endDate, CancellationToken cancellationToken = default);
-}
-
-/// <summary>
-/// DTO for team workload information
-/// </summary>
-public class TeamWorkloadDto
-{
-    public int TeamId { get; set; }
-    public string TeamName { get; set; } = string.Empty;
-    public int TotalMembers { get; set; }
-    public int ActiveProjects { get; set; }
-    public int TotalTasks { get; set; }
-    public int CompletedTasks { get; set; }
-    public int PendingTasks { get; set; }
-    public decimal AverageTasksPerMember { get; set; }
-    public decimal WorkloadPercentage { get; set; }
-}
-
-/// <summary>
-/// DTO for team performance metrics
-/// </summary>
-public class TeamPerformanceDto
-{
-    public int TeamId { get; set; }
-    public string TeamName { get; set; } = string.Empty;
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public int TasksCompleted { get; set; }
-    public int TasksCreated { get; set; }
-    public decimal CompletionRate { get; set; }
-    public decimal AverageTaskDuration { get; set; }
-    public decimal TotalHoursWorked { get; set; }
-    public decimal Productivity { get; set; }
 }

@@ -1,5 +1,4 @@
-using SoftwareDeveloperCase.Domain.Entities.Core;
-using SoftwareDeveloperCase.Domain.Entities.Lookups;
+using SoftwareDeveloperCase.Domain.Entities.Team;
 
 namespace SoftwareDeveloperCase.Domain.Services;
 

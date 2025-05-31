@@ -2,7 +2,7 @@ using SoftwareDeveloperCase.Application;
 using SoftwareDeveloperCase.Infrastructure;
 using SoftwareDeveloperCase.Api.HealthChecks;
 using SoftwareDeveloperCase.Api.Filters;
-using SoftwareDeveloperCase.Infrastructure.Persistence;
+using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
 
 namespace SoftwareDeveloperCase.Api;
 

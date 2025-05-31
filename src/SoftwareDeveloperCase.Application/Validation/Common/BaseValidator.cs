@@ -9,21 +9,6 @@ namespace SoftwareDeveloperCase.Application.Validation.Common;
 public abstract class BaseValidator<T> : AbstractValidator<T>
 {
     /// <summary>
-    /// Common error messages for consistent validation feedback
-    /// </summary>
-    protected static class ErrorMessages
-    {
-        public const string Required = "{PropertyName} is required.";
-        public const string InvalidEmail = "{PropertyName} must be a valid email address.";
-        public const string InvalidLength = "{PropertyName} must be between {MinLength} and {MaxLength} characters.";
-        public const string MustBeUnique = "{PropertyName} already exists.";
-        public const string InvalidFormat = "{PropertyName} has an invalid format.";
-        public const string MustBePositive = "{PropertyName} must be a positive value.";
-        public const string InvalidDateRange = "End date must be after start date.";
-        public const string NotFound = "{PropertyName} does not exist.";
-    }
-
-    /// <summary>
     /// Validates that a string is not empty and within length constraints
     /// </summary>
     protected void ValidateRequiredString(IRuleBuilder<T, string> ruleBuilder, int minLength = 1, int maxLength = 255)

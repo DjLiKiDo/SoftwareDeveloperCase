@@ -1,31 +1,44 @@
+using SoftwareDeveloperCase.Application.Contracts.Services;
+
 namespace SoftwareDeveloperCase.Infrastructure.Services;
 
 /// <summary>
 /// Service for generating consistent cache keys across the application
 /// </summary>
-internal static class CacheKeyService
+public class CacheKeyService : ICacheKeyService
 {
     /// <summary>
-    /// Generates a cache key for all entities of a specific type
+    /// Creates a cache key for a specific entity with its ID
     /// </summary>
-    /// <param name="entityType">The entity type name</param>
-    /// <returns>The cache key for all entities</returns>
-    public static string GetAllEntitiesKey(string entityType)
+    /// <typeparam name="T">The entity type</typeparam>
+    /// <param name="id">The entity identifier</param>
+    /// <returns>A string cache key</returns>
+    public string GenerateEntityCacheKey<T>(string id) where T : class
     {
-        return $"{entityType.ToLowerInvariant()}:all";
+        return $"{typeof(T).Name.ToLowerInvariant()}:id:{id}";
     }
 
     /// <summary>
-    /// Generates a cache key for a specific entity by ID
+    /// Creates a cache key for a collection of entities
     /// </summary>
-    /// <param name="entityType">The entity type name</param>
-    /// <param name="id">The entity ID</param>
-    /// <returns>The cache key for the specific entity</returns>
-    public static string GetEntityByIdKey(string entityType, Guid id)
+    /// <typeparam name="T">The entity type</typeparam>
+    /// <returns>A string cache key</returns>
+    public string GenerateListCacheKey<T>() where T : class
     {
-        return $"{entityType.ToLowerInvariant()}:id:{id}";
+        return $"{typeof(T).Name.ToLowerInvariant()}:all";
     }
 
+    /// <summary>
+    /// Creates a cache key for a filtered collection of entities
+    /// </summary>
+    /// <typeparam name="T">The entity type</typeparam>
+    /// <param name="filter">A string describing the filter being applied</param>
+    /// <returns>A string cache key</returns>
+    public string GenerateFilteredListCacheKey<T>(string filter) where T : class
+    {
+        return $"{typeof(T).Name.ToLowerInvariant()}:filter:{filter}";
+    }
+    
     /// <summary>
     /// Generates a cache key pattern for all keys related to an entity type
     /// </summary>

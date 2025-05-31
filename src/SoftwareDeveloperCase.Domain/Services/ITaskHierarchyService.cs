@@ -1,6 +1,7 @@
-using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities.Project;
+using SoftwareDeveloperCase.Domain.Entities.Task;
 using SoftwareDeveloperCase.Domain.ValueObjects;
-using TaskEntity = SoftwareDeveloperCase.Domain.Entities.Core.Task;
+using TaskEntity = SoftwareDeveloperCase.Domain.Entities.Task.Task;
 
 namespace SoftwareDeveloperCase.Domain.Services;
 

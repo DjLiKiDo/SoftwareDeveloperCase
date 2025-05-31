@@ -2,7 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using RoleEntity = SoftwareDeveloperCase.Domain.Entities.Identity.Role;
+using RoleEntity = SoftwareDeveloperCase.Domain.Entities.Role;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Roles.Commands.InsertRole;
 

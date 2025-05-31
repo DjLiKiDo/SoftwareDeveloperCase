@@ -1,6 +1,8 @@
-using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities.Task;
+using SoftwareDeveloperCase.Domain.Entities.Team;
+using SoftwareDeveloperCase.Domain.Entities.Project;
 using SoftwareDeveloperCase.Domain.Enums.Core;
-using TaskEntity = SoftwareDeveloperCase.Domain.Entities.Core.Task;
+using TaskEntity = SoftwareDeveloperCase.Domain.Entities.Task.Task;
 using TaskStatusEnum = SoftwareDeveloperCase.Domain.Enums.Core.TaskStatus;
 
 namespace SoftwareDeveloperCase.Application.Contracts.Services.Core;
@@ -81,65 +83,4 @@ public interface ITaskService
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Burndown chart data</returns>
     Task<TaskBurndownDto> GetTaskBurndownAsync(int projectId, DateTime startDate, DateTime endDate, CancellationToken cancellationToken = default);
-}
-
-/// <summary>
-/// DTO for task workload information
-/// </summary>
-public class TaskWorkloadDto
-{
-    public int AssigneeId { get; set; }
-    public string AssigneeName { get; set; } = string.Empty;
-    public int TotalTasks { get; set; }
-    public int CompletedTasks { get; set; }
-    public int InProgressTasks { get; set; }
-    public int OverdueTasks { get; set; }
-    public int HighPriorityTasks { get; set; }
-    public decimal TotalEstimatedHours { get; set; }
-    public decimal TotalActualHours { get; set; }
-    public decimal WorkloadPercentage { get; set; }
-    public decimal EfficiencyRatio { get; set; }
-    public List<TaskSummaryDto> RecentTasks { get; set; } = [];
-}
-
-/// <summary>
-/// DTO for task summary information
-/// </summary>
-public class TaskSummaryDto
-{
-    public int TaskId { get; set; }
-    public string Title { get; set; } = string.Empty;
-    public TaskStatusEnum Status { get; set; }
-    public Priority Priority { get; set; }
-    public DateTime? DueDate { get; set; }
-    public string ProjectName { get; set; } = string.Empty;
-    public decimal? EstimatedHours { get; set; }
-    public decimal? ActualHours { get; set; }
-}
-
-/// <summary>
-/// DTO for task burndown chart data
-/// </summary>
-public class TaskBurndownDto
-{
-    public int ProjectId { get; set; }
-    public string ProjectName { get; set; } = string.Empty;
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public int TotalTasks { get; set; }
-    public int CompletedTasks { get; set; }
-    public List<BurndownDataPointDto> DataPoints { get; set; } = [];
-    public decimal Velocity { get; set; }
-    public DateTime? ProjectedCompletionDate { get; set; }
-}
-
-/// <summary>
-/// DTO for burndown chart data points
-/// </summary>
-public class BurndownDataPointDto
-{
-    public DateTime Date { get; set; }
-    public int RemainingTasks { get; set; }
-    public int CompletedTasks { get; set; }
-    public int IdealRemaining { get; set; }
 }

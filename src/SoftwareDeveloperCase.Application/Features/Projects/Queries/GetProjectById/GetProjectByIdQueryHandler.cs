@@ -2,7 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Application.DTOs.Projects;
+using SoftwareDeveloperCase.Application.Features.Projects.DTOs;
 using SoftwareDeveloperCase.Application.Exceptions;
 using System;
 using System.Threading;

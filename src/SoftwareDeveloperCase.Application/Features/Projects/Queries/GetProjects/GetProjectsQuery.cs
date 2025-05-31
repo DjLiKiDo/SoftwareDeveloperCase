@@ -1,5 +1,5 @@
 using MediatR;
-using SoftwareDeveloperCase.Application.DTOs.Projects;
+using SoftwareDeveloperCase.Application.Features.Projects.DTOs;
 using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Domain.Enums.Core;
 

@@ -2,7 +2,7 @@ using Serilog;
 using SoftwareDeveloperCase.Api;
 using SoftwareDeveloperCase.Api.Middleware;
 using SoftwareDeveloperCase.Api.Filters;
-using SoftwareDeveloperCase.Infrastructure.Persistence;
+using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

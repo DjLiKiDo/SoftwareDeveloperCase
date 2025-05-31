@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Exceptions;
-using UserEntity = SoftwareDeveloperCase.Domain.Entities.Core.User;
+using UserEntity = SoftwareDeveloperCase.Domain.Entities.User;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.DeleteUser;
 

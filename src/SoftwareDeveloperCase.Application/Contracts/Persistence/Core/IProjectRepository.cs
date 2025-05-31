@@ -1,5 +1,5 @@
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities.Project;
 using SoftwareDeveloperCase.Domain.Enums.Core;
 
 namespace SoftwareDeveloperCase.Application.Contracts.Persistence.Core;

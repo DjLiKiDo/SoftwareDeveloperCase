@@ -1,4 +1,5 @@
-using SoftwareDeveloperCase.Application.Contracts.Persistence;using SoftwareDeveloperCase.Domain.Entities.Identity;
+using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
 
 namespace SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 

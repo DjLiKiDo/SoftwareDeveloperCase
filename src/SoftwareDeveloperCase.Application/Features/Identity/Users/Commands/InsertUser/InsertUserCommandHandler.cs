@@ -4,9 +4,10 @@ using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Application.Models;
+using SoftwareDeveloperCase.Domain.Entities;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
 using System.Linq.Expressions;
-using UserEntity = SoftwareDeveloperCase.Domain.Entities.Core.User;
+using UserEntity = SoftwareDeveloperCase.Domain.Entities.User;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.InsertUser;
 

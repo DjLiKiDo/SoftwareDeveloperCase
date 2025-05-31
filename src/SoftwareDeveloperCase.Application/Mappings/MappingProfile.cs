@@ -5,7 +5,7 @@ using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.AssignR
 using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.InsertUser;
 using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.UpdateUser;
 using SoftwareDeveloperCase.Application.Features.Identity.Users.Queries.GetUserPermissions;
-using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
 
 namespace SoftwareDeveloperCase.Application.Mappings;

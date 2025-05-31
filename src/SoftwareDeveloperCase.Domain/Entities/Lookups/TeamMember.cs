@@ -1,5 +1,5 @@
 using SoftwareDeveloperCase.Domain.Common;
-using SoftwareDeveloperCase.Domain.Entities.Core;
+using SoftwareDeveloperCase.Domain.Entities.Team;
 using SoftwareDeveloperCase.Domain.Enums.Core;
 
 namespace SoftwareDeveloperCase.Domain.Entities.Lookups;
@@ -17,7 +17,7 @@ public class TeamMember : BaseEntity
     /// <summary>
     /// Gets or sets the team this member belongs to.
     /// </summary>
-    public Team Team { get; set; } = null!;
+    public Entities.Team.Team Team { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the user identifier.
