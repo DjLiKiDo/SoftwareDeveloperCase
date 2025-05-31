@@ -25,7 +25,7 @@ internal class CachedRoleRepository : IRoleRepository
     /// <param name="cache">The memory cache instance</param>
     /// <param name="cacheKeyService">The cache key service</param>
     public CachedRoleRepository(
-        IRoleRepository roleRepository, 
+        IRoleRepository roleRepository,
         IMemoryCache cache,
         ICacheKeyService cacheKeyService)
     {
@@ -143,7 +143,7 @@ internal class CachedRoleRepository : IRoleRepository
     public async Task<Role> InsertAsync(Role entity, CancellationToken cancellationToken = default)
     {
         var result = await _roleRepository.InsertAsync(entity, cancellationToken);
-        
+
         // Invalidate cache
         InvalidateCacheItems();
 
@@ -159,7 +159,7 @@ internal class CachedRoleRepository : IRoleRepository
     public async Task<Role> UpdateAsync(Role entity, CancellationToken cancellationToken = default)
     {
         var result = await _roleRepository.UpdateAsync(entity, cancellationToken);
-        
+
         // Invalidate cache for this entity and collections
         InvalidateCacheItems();
 
@@ -174,11 +174,11 @@ internal class CachedRoleRepository : IRoleRepository
     public async Task DeleteAsync(Role entity, CancellationToken cancellationToken = default)
     {
         await _roleRepository.DeleteAsync(entity, cancellationToken);
-        
+
         // Invalidate cache for this entity and collections
         InvalidateCacheItems();
     }
-    
+
     /// <summary>
     /// Inserts a new role synchronously
     /// </summary>
@@ -186,11 +186,11 @@ internal class CachedRoleRepository : IRoleRepository
     public void Insert(Role entity)
     {
         _roleRepository.Insert(entity);
-        
+
         // Invalidate cache
         InvalidateCacheItems();
     }
-    
+
     /// <summary>
     /// Updates an existing role synchronously
     /// </summary>
@@ -198,11 +198,11 @@ internal class CachedRoleRepository : IRoleRepository
     public void Update(Role entity)
     {
         _roleRepository.Update(entity);
-        
+
         // Invalidate cache
         InvalidateCacheItems();
     }
-    
+
     /// <summary>
     /// Deletes a role synchronously
     /// </summary>
@@ -210,7 +210,7 @@ internal class CachedRoleRepository : IRoleRepository
     public void Delete(Role entity)
     {
         _roleRepository.Delete(entity);
-        
+
         // Invalidate cache
         InvalidateCacheItems();
     }
@@ -223,7 +223,7 @@ internal class CachedRoleRepository : IRoleRepository
     {
         return _roleRepository.GetQueryable();
     }
-    
+
     /// <summary>
     /// Counts the number of roles in the query
     /// </summary>
@@ -234,7 +234,7 @@ internal class CachedRoleRepository : IRoleRepository
     {
         return _roleRepository.CountAsync(query, cancellationToken);
     }
-    
+
     /// <summary>
     /// Gets a paged result of roles
     /// </summary>
@@ -247,7 +247,7 @@ internal class CachedRoleRepository : IRoleRepository
     {
         return _roleRepository.GetPagedAsync(query, skip, take, cancellationToken);
     }
-    
+
 
 
     /// <summary>

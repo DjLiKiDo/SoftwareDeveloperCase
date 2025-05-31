@@ -43,7 +43,7 @@ internal class ProjectRepository : Repository<Project>, IProjectRepository
     {
         var query = _context.Projects?.Where(p => p.TeamId == teamId)
                                       .Include(p => p.Team!);
-        
+
         return query != null ? await query.ToListAsync(cancellationToken) : new List<Project>();
     }
 

@@ -42,6 +42,6 @@ public class ProjectTimeline : ValueObject
     /// Returns the string representation of the project timeline.
     /// </summary>
     /// <returns>The timeline formatted with planned dates.</returns>
-    public override string ToString() => 
+    public override string ToString() =>
         $"Planned: {PlannedStartDate:yyyy-MM-dd} to {PlannedEndDate:yyyy-MM-dd}";
 }

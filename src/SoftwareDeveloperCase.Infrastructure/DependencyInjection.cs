@@ -121,7 +121,7 @@ public static class DependencyInjection
         });
         // Register email settings validator
         services.AddSingleton<IValidateOptions<EmailSettings>, EmailSettingsValidator>();
-        
+
         // Register EmailService if needed
         services.AddTransient<IEmailService, EmailService>();
 

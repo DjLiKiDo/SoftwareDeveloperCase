@@ -38,7 +38,7 @@ public class CacheKeyService : ICacheKeyService
     {
         return $"{typeof(T).Name.ToLowerInvariant()}:filter:{filter}";
     }
-    
+
     /// <summary>
     /// Generates a cache key pattern for all keys related to an entity type
     /// </summary>

@@ -45,7 +45,7 @@ public interface IRepository<T> where T : BaseEntity
         Expression<Func<T, bool>>? predicate = null,
         Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
         string? includeString = null,
-        bool disableTracking = true, 
+        bool disableTracking = true,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -104,13 +104,13 @@ public interface IRepository<T> where T : BaseEntity
     /// </summary>
     /// <param name="entity">The entity to delete.</param>
     void Delete(T entity);
-    
+
     /// <summary>
     /// Gets a queryable collection of entities
     /// </summary>
     /// <returns>Queryable collection of entities</returns>
     IQueryable<T> GetQueryable();
-    
+
     /// <summary>
     /// Counts the number of entities in the query asynchronously
     /// </summary>
@@ -118,7 +118,7 @@ public interface IRepository<T> where T : BaseEntity
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Count of entities in the query</returns>
     Task<int> CountAsync(IQueryable<T> query, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Gets a paged result from a query asynchronously
     /// </summary>

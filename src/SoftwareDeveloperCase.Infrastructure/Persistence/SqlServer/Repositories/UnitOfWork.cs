@@ -35,22 +35,22 @@ internal class UnitOfWork : IUnitOfWork
     /// Gets the permission repository
     /// </summary>
     public IPermissionRepository PermissionRepository => _permissionRepository;
-    
+
     /// <summary>
     /// Gets the role permission repository
     /// </summary>
     public IRolePermissionRepository RolePermissionRepository => _rolePermissionRepository;
-    
+
     /// <summary>
     /// Gets the role repository
     /// </summary>
     public IRoleRepository RoleRepository => _roleRepository;
-    
+
     /// <summary>
     /// Gets the user repository
     /// </summary>
     public IUserRepository UserRepository => _userRepository;
-    
+
     /// <summary>
     /// Gets the user role repository
     /// </summary>
@@ -60,22 +60,22 @@ internal class UnitOfWork : IUnitOfWork
     /// Gets the team repository
     /// </summary>
     public ITeamRepository TeamRepository => _teamRepository;
-    
+
     /// <summary>
     /// Gets the team member repository
     /// </summary>
     public ITeamMemberRepository TeamMemberRepository => _teamMemberRepository;
-    
+
     /// <summary>
     /// Gets the project repository
     /// </summary>
     public IProjectRepository ProjectRepository => _projectRepository;
-    
+
     /// <summary>
     /// Gets the task repository
     /// </summary>
     public ITaskRepository TaskRepository => _taskRepository;
-    
+
     /// <summary>
     /// Gets the task comment repository
     /// </summary>
@@ -105,14 +105,14 @@ internal class UnitOfWork : IUnitOfWork
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        
+
         // Identity repositories
         _permissionRepository = permissionRepository ?? throw new ArgumentNullException(nameof(permissionRepository));
         _rolePermissionRepository = rolePermissionRepository ?? throw new ArgumentNullException(nameof(rolePermissionRepository));
         _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _userRoleRepository = userRoleRepository ?? throw new ArgumentNullException(nameof(userRoleRepository));
-        
+
         // Core domain repositories
         _teamRepository = teamRepository ?? throw new ArgumentNullException(nameof(teamRepository));
         _teamMemberRepository = teamMemberRepository ?? throw new ArgumentNullException(nameof(teamMemberRepository));

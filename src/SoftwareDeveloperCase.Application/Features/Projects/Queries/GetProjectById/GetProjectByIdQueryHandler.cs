@@ -53,7 +53,7 @@ public class GetProjectByIdQueryHandler : IRequestHandler<GetProjectByIdQuery, P
         }
 
         var projectDto = _mapper.Map<ProjectDto>(project);
-        
+
         // If there's a team associated with the project, get the team name
         if (project.TeamId != Guid.Empty)
         {

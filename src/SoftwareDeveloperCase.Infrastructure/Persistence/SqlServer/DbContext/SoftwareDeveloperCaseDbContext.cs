@@ -126,12 +126,12 @@ public class SoftwareDeveloperCaseDbContext : DbContext
                 hierarchy.Property(h => h.Level)
                     .HasColumnName("HierarchyLevel")
                     .IsRequired();
-                
+
                 hierarchy.Property(h => h.Path)
                     .HasColumnName("HierarchyPath")
                     .HasMaxLength(500)
                     .IsRequired();
-                
+
                 hierarchy.Property(h => h.Order)
                     .HasColumnName("HierarchyOrder")
                     .IsRequired();

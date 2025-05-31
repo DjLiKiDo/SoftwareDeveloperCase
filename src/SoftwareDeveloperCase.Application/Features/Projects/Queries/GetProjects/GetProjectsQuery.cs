@@ -55,12 +55,12 @@ public class GetProjectsQuery : IRequest<PagedResult<ProjectDto>>
         PageNumber = pageNumber < 1 ? 1 : pageNumber;
         PageSize = pageSize < 1 ? 10 : pageSize;
         SearchTerm = searchTerm;
-        
+
         if (!string.IsNullOrWhiteSpace(status) && Enum.TryParse<ProjectStatus>(status, true, out var statusEnum))
         {
             Status = statusEnum;
         }
-        
+
         TeamId = teamId;
     }
 }

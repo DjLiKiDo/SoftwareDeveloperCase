@@ -29,7 +29,7 @@ internal class TeamMemberRepository : Repository<TeamMember>, ITeamMemberReposit
             .Include(tm => tm.Team)
             .Where(tm => tm.TeamId == teamId)
             .ToListAsync(cancellationToken);
-        
+
         return members.AsReadOnly();
     }
 
@@ -46,7 +46,7 @@ internal class TeamMemberRepository : Repository<TeamMember>, ITeamMemberReposit
             .Include(tm => tm.User)
             .Where(tm => tm.UserId == userId)
             .ToListAsync(cancellationToken);
-        
+
         return members.AsReadOnly();
     }
 
@@ -91,7 +91,7 @@ internal class TeamMemberRepository : Repository<TeamMember>, ITeamMemberReposit
             .Include(tm => tm.Team)
             .Where(tm => tm.TeamId == teamId && tm.Status == MemberStatus.Active)
             .ToListAsync(cancellationToken);
-        
+
         return members.AsReadOnly();
     }
 
@@ -99,7 +99,7 @@ internal class TeamMemberRepository : Repository<TeamMember>, ITeamMemberReposit
     {
         var query = _context.TeamMembers?.Where(tm => tm.TeamId == teamId)
                                          .Include(tm => tm.User);
-        
+
         return query != null ? await query.ToListAsync(cancellationToken) : new List<TeamMember>();
     }
 
@@ -107,7 +107,7 @@ internal class TeamMemberRepository : Repository<TeamMember>, ITeamMemberReposit
     {
         var query = _context.TeamMembers?.Where(tm => tm.UserId == userId)
                                          .Include(tm => tm.Team);
-        
+
         return query != null ? await query.ToListAsync(cancellationToken) : new List<TeamMember>();
     }
 
@@ -115,7 +115,7 @@ internal class TeamMemberRepository : Repository<TeamMember>, ITeamMemberReposit
     {
         var query = _context.TeamMembers?.Where(tm => tm.TeamId == teamId && tm.Status == MemberStatus.Active)
                                          .Include(tm => tm.User);
-        
+
         return query != null ? await query.ToListAsync(cancellationToken) : new List<TeamMember>();
     }
 
@@ -129,7 +129,7 @@ internal class TeamMemberRepository : Repository<TeamMember>, ITeamMemberReposit
     {
         var query = _context.TeamMembers?.Where(tm => tm.TeamId == teamId && tm.TeamRole == TeamRole.Leader) // Changed from tm.Role to tm.TeamRole
                                          .Include(tm => tm.User);
-        
+
         return query != null ? await query.ToListAsync(cancellationToken) : new List<TeamMember>();
     }
 }

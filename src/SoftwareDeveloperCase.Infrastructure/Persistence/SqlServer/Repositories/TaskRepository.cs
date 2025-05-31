@@ -33,7 +33,7 @@ internal class TaskRepository : Repository<TaskEntity>, ITaskRepository
             .Include(t => t.ParentTask)
             .Where(t => t.ProjectId == projectId) ?? throw new InvalidOperationException("Tasks DbSet is null"))
             .ToListAsync(cancellationToken);
-        
+
         return tasks.AsReadOnly();
     }
 
@@ -51,7 +51,7 @@ internal class TaskRepository : Repository<TaskEntity>, ITaskRepository
             .Include(t => t.ParentTask)
             .Where(t => t.AssignedToId == assigneeId) ?? throw new InvalidOperationException("Tasks DbSet is null"))
             .ToListAsync(cancellationToken);
-        
+
         return tasks.AsReadOnly();
     }
 
@@ -69,7 +69,7 @@ internal class TaskRepository : Repository<TaskEntity>, ITaskRepository
             .Include(t => t.ParentTask)
             .Where(t => t.Status == status) ?? throw new InvalidOperationException("Tasks DbSet is null"))
             .ToListAsync(cancellationToken);
-        
+
         return tasks.AsReadOnly();
     }
 
@@ -87,7 +87,7 @@ internal class TaskRepository : Repository<TaskEntity>, ITaskRepository
             .Include(t => t.ParentTask)
             .Where(t => t.Priority == priority) ?? throw new InvalidOperationException("Tasks DbSet is null"))
             .ToListAsync(cancellationToken);
-        
+
         return tasks.AsReadOnly();
     }
 
@@ -106,7 +106,7 @@ internal class TaskRepository : Repository<TaskEntity>, ITaskRepository
             .Include(t => t.SubTasks)
             .Where(t => t.ParentTaskId == parentTaskId) ?? throw new InvalidOperationException("Tasks DbSet is null"))
             .ToListAsync(cancellationToken);
-        
+
         return tasks.AsReadOnly();
     }
 
@@ -155,10 +155,10 @@ internal class TaskRepository : Repository<TaskEntity>, ITaskRepository
     public async Task<IReadOnlyList<TaskEntity>> GetOverdueTasksAsync(CancellationToken cancellationToken = default)
     {
         var now = DateTime.UtcNow;
-        var query = _context.Tasks?.Where(t => t.DueDate.HasValue && 
-                                               t.DueDate.Value < now && 
+        var query = _context.Tasks?.Where(t => t.DueDate.HasValue &&
+                                               t.DueDate.Value < now &&
                                                t.Status != DomainTaskStatus.Done);
-        
+
         return query != null ? await query.ToListAsync(cancellationToken) : new List<TaskEntity>();
     }
 
@@ -171,10 +171,10 @@ internal class TaskRepository : Repository<TaskEntity>, ITaskRepository
     public async Task<IReadOnlyList<TaskEntity>> GetTasksDueWithinDaysAsync(int daysAhead, CancellationToken cancellationToken = default)
     {
         var cutoffDate = DateTime.UtcNow.AddDays(daysAhead);
-        var query = _context.Tasks?.Where(t => t.DueDate.HasValue && 
-                                               t.DueDate.Value <= cutoffDate && 
+        var query = _context.Tasks?.Where(t => t.DueDate.HasValue &&
+                                               t.DueDate.Value <= cutoffDate &&
                                                t.Status != DomainTaskStatus.Done);
-        
+
         return query != null ? await query.ToListAsync(cancellationToken) : new List<TaskEntity>();
     }
 

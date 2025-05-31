@@ -29,7 +29,7 @@ internal class TaskCommentRepository : Repository<TaskComment>, ITaskCommentRepo
             .Where(tc => tc.TaskId == taskId)
             .OrderBy(tc => tc.CreatedAt)
             .ToListAsync(cancellationToken);
-        
+
         return comments.AsReadOnly();
     }
 
@@ -48,7 +48,7 @@ internal class TaskCommentRepository : Repository<TaskComment>, ITaskCommentRepo
             .Where(tc => tc.AuthorId == authorId) // Changed from tc.UserId to tc.AuthorId
             .OrderByDescending(tc => tc.CreatedAt)
             .ToListAsync(cancellationToken);
-        
+
         return comments.AsReadOnly();
     }
 
@@ -66,7 +66,7 @@ internal class TaskCommentRepository : Repository<TaskComment>, ITaskCommentRepo
             .Where(tc => tc.TaskId == taskId)
             .OrderBy(tc => tc.CreatedAt)
             .ToListAsync(cancellationToken);
-        
+
         return comments.AsReadOnly();
     }
 
@@ -86,7 +86,7 @@ internal class TaskCommentRepository : Repository<TaskComment>, ITaskCommentRepo
             .OrderByDescending(tc => tc.CreatedAt)
             .Take(take)
             .ToListAsync(cancellationToken);
-        
+
         return comments.AsReadOnly();
     }
 
@@ -107,7 +107,7 @@ internal class TaskCommentRepository : Repository<TaskComment>, ITaskCommentRepo
             .OrderByDescending(tc => tc.CreatedAt)
             .Take(take)
             .ToListAsync(cancellationToken);
-        
+
         return comments.AsReadOnly();
     }
 
@@ -116,7 +116,7 @@ internal class TaskCommentRepository : Repository<TaskComment>, ITaskCommentRepo
         var query = _context.TaskComments?.Where(tc => tc.TaskId == taskId)
                                           .Include(tc => tc.Author) // Changed from tc.User to tc.Author
                                           .OrderBy(tc => tc.CreatedAt);
-        
+
         return query != null ? await query.ToListAsync(cancellationToken) : new List<TaskComment>();
     }
 
@@ -125,7 +125,7 @@ internal class TaskCommentRepository : Repository<TaskComment>, ITaskCommentRepo
         var query = _context.TaskComments?.Where(tc => tc.AuthorId == userId) // Changed from tc.UserId to tc.AuthorId
                                           .Include(tc => tc.Author) // Changed from tc.User to tc.Author
                                           .Include(tc => tc.Task);
-        
+
         return query != null ? await query.ToListAsync(cancellationToken) : new List<TaskComment>();
     }
 
@@ -135,18 +135,18 @@ internal class TaskCommentRepository : Repository<TaskComment>, ITaskCommentRepo
                                           .Include(tc => tc.Author) // Changed from tc.User to tc.Author
                                           .OrderByDescending(tc => tc.CreatedAt)
                                           .Take(count);
-        
+
         return query != null ? await query.ToListAsync(cancellationToken) : new List<TaskComment>();
     }
 
     public async Task<IEnumerable<TaskComment>> GetCommentsByDateRangeAsync(Guid taskId, DateTime startDate, DateTime endDate, CancellationToken cancellationToken = default)
     {
-        var query = _context.TaskComments?.Where(tc => tc.TaskId == taskId && 
-                                                       tc.CreatedAt >= startDate && 
+        var query = _context.TaskComments?.Where(tc => tc.TaskId == taskId &&
+                                                       tc.CreatedAt >= startDate &&
                                                        tc.CreatedAt <= endDate)
                                           .Include(tc => tc.Author) // Changed from tc.User to tc.Author
                                           .OrderBy(tc => tc.CreatedAt);
-        
+
         return query != null ? await query.ToListAsync(cancellationToken) : new List<TaskComment>();
     }
 }

@@ -46,7 +46,7 @@ public class TeamsController : ControllerBase
         // };
         // var result = await _mediator.Send(query);
         // return Ok(result);
-        
+
         await Task.CompletedTask;
         return Ok(new { Message = "GetTeams endpoint - Implementation pending in Phase 5" });
     }
@@ -66,7 +66,7 @@ public class TeamsController : ControllerBase
         // var query = new GetTeamByIdQuery(teamId);
         // var result = await _mediator.Send(query);
         // return Ok(result);
-        
+
         await Task.CompletedTask;
         return Ok(new { Message = $"GetTeamById endpoint for team {teamId} - Implementation pending in Phase 5" });
     }
@@ -85,7 +85,7 @@ public class TeamsController : ControllerBase
         // TODO: Implement CreateTeamCommand when available
         // var result = await _mediator.Send(command);
         // return CreatedAtRoute("GetTeamById", new { teamId = result }, result);
-        
+
         await Task.CompletedTask;
         return Ok(new { Message = "CreateTeam endpoint - Implementation pending in Phase 5" });
     }
@@ -106,7 +106,7 @@ public class TeamsController : ControllerBase
         // TODO: Implement UpdateTeamCommand when available
         // await _mediator.Send(command);
         // return NoContent();
-        
+
         await Task.CompletedTask;
         return Ok(new { Message = $"UpdateTeam endpoint for team {teamId} - Implementation pending in Phase 5" });
     }
@@ -126,7 +126,7 @@ public class TeamsController : ControllerBase
         // var command = new DeleteTeamCommand { Id = teamId };
         // await _mediator.Send(command);
         // return NoContent();
-        
+
         await Task.CompletedTask;
         return Ok(new { Message = $"DeleteTeam endpoint for team {teamId} - Implementation pending in Phase 5" });
     }
@@ -146,7 +146,7 @@ public class TeamsController : ControllerBase
         // var query = new GetTeamMembersQuery(teamId);
         // var result = await _mediator.Send(query);
         // return Ok(result);
-        
+
         await Task.CompletedTask;
         return Ok(new { Message = $"GetTeamMembers endpoint for team {teamId} - Implementation pending in Phase 5" });
     }
@@ -167,7 +167,7 @@ public class TeamsController : ControllerBase
         // TODO: Implement AddTeamMemberCommand when available
         // var result = await _mediator.Send(command);
         // return CreatedAtRoute("GetTeamMembers", new { teamId }, result);
-        
+
         await Task.CompletedTask;
         return Ok(new { Message = $"AddTeamMember endpoint for team {teamId} - Implementation pending in Phase 5" });
     }
@@ -188,7 +188,7 @@ public class TeamsController : ControllerBase
         // var command = new RemoveTeamMemberCommand { TeamId = teamId, UserId = userId };
         // await _mediator.Send(command);
         // return NoContent();
-        
+
         await Task.CompletedTask;
         return Ok(new { Message = $"RemoveTeamMember endpoint for team {teamId}, user {userId} - Implementation pending in Phase 5" });
     }

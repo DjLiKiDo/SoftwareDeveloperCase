@@ -139,7 +139,7 @@ public static class SwaggerConfiguration
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "SoftwareDeveloperCase API v1");
             c.RoutePrefix = "swagger";
             c.DocumentTitle = "SoftwareDeveloperCase API Documentation";
-            
+
             // UI Customization
             c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
             c.DefaultModelsExpandDepth(-1);

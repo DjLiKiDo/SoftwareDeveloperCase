@@ -56,8 +56,8 @@ public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, PagedRe
         if (!string.IsNullOrEmpty(request.SearchTerm))
         {
             var searchTerm = request.SearchTerm.ToLower();
-            query = query.Where(p => 
-                p.Name.ToLower().Contains(searchTerm) || 
+            query = query.Where(p =>
+                p.Name.ToLower().Contains(searchTerm) ||
                 (p.Description != null && p.Description.ToLower().Contains(searchTerm)));
         }
 

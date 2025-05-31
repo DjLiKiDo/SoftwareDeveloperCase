@@ -56,7 +56,7 @@ public class TasksController : ControllerBase
         // return Ok(result);
 
         var mockResult = new PagedResult<TaskDto>(
-            new List<TaskDto>(), 
+            new List<TaskDto>(),
             pageNumber,
             pageSize,
             0);

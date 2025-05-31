@@ -117,17 +117,17 @@ internal class Repository<T> : IRepository<T> where T : BaseEntity
     {
         _context.Set<T>().Remove(entity);
     }
-    
+
     public IQueryable<T> GetQueryable()
     {
         return _context.Set<T>();
     }
-    
+
     public async Task<int> CountAsync(IQueryable<T> query, CancellationToken cancellationToken = default)
     {
         return await query.CountAsync(cancellationToken);
     }
-    
+
     public async Task<IReadOnlyList<T>> GetPagedAsync(IQueryable<T> query, int skip, int take, CancellationToken cancellationToken = default)
     {
         return await query.Skip(skip).Take(take).ToListAsync(cancellationToken);

@@ -32,7 +32,7 @@ public abstract class BaseValidator<T> : AbstractValidator<T>
     /// <summary>
     /// Validates that a value is positive
     /// </summary>
-    protected void ValidatePositiveValue<TProperty>(IRuleBuilder<T, TProperty> ruleBuilder) 
+    protected void ValidatePositiveValue<TProperty>(IRuleBuilder<T, TProperty> ruleBuilder)
         where TProperty : struct, IComparable<TProperty>
     {
         ruleBuilder

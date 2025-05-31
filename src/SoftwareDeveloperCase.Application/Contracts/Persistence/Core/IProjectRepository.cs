@@ -10,7 +10,7 @@ namespace SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
 public interface IProjectRepository : IRepository<Project>
 {
     // These methods are now already inherited from IRepository<Project>
-    
+
     /// <summary>
     /// Gets projects by team ID
     /// </summary>

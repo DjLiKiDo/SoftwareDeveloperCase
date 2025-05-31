@@ -61,7 +61,7 @@ public class ProjectsController : ControllerBase
             Status = status != null ? Enum.Parse<Domain.Enums.Core.ProjectStatus>(status) : null,
             TeamId = teamId
         };
-        
+
         var result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }
@@ -126,7 +126,7 @@ public class ProjectsController : ControllerBase
     public async Task<ActionResult<bool>> UpdateProject(Guid id, UpdateProjectCommand request, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Updating project with ID: {ProjectId}", id);
-        
+
         // Ensure the ID in the route matches the ID in the request body
         if (id != request.Id)
         {
@@ -167,12 +167,12 @@ public class ProjectsController : ControllerBase
         {
             var command = new DeleteProjectCommand(id);
             var result = await _mediator.Send(command, cancellationToken);
-            
+
             if (result)
             {
                 return NoContent();
             }
-            
+
             return BadRequest("Failed to delete project");
         }
         catch (Application.Exceptions.NotFoundException ex)

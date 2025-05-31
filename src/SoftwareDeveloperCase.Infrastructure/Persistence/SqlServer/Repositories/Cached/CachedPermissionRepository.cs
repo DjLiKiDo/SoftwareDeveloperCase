@@ -25,7 +25,7 @@ internal class CachedPermissionRepository : IPermissionRepository
     /// <param name="cache">The memory cache instance</param>
     /// <param name="cacheKeyService">The cache key service</param>
     public CachedPermissionRepository(
-        IPermissionRepository permissionRepository, 
+        IPermissionRepository permissionRepository,
         IMemoryCache cache,
         ICacheKeyService cacheKeyService)
     {
@@ -143,7 +143,7 @@ internal class CachedPermissionRepository : IPermissionRepository
     public async Task<Permission> InsertAsync(Permission entity, CancellationToken cancellationToken = default)
     {
         var result = await _permissionRepository.InsertAsync(entity, cancellationToken);
-        
+
         // Invalidate cache
         InvalidateCacheItems();
 
@@ -159,7 +159,7 @@ internal class CachedPermissionRepository : IPermissionRepository
     public async Task<Permission> UpdateAsync(Permission entity, CancellationToken cancellationToken = default)
     {
         var result = await _permissionRepository.UpdateAsync(entity, cancellationToken);
-        
+
         // Invalidate cache for this entity and collections
         InvalidateCacheItems();
 
@@ -174,11 +174,11 @@ internal class CachedPermissionRepository : IPermissionRepository
     public async Task DeleteAsync(Permission entity, CancellationToken cancellationToken = default)
     {
         await _permissionRepository.DeleteAsync(entity, cancellationToken);
-        
+
         // Invalidate cache for this entity and collections
         InvalidateCacheItems();
     }
-    
+
     /// <summary>
     /// Inserts a new permission synchronously
     /// </summary>
@@ -186,11 +186,11 @@ internal class CachedPermissionRepository : IPermissionRepository
     public void Insert(Permission entity)
     {
         _permissionRepository.Insert(entity);
-        
+
         // Invalidate cache
         InvalidateCacheItems();
     }
-    
+
     /// <summary>
     /// Updates an existing permission synchronously
     /// </summary>
@@ -198,11 +198,11 @@ internal class CachedPermissionRepository : IPermissionRepository
     public void Update(Permission entity)
     {
         _permissionRepository.Update(entity);
-        
+
         // Invalidate cache
         InvalidateCacheItems();
     }
-    
+
     /// <summary>
     /// Deletes a permission synchronously
     /// </summary>
@@ -210,7 +210,7 @@ internal class CachedPermissionRepository : IPermissionRepository
     public void Delete(Permission entity)
     {
         _permissionRepository.Delete(entity);
-        
+
         // Invalidate cache
         InvalidateCacheItems();
     }
@@ -223,7 +223,7 @@ internal class CachedPermissionRepository : IPermissionRepository
     {
         return _permissionRepository.GetQueryable();
     }
-    
+
     /// <summary>
     /// Counts the number of permissions in the query
     /// </summary>
@@ -234,7 +234,7 @@ internal class CachedPermissionRepository : IPermissionRepository
     {
         return _permissionRepository.CountAsync(query, cancellationToken);
     }
-    
+
     /// <summary>
     /// Gets a paged result of permissions
     /// </summary>
@@ -247,7 +247,7 @@ internal class CachedPermissionRepository : IPermissionRepository
     {
         return _permissionRepository.GetPagedAsync(query, skip, take, cancellationToken);
     }
-    
+
 
 
     /// <summary>

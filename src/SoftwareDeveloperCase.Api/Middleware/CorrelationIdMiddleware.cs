@@ -20,10 +20,10 @@ public class CorrelationIdMiddleware
     public async Task InvokeAsync(HttpContext context)
     {
         var correlationId = GetOrCreateCorrelationId(context);
-        
+
         // Add to response headers
         context.Response.Headers.Append(CorrelationIdHeaderName, correlationId);
-        
+
         // Add to logging scope
         using var scope = _logger.BeginScope(new Dictionary<string, object>
         {

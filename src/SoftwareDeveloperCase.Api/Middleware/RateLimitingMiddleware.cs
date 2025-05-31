@@ -24,14 +24,14 @@ public class RateLimitingMiddleware
         var rateLimiter = GetRateLimiter(clientId);
 
         using var lease = await rateLimiter.AcquireAsync(permitCount: 1);
-        
+
         if (!lease.IsAcquired)
         {
             _logger.LogWarning("Rate limit exceeded for client {ClientId}", clientId);
-            
+
             context.Response.StatusCode = 429; // Too Many Requests
             context.Response.Headers.Append("Retry-After", "60");
-            
+
             await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(new
             {
                 Type = "RateLimitExceeded",
@@ -40,7 +40,7 @@ public class RateLimitingMiddleware
                 Detail = "Too many requests. Please try again later.",
                 TraceId = context.TraceIdentifier
             }));
-            
+
             return;
         }
 

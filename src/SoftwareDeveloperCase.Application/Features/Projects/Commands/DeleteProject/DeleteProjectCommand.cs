@@ -12,14 +12,14 @@ public class DeleteProjectCommand : IRequest<bool>
     /// Gets or sets the project ID to delete
     /// </summary>
     public Guid Id { get; set; }
-    
+
     /// <summary>
     /// Initializes a new instance of the DeleteProjectCommand class
     /// </summary>
     public DeleteProjectCommand()
     {
     }
-    
+
     /// <summary>
     /// Initializes a new instance of the DeleteProjectCommand class with a project ID
     /// </summary>

@@ -29,7 +29,7 @@ internal class TeamRepository : Repository<Team>, ITeamRepository
             .ThenInclude(tm => tm.User)
             .Where(t => t.TeamMembers.Any(m => m.UserId == userId)) // No longer need int conversion
             .ToListAsync(cancellationToken));
-        
+
         return teams.AsReadOnly();
     }
 
@@ -46,7 +46,7 @@ internal class TeamRepository : Repository<Team>, ITeamRepository
             .ThenInclude(tm => tm.User)
             .Where(t => t.TeamMembers.Any(m => m.UserId == leaderId && m.TeamRole == TeamRole.Leader)) // No longer need int conversion
             .ToListAsync(cancellationToken));
-        
+
         return teams.AsReadOnly();
     }
 
@@ -62,7 +62,7 @@ internal class TeamRepository : Repository<Team>, ITeamRepository
             .ThenInclude(tm => tm.User)
             .Include(t => t.Projects)
             .ToListAsync(cancellationToken));
-        
+
         return teams.AsReadOnly();
     }
 
@@ -115,7 +115,7 @@ internal class TeamRepository : Repository<Team>, ITeamRepository
         var teams = await _context.Teams!
             .Include(t => t.Projects.Where(p => p.Status == ProjectStatus.Active))
             .ToListAsync(cancellationToken);
-        
+
         return teams.AsReadOnly();
     }
 
@@ -127,7 +127,7 @@ internal class TeamRepository : Repository<Team>, ITeamRepository
     public async Task<IEnumerable<Team>> GetTeamsWithProjectsAsync(CancellationToken cancellationToken = default)
     {
         var query = _context.Teams?.Include(t => t.Projects);
-        
+
         return query != null ? await query.ToListAsync(cancellationToken) : new List<Team>();
     }
 }

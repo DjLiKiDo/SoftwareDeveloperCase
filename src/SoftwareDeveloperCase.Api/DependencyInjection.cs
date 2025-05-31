@@ -26,7 +26,7 @@ public static class DependencyInjection
             options.Filters.Add<PerformanceLoggingActionFilter>();
             options.Filters.Add<ResourceAccessAuthorizationFilter>();
         });
-        
+
         // Configure API filters
         services.AddScoped<ModelValidationActionFilter>();
         services.AddScoped<PerformanceLoggingActionFilter>();
