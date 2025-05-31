@@ -12,7 +12,7 @@ public class TeamMember : BaseEntity
     /// <summary>
     /// Gets or sets the team ID
     /// </summary>
-    public Guid TeamId { get; set; } // Changed from int to Guid
+    public Guid TeamId { get; set; }
 
     /// <summary>
     /// Gets or sets the team navigation property
@@ -22,7 +22,7 @@ public class TeamMember : BaseEntity
     /// <summary>
     /// Gets or sets the user ID
     /// </summary>
-    public Guid UserId { get; set; } // Changed from int to Guid
+    public Guid UserId { get; set; }
 
     /// <summary>
     /// Gets or sets the user navigation property
