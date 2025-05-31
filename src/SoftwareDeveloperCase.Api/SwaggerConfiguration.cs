@@ -2,6 +2,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Reflection;
+using SoftwareDeveloperCase.Api.Configuration;
 
 namespace SoftwareDeveloperCase.Api;
 

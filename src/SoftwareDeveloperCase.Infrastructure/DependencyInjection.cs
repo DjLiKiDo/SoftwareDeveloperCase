@@ -13,6 +13,7 @@ using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
 using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Repositories;
 using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Repositories.Cached;
 using SoftwareDeveloperCase.Infrastructure.ExternalServices;
+using SoftwareDeveloperCase.Infrastructure.Services;
 
 namespace SoftwareDeveloperCase.Infrastructure;
 
@@ -63,7 +64,7 @@ public static class DependencyInjection
         services.AddScoped<ITaskCommentRepository, TaskCommentRepository>();
 
         // Configure database context
-        services.AddDbContext<Persistence.SoftwareDeveloperCaseDbContext>((serviceProvider, options) =>
+        services.AddDbContext<SoftwareDeveloperCaseDbContext>((serviceProvider, options) =>
         {
             var databaseSettings = serviceProvider.GetRequiredService<IOptions<DatabaseSettings>>().Value;
 
