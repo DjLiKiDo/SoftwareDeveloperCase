@@ -88,10 +88,10 @@ public class InsertUserCommandHandlerPasswordHashingTests
         capturedUser.Should().NotBeNull();
         capturedUser!.Password.Should().NotBe(plainTextPassword, "password should be hashed");
         capturedUser.Password.Should().StartWith("$2a$12$", "should use BCrypt with work factor 12");
-        
+
         // Verify the hash can be verified with the original password
         _passwordService.VerifyPassword(plainTextPassword, capturedUser.Password).Should().BeTrue();
-        
+
         // Verify the hash cannot be verified with wrong password
         _passwordService.VerifyPassword("WrongPassword", capturedUser.Password).Should().BeFalse();
     }
