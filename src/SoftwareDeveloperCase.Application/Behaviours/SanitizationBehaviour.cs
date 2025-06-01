@@ -53,7 +53,7 @@ public class SanitizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReq
 
         // Get all properties of the object using cached reflection metadata
         var objectType = obj.GetType();
-        var properties = PropertyCache.GetOrAdd(objectType, 
+        var properties = PropertyCache.GetOrAdd(objectType,
             type => type.GetProperties(BindingFlags.Public | BindingFlags.Instance));
 
         foreach (var property in properties)
