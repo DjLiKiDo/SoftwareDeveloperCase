@@ -141,7 +141,7 @@ jobs:
     
     - name: Publish API
       run: |
-        dotnet publish SoftwareDeveloperCase.Api/SoftwareDeveloperCase.Api.csproj \
+        dotnet publish src/SoftwareDeveloperCase.Api/SoftwareDeveloperCase.Api.csproj \
           --no-build \
           --configuration Release \
           --output ./publish \
