@@ -101,7 +101,7 @@ public class JwtTokenService : IJwtTokenService
 
             var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
 
-            if (validatedToken is not JwtSecurityToken jwtToken || 
+            if (validatedToken is not JwtSecurityToken jwtToken ||
                 !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {
                 return null;

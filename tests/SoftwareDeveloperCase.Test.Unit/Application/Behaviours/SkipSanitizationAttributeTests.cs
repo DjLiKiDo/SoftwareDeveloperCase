@@ -17,7 +17,7 @@ public class SkipSanitizationAttributeTests
     private class TestClass
     {
         public string? RegularProperty { get; set; }
-        
+
         [SkipSanitization("Test sensitive data")]
         public string? SensitiveProperty { get; set; }
     }

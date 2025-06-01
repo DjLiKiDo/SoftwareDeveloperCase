@@ -32,7 +32,7 @@ public class RefreshTokenCommandValidator : AbstractValidator<RefreshTokenComman
 
         // Sanitize the token to ensure it doesn't contain malicious content
         var sanitized = InputSanitizer.SanitizeString(token);
-        
+
         // Token should remain unchanged after sanitization
         // and should be at least 32 characters (typical for secure tokens)
         return sanitized == token && token.Length >= 32;

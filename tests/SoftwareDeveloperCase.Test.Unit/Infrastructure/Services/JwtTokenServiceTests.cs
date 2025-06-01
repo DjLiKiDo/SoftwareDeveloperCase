@@ -46,7 +46,7 @@ public class JwtTokenServiceTests
 
         // Assert
         token.Should().NotBeNullOrEmpty();
-        
+
         // Validate token structure (JWT has 3 parts separated by dots)
         var tokenParts = token.Split('.');
         tokenParts.Should().HaveCount(3);

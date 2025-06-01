@@ -136,9 +136,10 @@ dotnet run --project SoftwareDeveloperCase.Api
 
 ### Quick Start
 1. Register a new user via POST `/api/v1/auth/register`
-2. Login to get JWT token via POST `/api/v1/auth/login`
-3. Use the token in Authorization header: `Bearer {token}`
-4. Create a team, project, and start managing tasks!
+2. Login to get JWT tokens via POST `/api/v1/auth/login`
+3. Use the access token in Authorization header: `Bearer {access_token}`
+4. Refresh tokens automatically when access token expires
+5. Create a team, project, and start managing tasks!
 
 ## 🧪 Testing
 
@@ -169,9 +170,10 @@ https://localhost:7001/swagger
 
 #### Authentication
 - `POST /api/v1/auth/register` - Register new user
-- `POST /api/v1/auth/login` - Login with credentials
-- `POST /api/v1/auth/refresh` - Refresh access token
-- `POST /api/v1/auth/logout` - Logout and revoke tokens
+- `POST /api/v1/auth/login` - Login with credentials and receive JWT tokens
+- `POST /api/v1/auth/refresh` - Exchange refresh token for new access token
+- `POST /api/v1/auth/logout` - Logout and revoke refresh tokens
+- `GET /api/v1/auth/me` - Get current authenticated user information
 
 #### Teams
 - `GET /api/v1/teams` - List all teams (paginated)
@@ -221,12 +223,15 @@ https://localhost:7001/swagger
 
 ## 🔒 Security
 
-- JWT Bearer authentication with refresh tokens
-- Role-based authorization (Admin, Manager, Developer)
-- Rate limiting per user/IP
-- Input validation and sanitization
-- HTTPS enforcement
-- Security headers implementation
+- **JWT Bearer Authentication**: OAuth2-compliant token-based authentication
+  - 15-minute access tokens with HMAC-SHA256 signing
+  - 7-day refresh tokens with automatic rotation
+  - Secure token storage and validation
+- **Role-Based Authorization**: Admin, Manager, Developer roles with granular permissions
+- **Input Sanitization**: Comprehensive protection against injection attacks
+- **Rate Limiting**: Per user/IP request throttling
+- **Security Headers**: Content Security Policy, HSTS, X-Frame-Options
+- **HTTPS Enforcement**: TLS/SSL required for all communications
 
 ## 🤝 Contributing
 
@@ -287,11 +292,12 @@ https://localhost:7001/swagger
 # Database
 ConnectionStrings__DefaultConnection="Server=...;Database=...;Trusted_Connection=true;"
 
-# JWT
-Jwt__Secret="your-secret-key-min-32-chars"
-Jwt__Issuer="your-issuer"
-Jwt__Audience="your-audience"
+# JWT Authentication
+Jwt__Secret="your-secret-key-min-32-chars-for-hmac-sha256"
+Jwt__Issuer="your-application-name"
+Jwt__Audience="your-api-audience"
 Jwt__ExpirationMinutes="15"
+Jwt__RefreshExpirationDays="7"
 
 # Logging
 Serilog__MinimumLevel__Default="Information"
