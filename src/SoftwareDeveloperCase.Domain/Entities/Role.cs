@@ -1,4 +1,5 @@
 using SoftwareDeveloperCase.Domain.Common;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
 
 namespace SoftwareDeveloperCase.Domain.Entities;
 
@@ -10,7 +11,7 @@ public class Role : BaseEntity
     /// <summary>
     /// Gets or sets the name of the role.
     /// </summary>
-    public string? Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the identifier of the parent role for hierarchical roles.
@@ -20,7 +21,7 @@ public class Role : BaseEntity
     /// <summary>
     /// Gets or sets the parent role for hierarchical role structure.
     /// </summary>
-    public virtual Role? ParentRole { get; set; }
+    public Role? ParentRole { get; set; }
 
     /// <summary>
     /// Gets or sets the collection of user-role associations.

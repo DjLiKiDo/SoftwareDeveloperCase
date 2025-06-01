@@ -1,6 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Domain.Entities;
+using SoftwareDeveloperCase.Domain.Entities.Team;
+using SoftwareDeveloperCase.Domain.Entities.Task;
+using SoftwareDeveloperCase.Domain.Entities.Project;
+using SoftwareDeveloperCase.Domain.Entities.Identity;
+using SoftwareDeveloperCase.Domain.ValueObjects;
 
 namespace SoftwareDeveloperCase.Infrastructure.Persistence.Extensions;
 
@@ -16,12 +21,6 @@ internal static class ModelBuilderExtensions
 
     internal static void SeedDataBase(this ModelBuilder modelBuilder, IDateTimeService datetimeService)
     {
-        modelBuilder.Entity<Department>()
-            .HasData(
-               new Department { Id = Guid.Parse("7E1ECEDD-D9A5-4C81-8D2D-0FFD332F29C0"), Name = "HR", CreatedBy = "InitialSeed", CreatedOn = datetimeService.Now },
-               new Department { Id = Guid.Parse("0EDED24E-F07E-434C-AF1D-B97D638564C9"), Name = "IT", CreatedBy = "InitialSeed", CreatedOn = datetimeService.Now }
-            );
-
         modelBuilder.Entity<Permission>()
             .HasData(
                 new Permission { Id = Guid.Parse("9A6AE1D8-0688-43D4-B1CE-2A13608FA68C"), Name = "Read", CreatedBy = "InitialSeed", CreatedOn = datetimeService.Now },
@@ -49,10 +48,10 @@ internal static class ModelBuilderExtensions
 
         modelBuilder.Entity<User>()
             .HasData(
-                new User { Id = Guid.Parse("2D7AA3B0-F221-4753-B77F-FF261858A13A"), Name = "HR Employee", Email = "hremployee@sdc.com", Password = "sdc", DepartmentId = Guid.Parse("7E1ECEDD-D9A5-4C81-8D2D-0FFD332F29C0"), CreatedBy = "InitialSeed", CreatedOn = datetimeService.Now },
-                new User { Id = Guid.Parse("64A19C7D-A7A9-4481-A498-7DF87F341DA4"), Name = "HR Manager", Email = "hrmanager@sdc.com", Password = "sdc", DepartmentId = Guid.Parse("7E1ECEDD-D9A5-4C81-8D2D-0FFD332F29C0"), CreatedBy = "InitialSeed", CreatedOn = datetimeService.Now },
-                new User { Id = Guid.Parse("29D6CF7D-2335-4329-91AD-4A7EC437D73C"), Name = "IT Employee", Email = "itemployee@sdc.com", Password = "sdc", DepartmentId = Guid.Parse("0EDED24E-F07E-434C-AF1D-B97D638564C9"), CreatedBy = "InitialSeed", CreatedOn = datetimeService.Now },
-                new User { Id = Guid.Parse("94651E82-5FC3-43D0-9C64-5A16AC517D43"), Name = "IT Manager", Email = "itmanager@sdc.com", Password = "sdc", DepartmentId = Guid.Parse("0EDED24E-F07E-434C-AF1D-B97D638564C9"), CreatedBy = "InitialSeed", CreatedOn = datetimeService.Now }
+                new User { Id = Guid.Parse("2D7AA3B0-F221-4753-B77F-FF261858A13A"), Name = "HR Employee", Email = (Email)"hremployee@sdc.com", Password = "sdc", CreatedBy = "InitialSeed", CreatedOn = datetimeService.Now },
+                new User { Id = Guid.Parse("64A19C7D-A7A9-4481-A498-7DF87F341DA4"), Name = "HR Manager", Email = (Email)"hrmanager@sdc.com", Password = "sdc", CreatedBy = "InitialSeed", CreatedOn = datetimeService.Now },
+                new User { Id = Guid.Parse("29D6CF7D-2335-4329-91AD-4A7EC437D73C"), Name = "IT Employee", Email = (Email)"itemployee@sdc.com", Password = "sdc", CreatedBy = "InitialSeed", CreatedOn = datetimeService.Now },
+                new User { Id = Guid.Parse("94651E82-5FC3-43D0-9C64-5A16AC517D43"), Name = "IT Manager", Email = (Email)"itmanager@sdc.com", Password = "sdc", CreatedBy = "InitialSeed", CreatedOn = datetimeService.Now }
             );
 
         modelBuilder.Entity<UserRole>()

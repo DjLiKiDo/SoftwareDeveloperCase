@@ -22,6 +22,7 @@ Solution: **SoftwareDeveloperCase**
 4. **API**: Controllers, Middleware, Filters, Program.cs
 
 ## Coding Standards
+- Assess adherence to SOLID, DRY, KISS, YAGNI principles + Tell Don't Ask
 - Use file-scoped namespaces
 - Prefer primary constructors for simple classes
 - Use nullable reference types (`#nullable enable`)

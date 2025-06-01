@@ -1,3 +1,5 @@
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Domain.Common;
 
 namespace SoftwareDeveloperCase.Application.Contracts.Persistence;
@@ -7,11 +9,7 @@ namespace SoftwareDeveloperCase.Application.Contracts.Persistence;
 /// </summary>
 public interface IUnitOfWork : IDisposable
 {
-    /// <summary>
-    /// Gets the repository for Department entities
-    /// </summary>
-    IDepartmentRepository DepartmentRepository { get; }
-
+    #region Identity Repositories
     /// <summary>
     /// Gets the repository for Permission entities
     /// </summary>
@@ -36,6 +34,34 @@ public interface IUnitOfWork : IDisposable
     /// Gets the repository for UserRole entities
     /// </summary>
     IUserRoleRepository UserRoleRepository { get; }
+    #endregion
+
+    #region Core Repositories
+    /// <summary>
+    /// Gets the repository for Team entities
+    /// </summary>
+    ITeamRepository TeamRepository { get; }
+
+    /// <summary>
+    /// Gets the repository for TeamMember entities
+    /// </summary>
+    ITeamMemberRepository TeamMemberRepository { get; }
+
+    /// <summary>
+    /// Gets the repository for Project entities
+    /// </summary>
+    IProjectRepository ProjectRepository { get; }
+
+    /// <summary>
+    /// Gets the repository for Task entities
+    /// </summary>
+    ITaskRepository TaskRepository { get; }
+
+    /// <summary>
+    /// Gets the repository for TaskComment entities
+    /// </summary>
+    ITaskCommentRepository TaskCommentRepository { get; }
+    #endregion
 
     /// <summary>
     /// Gets a generic repository for the specified entity type
@@ -49,4 +75,11 @@ public interface IUnitOfWork : IDisposable
     /// </summary>
     /// <returns>The number of affected rows</returns>
     Task<int> SaveChanges();
+
+    /// <summary>
+    /// Saves all changes made in this unit of work to the database asynchronously with cancellation token support
+    /// </summary>
+    /// <param name="cancellationToken">A token to observe while waiting for the task to complete</param>
+    /// <returns>The number of affected rows</returns>
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

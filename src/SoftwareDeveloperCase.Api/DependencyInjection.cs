@@ -1,7 +1,8 @@
 using SoftwareDeveloperCase.Application;
 using SoftwareDeveloperCase.Infrastructure;
 using SoftwareDeveloperCase.Api.HealthChecks;
-using SoftwareDeveloperCase.Infrastructure.Persistence;
+using SoftwareDeveloperCase.Api.Filters;
+using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
 
 namespace SoftwareDeveloperCase.Api;
 
@@ -18,9 +19,21 @@ public static class DependencyInjection
     /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddControllers();
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        // Configure controllers with filters
+        services.AddControllers(options =>
+        {
+            options.Filters.Add<ModelValidationActionFilter>();
+            options.Filters.Add<PerformanceLoggingActionFilter>();
+            options.Filters.Add<ResourceAccessAuthorizationFilter>();
+        });
+
+        // Configure API filters
+        services.AddScoped<ModelValidationActionFilter>();
+        services.AddScoped<PerformanceLoggingActionFilter>();
+        services.AddScoped<ResourceAccessAuthorizationFilter>();
+
+        // Configure Swagger with enhanced documentation
+        services.AddSwaggerDocumentation();
 
         // Add health checks
         services.AddHealthChecks()

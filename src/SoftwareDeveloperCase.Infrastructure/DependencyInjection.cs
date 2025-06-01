@@ -4,12 +4,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Application.Validation;
-using SoftwareDeveloperCase.Infrastructure.Persistence;
-using SoftwareDeveloperCase.Infrastructure.Repositories;
-using SoftwareDeveloperCase.Infrastructure.Repositories.Cached;
+using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
+using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Repositories;
+using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Repositories.Cached;
+using SoftwareDeveloperCase.Infrastructure.ExternalServices;
 using SoftwareDeveloperCase.Infrastructure.Services;
 
 namespace SoftwareDeveloperCase.Infrastructure;
@@ -29,34 +32,38 @@ public static class DependencyInjection
     {
         // Register core repositories
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<UserRoleRepository>();
-        services.AddScoped<RolePermissionRepository>();
+        services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+        services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
+
+        // Register repository base classes
+        services.AddScoped<RoleRepository>();
+        services.AddScoped<PermissionRepository>();
 
         // Register repositories with caching decorators
-        services.AddScoped<RoleRepository>();
         services.AddScoped<IRoleRepository>(provider =>
         {
             var baseRepository = provider.GetRequiredService<RoleRepository>();
             var cache = provider.GetRequiredService<IMemoryCache>();
-            return new CachedRoleRepository(baseRepository, cache);
+            var cacheKeyService = provider.GetRequiredService<ICacheKeyService>();
+            return new CachedRoleRepository(baseRepository, cache, cacheKeyService);
         });
 
-        services.AddScoped<PermissionRepository>();
         services.AddScoped<IPermissionRepository>(provider =>
         {
             var baseRepository = provider.GetRequiredService<PermissionRepository>();
             var cache = provider.GetRequiredService<IMemoryCache>();
-            return new CachedPermissionRepository(baseRepository, cache);
+            var cacheKeyService = provider.GetRequiredService<ICacheKeyService>();
+            return new CachedPermissionRepository(baseRepository, cache, cacheKeyService);
         });
 
-        services.AddScoped<DepartmentRepository>();
-        services.AddScoped<IDepartmentRepository>(provider =>
-        {
-            var baseRepository = provider.GetRequiredService<DepartmentRepository>();
-            var cache = provider.GetRequiredService<IMemoryCache>();
-            return new CachedDepartmentRepository(baseRepository, cache);
-        });
+        // Register Core domain repositories
+        services.AddScoped<ITeamRepository, TeamRepository>();
+        services.AddScoped<ITeamMemberRepository, TeamMemberRepository>();
+        services.AddScoped<IProjectRepository, ProjectRepository>();
+        services.AddScoped<ITaskRepository, TaskRepository>();
+        services.AddScoped<ITaskCommentRepository, TaskCommentRepository>();
 
+        // Configure database context
         services.AddDbContext<SoftwareDeveloperCaseDbContext>((serviceProvider, options) =>
         {
             var databaseSettings = serviceProvider.GetRequiredService<IOptions<DatabaseSettings>>().Value;
@@ -88,15 +95,20 @@ public static class DependencyInjection
             }
         });
 
+        // Register Unit of Work after all repositories
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        services.AddScoped<EntitySaveChangesInterceptor>();
+        // Register database interceptors
+        services.AddScoped<Persistence.EntitySaveChangesInterceptor>();
 
+        // Register services
         services.AddSingleton<IDateTimeService, DateTimeService>();
+        services.AddTransient<ICacheKeyService, CacheKeyService>();
 
         // Configure strongly-typed configuration with validation
         services.Configure<DatabaseSettings>(configuration.GetSection(DatabaseSettings.SECTION_NAME));
-        // Note: Not using IValidateOptions for DatabaseSettings to prevent startup failures in tests
+        // Register configuration validators
+        services.AddSingleton<IValidateOptions<DatabaseSettings>, DatabaseSettingsValidator>();
 
         services.Configure<EmailSettings>(options =>
         {
@@ -107,7 +119,10 @@ public static class DependencyInjection
             options.Password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? options.Password;
             options.FromAddress = Environment.GetEnvironmentVariable("EMAIL_FROM_ADDRESS") ?? options.FromAddress;
         });
-        // Note: Not using IValidateOptions for EmailSettings to prevent startup failures in tests
+        // Register email settings validator
+        services.AddSingleton<IValidateOptions<EmailSettings>, EmailSettingsValidator>();
+
+        // Register EmailService if needed
         services.AddTransient<IEmailService, EmailService>();
 
         // Add caching services

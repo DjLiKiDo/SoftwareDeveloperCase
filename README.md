@@ -14,11 +14,77 @@ This solution follows Clean Architecture principles with the following layers:
 - **Infrastructure**: Data persistence, external services, and identity
 - **API**: RESTful endpoints, middleware, and HTTP concerns
 
+### Project Structure
+
+```
+src/
+  ├── SoftwareDeveloperCase.Domain/
+  │   ├── Common/             # Base classes and common logic
+  │   ├── Entities/           # Domain entities
+  │   │   ├── Team/           # Team-related entities
+  │   │   ├── Project/        # Project-related entities
+  │   │   └── Task/           # Task-related entities
+  │   ├── Enums/              # Domain enumerations
+  │   ├── ValueObjects/       # Value objects like Email
+  │   ├── Events/             # Domain events
+  │   ├── Interfaces/         # Domain interfaces
+  │   └── Services/           # Domain services
+  │
+  ├── SoftwareDeveloperCase.Application/
+  │   ├── Behaviours/         # MediatR pipeline behaviors
+  │   ├── Contracts/          # Application interfaces
+  │   ├── Features/           # Features organized by domain concept
+  │   │   ├── Users/          # User-related features
+  │   │   │   ├── Commands/   # Commands for modifying user state
+  │   │   │   ├── Queries/    # Queries for retrieving user data
+  │   │   │   └── DTOs/       # Data transfer objects for users
+  │   │   ├── Projects/       # Project-related features
+  │   │   ├── Tasks/          # Task-related features
+  │   │   └── Teams/          # Team-related features
+  │   ├── Mappings/           # AutoMapper profiles
+  │   ├── Models/             # Application models
+  │   └── Validation/         # Validation logic
+  │
+  ├── SoftwareDeveloperCase.Infrastructure/
+  │   ├── Persistence/        # Database persistence
+  │   │   └── SqlServer/      # SQL Server implementation
+  │   │       ├── Repositories/     # Repository implementations
+  │   │       │   └── Cached/       # Cached repository decorators
+  │   │       ├── DbContext/        # EF Core DbContext
+  │   │       ├── Configurations/   # Entity configurations
+  │   │       └── Migrations/       # EF Core migrations
+  │   ├── ExternalServices/   # External service integrations
+  │   │   └── Email/          # Email service
+  │   ├── Identity/           # Authentication and authorization
+  │   └── Services/           # Infrastructure services
+  │
+  └── SoftwareDeveloperCase.Api/
+      ├── Controllers/        # API controllers
+      │   └── V1/             # API version 1
+      ├── Middleware/         # Custom middleware
+      ├── Filters/            # Action filters
+      ├── Models/             # API-specific models
+      │   ├── Requests/       # Request models
+      │   └── Responses/      # Response models
+      └── HealthChecks/       # Health check implementations
+```
+
 ### Key Patterns
 - **CQRS**: Command Query Responsibility Segregation using MediatR
 - **Repository Pattern**: With Unit of Work for data access
 - **Domain-Driven Design**: Rich domain models with business logic
 - **Dependency Injection**: IoC container for loose coupling
+- **Decorator Pattern**: For repository caching and cross-cutting concerns
+
+### SOLID Principles Implementation
+
+This project strictly adheres to SOLID principles:
+
+- **Single Responsibility Principle**: Each class has a single responsibility (e.g., repositories focus only on data access, controllers only on HTTP concerns)
+- **Open/Closed Principle**: The extensive use of interfaces allows extending functionality without modifying existing code
+- **Liskov Substitution Principle**: All implementations are substitutable for their base interfaces
+- **Interface Segregation Principle**: Interfaces are client-specific and focused (e.g., repository interfaces)
+- **Dependency Inversion Principle**: High-level modules depend on abstractions, not concrete implementations
 
 ## 🚀 Getting Started
 
@@ -43,12 +109,28 @@ dotnet restore
 dotnet build
 
 # Run database migrations
-dotnet ef database update -p SoftwareDeveloperCase.Infrastructure -s SoftwareDeveloperCase.Api
+dotnet ef migrations add InitialCreate -p src/SoftwareDeveloperCase.Infrastructure -s src/SoftwareDeveloperCase.Api
+dotnet ef database update -p src/SoftwareDeveloperCase.Infrastructure -s src/SoftwareDeveloperCase.Api
 
 # Run tests
 dotnet test
 
 # Run the API
+dotnet run --project src/SoftwareDeveloperCase.Api
+```
+
+### Development Workflow
+
+```bash
+# Format the codebase according to style rules
+dotnet format
+
+# Check for code quality issues
+dotnet build /warnaserror
+
+# Update only database without generating new migration
+dotnet ef database update -p src/SoftwareDeveloperCase.Infrastructure -s src/SoftwareDeveloperCase.Api
+```
 dotnet run --project SoftwareDeveloperCase.Api
 ```
 
