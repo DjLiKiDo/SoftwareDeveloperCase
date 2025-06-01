@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using System.Web;
+using Ganss.Xss;
 
 namespace SoftwareDeveloperCase.Application.Services;
 
@@ -8,6 +9,37 @@ namespace SoftwareDeveloperCase.Application.Services;
 /// </summary>
 public static class InputSanitizer
 {
+    private static readonly HtmlSanitizer HtmlSanitizerInstance = new();
+
+    static InputSanitizer()
+    {
+        // Configure the HTML sanitizer with safe tags and attributes
+        HtmlSanitizerInstance.AllowedTags.Clear();
+        HtmlSanitizerInstance.AllowedTags.Add("p");
+        HtmlSanitizerInstance.AllowedTags.Add("br");
+        HtmlSanitizerInstance.AllowedTags.Add("strong");
+        HtmlSanitizerInstance.AllowedTags.Add("em");
+        HtmlSanitizerInstance.AllowedTags.Add("u");
+        HtmlSanitizerInstance.AllowedTags.Add("ul");
+        HtmlSanitizerInstance.AllowedTags.Add("ol");
+        HtmlSanitizerInstance.AllowedTags.Add("li");
+        HtmlSanitizerInstance.AllowedTags.Add("a");
+        HtmlSanitizerInstance.AllowedTags.Add("h1");
+        HtmlSanitizerInstance.AllowedTags.Add("h2");
+        HtmlSanitizerInstance.AllowedTags.Add("h3");
+        HtmlSanitizerInstance.AllowedTags.Add("h4");
+        HtmlSanitizerInstance.AllowedTags.Add("h5");
+        HtmlSanitizerInstance.AllowedTags.Add("h6");
+        
+        HtmlSanitizerInstance.AllowedAttributes.Clear();
+        HtmlSanitizerInstance.AllowedAttributes.Add("href");
+        HtmlSanitizerInstance.AllowedAttributes.Add("target");
+        
+        // Ensure only http/https links are allowed
+        HtmlSanitizerInstance.AllowedSchemes.Clear();
+        HtmlSanitizerInstance.AllowedSchemes.Add("http");
+        HtmlSanitizerInstance.AllowedSchemes.Add("https");
+    }
     /// <summary>
     /// Sanitizes a string input by removing potentially harmful content
     /// </summary>
@@ -41,16 +73,19 @@ public static class InputSanitizer
             return input;
         }
 
+        // Remove HTML tags first
+        var withoutHtml = Regex.Replace(input, @"<[^>]*>", string.Empty, RegexOptions.Compiled);
+        
         // Remove potentially dangerous characters, leaving only alphanumeric, spaces, and common punctuation
         return Regex.Replace(
-            input,
+            withoutHtml,
             @"[^\w\s\-.,?!:;()[\]{}@#$%&*+=/\\]",
             string.Empty,
             RegexOptions.Compiled);
     }
 
     /// <summary>
-    /// Sanitizes a string intended for use as a filename
+    /// Sanitizes a string intended for use as a filename following OWASP security best practices
     /// </summary>
     /// <param name="input">The input string to sanitize</param>
     /// <returns>Sanitized string safe for use as a filename or null if input was null</returns>
@@ -61,12 +96,46 @@ public static class InputSanitizer
             return input;
         }
 
-        // Replace potentially dangerous characters with underscores
-        var invalidChars = Path.GetInvalidFileNameChars();
-        var sanitized = new string(input.Select(c => invalidChars.Contains(c) ? '_' : c).ToArray());
+        var sanitized = input.Trim();
 
-        // Prevent directory traversal attempts
-        sanitized = sanitized.Replace("..", "_");
+        // 1. Handle directory traversal patterns - replace with single underscore
+        sanitized = Regex.Replace(sanitized, @"\.{2,}", "_", RegexOptions.Compiled);
+
+        // 2. Remove or replace path separators completely (security critical)
+        sanitized = sanitized.Replace('/', '_').Replace('\\', '_');
+
+        // 3. Handle Windows reserved characters: < > : " | ? * and all control characters (0-31)
+        // Using regex for better performance and readability
+        sanitized = Regex.Replace(sanitized, @"[<>:""|?*\x00-\x1f\x7f]", "_", RegexOptions.Compiled);
+
+        // 4. Handle Windows reserved names (case-insensitive)
+        var reservedNames = new[] { "CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
+        var nameWithoutExtension = Path.GetFileNameWithoutExtension(sanitized);
+        var extension = Path.GetExtension(sanitized);
+        
+        if (reservedNames.Contains(nameWithoutExtension.ToUpperInvariant()))
+        {
+            nameWithoutExtension = "_" + nameWithoutExtension;
+            sanitized = nameWithoutExtension + extension;
+        }
+
+        // 5. Remove leading/trailing dots and spaces (Windows compatibility)
+        sanitized = sanitized.Trim('.', ' ');
+
+        // 6. Ensure the filename is not empty after sanitization
+        if (string.IsNullOrEmpty(sanitized))
+        {
+            sanitized = "sanitized_file";
+        }
+
+        // 7. Limit length to 255 characters (most filesystem limit)
+        if (sanitized.Length > 255)
+        {
+            var ext = Path.GetExtension(sanitized);
+            var nameOnly = Path.GetFileNameWithoutExtension(sanitized);
+            var maxNameLength = 255 - ext.Length;
+            sanitized = nameOnly.Substring(0, Math.Max(1, maxNameLength)) + ext;
+        }
 
         return sanitized;
     }
@@ -83,24 +152,8 @@ public static class InputSanitizer
             return htmlInput;
         }
 
-        // This is a basic implementation
-        // In a production environment, consider using a library like HtmlSanitizer
-        
-        // Remove script tags and their contents
-        var sanitized = Regex.Replace(htmlInput, @"<script[^>]*>[\s\S]*?</script>", string.Empty, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        
-        // Remove inline event handlers
-        sanitized = Regex.Replace(sanitized, @"\s(on\w+)=[""][^""]*[""]", string.Empty, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        sanitized = Regex.Replace(sanitized, @"\s(on\w+)=[''][^'']*['']", string.Empty, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        
-        // Remove iframe, object, embed tags
-        sanitized = Regex.Replace(sanitized, @"<(iframe|object|embed)[^>]*>[\s\S]*?</\1>", string.Empty, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        
-        // Remove potentially harmful attributes
-        sanitized = Regex.Replace(sanitized, @"\s(href|src)\s*=\s*[""]javascript:[^""]*[""]", string.Empty, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        sanitized = Regex.Replace(sanitized, @"\s(href|src)\s*=\s*['']javascript:[^'']*['']", string.Empty, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        
-        return sanitized;
+        // Use the HtmlSanitizer library for proper HTML sanitization
+        return HtmlSanitizerInstance.Sanitize(htmlInput);
     }
 
     /// <summary>
@@ -140,8 +193,8 @@ public static class InputSanitizer
             return null; // Invalid email format
         }
 
-        // Keep only valid email characters
-        return Regex.Replace(email, @"[^\w@.\-]", string.Empty, RegexOptions.Compiled);
+        // Keep only valid email characters (including + for email aliases)
+        return Regex.Replace(email, @"[^\w@.\-+]", string.Empty, RegexOptions.Compiled);
     }
 
     /// <summary>
@@ -215,6 +268,192 @@ public static class InputSanitizer
 
         // Collapse multiple spaces into single space
         sanitized = Regex.Replace(sanitized, @"\s+", " ", RegexOptions.Compiled).Trim();
+
+        return sanitized;
+    }
+
+    /// <summary>
+    /// Sanitizes input to prevent LDAP injection attacks
+    /// </summary>
+    /// <param name="input">The input string to sanitize for LDAP queries</param>
+    /// <returns>Sanitized string safe for LDAP queries or null if input was null</returns>
+    public static string? SanitizeLdap(string? input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return input;
+        }
+
+        // Escape LDAP special characters
+        var ldapEscapes = new Dictionary<char, string>
+        {
+            { '\\', @"\5c" },
+            { '*', @"\2a" },
+            { '(', @"\28" },
+            { ')', @"\29" },
+            { '\0', @"\00" }
+        };
+
+        var sanitized = input;
+        foreach (var kvp in ldapEscapes)
+        {
+            sanitized = sanitized.Replace(kvp.Key.ToString(), kvp.Value);
+        }
+
+        return sanitized;
+    }
+
+    /// <summary>
+    /// Sanitizes input to prevent JSON injection attacks
+    /// </summary>
+    /// <param name="input">The input string to sanitize for JSON</param>
+    /// <returns>Sanitized string safe for JSON or null if input was null</returns>
+    public static string? SanitizeJson(string? input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return input;
+        }
+
+        // Escape JSON special characters
+        var sanitized = input
+            .Replace("\\", "\\\\")  // Escape backslashes first
+            .Replace("\"", "\\\"")  // Escape quotes
+            .Replace("\b", "\\b")   // Escape backspace
+            .Replace("\f", "\\f")   // Escape form feed
+            .Replace("\n", "\\n")   // Escape newline
+            .Replace("\r", "\\r")   // Escape carriage return
+            .Replace("\t", "\\t");  // Escape tab
+
+        // Remove or escape control characters
+        sanitized = Regex.Replace(sanitized, @"[\x00-\x1f\x7f]", string.Empty, RegexOptions.Compiled);
+
+        return sanitized;
+    }
+
+    /// <summary>
+    /// Sanitizes input to prevent NoSQL injection attacks
+    /// </summary>
+    /// <param name="input">The input string to sanitize for NoSQL queries</param>
+    /// <returns>Sanitized string safe for NoSQL queries or null if input was null</returns>
+    public static string? SanitizeNoSql(string? input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return input;
+        }
+
+        // Remove potential NoSQL injection patterns
+        var dangerousPatterns = new[]
+        {
+            @"\$where",
+            @"\$regex",
+            @"\$ne",
+            @"\$gt",
+            @"\$lt",
+            @"\$in",
+            @"\$nin",
+            @"\$or",
+            @"\$and",
+            @"\$not",
+            @"\$nor",
+            @"\$exists",
+            @"\$type",
+            @"\$mod",
+            @"\$all",
+            @"\$size",
+            @"\$elemMatch",
+            @"javascript:",
+            @"function\s*\(",
+            @"eval\s*\(",
+            @"setTimeout\s*\(",
+            @"setInterval\s*\("
+        };
+
+        var sanitized = input;
+        foreach (var pattern in dangerousPatterns)
+        {
+            sanitized = Regex.Replace(sanitized, pattern, string.Empty, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        }
+
+        return sanitized;
+    }
+
+    /// <summary>
+    /// Sanitizes input to prevent command injection attacks
+    /// </summary>
+    /// <param name="input">The input string to sanitize for command execution</param>
+    /// <returns>Sanitized string safe for command execution or null if input was null</returns>
+    public static string? SanitizeCommand(string? input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return input;
+        }
+
+        // Remove or escape dangerous command characters
+        var dangerousChars = new[] { ';', '&', '|', '`', '$', '(', ')', '<', '>', '\n', '\r' };
+        
+        var sanitized = input;
+        foreach (var dangerousChar in dangerousChars)
+        {
+            sanitized = sanitized.Replace(dangerousChar.ToString(), string.Empty);
+        }
+
+        // Remove dangerous command patterns
+        var dangerousPatterns = new[]
+        {
+            @"rm\s+",
+            @"del\s+",
+            @"format\s+",
+            @"shutdown\s+",
+            @"reboot\s+",
+            @"sudo\s+",
+            @"su\s+",
+            @"chmod\s+",
+            @"chown\s+",
+            @"cat\s+/etc/",
+            @"net\s+user",
+            @"net\s+localgroup"
+        };
+
+        foreach (var pattern in dangerousPatterns)
+        {
+            sanitized = Regex.Replace(sanitized, pattern, string.Empty, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        }
+
+        return sanitized;
+    }
+
+    /// <summary>
+    /// Sanitizes input to prevent template injection attacks
+    /// </summary>
+    /// <param name="input">The input string to sanitize for template engines</param>
+    /// <returns>Sanitized string safe for template engines or null if input was null</returns>
+    public static string? SanitizeTemplate(string? input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return input;
+        }
+
+        // Remove template engine syntax that could be dangerous
+        var templatePatterns = new[]
+        {
+            @"\{\{.*?\}\}",      // Handlebars/Mustache
+            @"\{%.*?%\}",        // Jinja2/Twig
+            @"\{\{.*?\}\}",      // Angular
+            @"<%.*?%>",          // ASP.NET/JSP
+            @"@\{.*?\}",         // Razor
+            @"\$\{.*?\}",        // Various template engines
+            @"#\{.*?\}"          // Ruby ERB style
+        };
+
+        var sanitized = input;
+        foreach (var pattern in templatePatterns)
+        {
+            sanitized = Regex.Replace(sanitized, pattern, string.Empty, RegexOptions.Compiled | RegexOptions.Singleline);
+        }
 
         return sanitized;
     }

@@ -53,13 +53,13 @@ public class ProjectsController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         // Sanitize the search term input
-        var sanitizedSearchTerm = InputSanitizer.SanitizeString(searchTerm);
+        var sanitizedSearchTerm = InputSanitizer.SanitizeString(searchTerm)?.Replace("\n", "").Replace("\r", "");
         
         // Use safe logging extension to prevent log injection
         _logger.SafeInformation("Getting projects with searchTerm: {SearchTerm}", sanitizedSearchTerm);
         
         // Sanitize other parameters for logging
-        var sanitizedStatus = InputSanitizer.SanitizeForLogging(status);
+        var sanitizedStatus = status?.Replace("\n", "").Replace("\r", "") ?? "null";
         var sanitizedTeamId = teamId?.ToString() ?? "null";
         
         _logger.LogInformation("Getting projects with pageNumber: {PageNumber}, pageSize: {PageSize}, status: {Status}, teamId: {TeamId}",
@@ -325,7 +325,7 @@ public class ProjectsController : ControllerBase
         
         // Log the sanitized input - use SanitizeForLogging for extra protection
         _logger.LogInformation("Searching projects with sanitized keyword: {Keyword}", 
-            InputSanitizer.SanitizeForLogging(sanitizedKeyword));
+            InputSanitizer.SanitizeForLogging(sanitizedKeyword)?.Replace("\n", "").Replace("\r", ""));
         
         // Create a custom search query 
         var query = new GetProjectsQuery

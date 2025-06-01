@@ -16,7 +16,7 @@ public static class LoggerExtensions
     /// <param name="userInput">User-provided input that will be sanitized before logging</param>
     public static void SafeInformation(this ILogger logger, string message, string? userInput)
     {
-        var sanitizedInput = InputSanitizer.SanitizeForLogging(userInput);
+        var sanitizedInput = InputSanitizer.SanitizeForLogging(userInput)?.Replace("\n", "").Replace("\r", "");
         logger.LogInformation(message, sanitizedInput);
     }
     
@@ -28,7 +28,7 @@ public static class LoggerExtensions
     /// <param name="userInput">User-provided input that will be sanitized before logging</param>
     public static void SafeWarning(this ILogger logger, string message, string? userInput)
     {
-        var sanitizedInput = InputSanitizer.SanitizeForLogging(userInput);
+        var sanitizedInput = InputSanitizer.SanitizeForLogging(userInput)?.Replace("\n", "").Replace("\r", "");
         logger.LogWarning(message, sanitizedInput);
     }
     
@@ -40,7 +40,7 @@ public static class LoggerExtensions
     /// <param name="userInput">User-provided input that will be sanitized before logging</param>
     public static void SafeError(this ILogger logger, string message, string? userInput)
     {
-        var sanitizedInput = InputSanitizer.SanitizeForLogging(userInput);
+        var sanitizedInput = InputSanitizer.SanitizeForLogging(userInput)?.Replace("\n", "").Replace("\r", "");
         logger.LogError(message, sanitizedInput);
     }
     
@@ -52,7 +52,7 @@ public static class LoggerExtensions
     /// <param name="userInput">User-provided input that will be sanitized before logging</param>
     public static void SafeDebug(this ILogger logger, string message, string? userInput)
     {
-        var sanitizedInput = InputSanitizer.SanitizeForLogging(userInput);
+        var sanitizedInput = InputSanitizer.SanitizeForLogging(userInput)?.Replace("\n", "").Replace("\r", "");
         logger.LogDebug(message, sanitizedInput);
     }
 }

