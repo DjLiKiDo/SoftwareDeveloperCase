@@ -1,198 +1,198 @@
-# Plan de Optimización GitHub Copilot Agent
+# GitHub Copilot Agent Optimization Plan
 ## SoftwareDeveloperCase - Clean Architecture .NET 8
 
-### Resumen Ejecutivo
-Este plan optimizará la eficiencia del GitHub Copilot Agent para el proyecto SoftwareDeveloperCase, mejorando la comprensión del contexto, automatizando tareas repetitivas y estableciendo patrones consistentes de desarrollo.
+### Executive Summary
+This plan will optimize the efficiency of GitHub Copilot Agent for the SoftwareDeveloperCase project, improving context understanding, automating repetitive tasks, and establishing consistent development patterns.
 
 ---
 
-## FASE 1: Configuración Base del Workspace ⚙️
+## PHASE 1: Workspace Base Configuration ⚙️
 
-### 1.1 Optimización de VS Code Settings
-**Objetivo**: Maximizar la comprensión del contexto por parte de Copilot
+### 1.1 VS Code Settings Optimization
+**Objective**: Maximize context understanding by Copilot
 
-**Acciones**:
-- [ ] Configurar indexación inteligente del workspace
-- [ ] Habilitar mejores sugerencias contextuales
-- [ ] Optimizar configuraciones para proyectos .NET
-- [ ] Configurar exclusiones de archivos irrelevantes
+**Actions**:
+- [ ] Configure intelligent workspace indexing
+- [ ] Enable better contextual suggestions
+- [ ] Optimize configurations for .NET projects
+- [ ] Configure irrelevant file exclusions
 
-**Archivos a crear/modificar**:
-- `.vscode/settings.json` - Configuraciones específicas del proyecto
-- `.vscode/extensions.json` - Extensiones recomendadas
+**Files to create/modify**:
+- `.vscode/settings.json` - Project-specific configurations
+- `.vscode/extensions.json` - Recommended extensions
 
-### 1.2 Estructura de Instrucciones Especializadas
-**Objetivo**: Crear instrucciones específicas por dominio
+### 1.2 Specialized Instructions Structure
+**Objective**: Create domain-specific instructions
 
-**Archivos a crear**:
+**Files to create**:
 ```
 .github/instructions/
-├── agent.instructions.md (✅ Existente - mejorar)
-├── api.instructions.md (🆕 Nuevo)
-├── testing.instructions.md (🆕 Nuevo)
-├── database.instructions.md (🆕 Nuevo)
-└── architecture.instructions.md (🆕 Nuevo)
+├── agent.instructions.md (✅ Existing - improve)
+├── api.instructions.md (🆕 New)
+├── testing.instructions.md (🆕 New)
+├── database.instructions.md (🆕 New)
+└── architecture.instructions.md (🆕 New)
 ```
 
 ---
 
-## FASE 2: Instrucciones Especializadas por Dominio 📋
+## PHASE 2: Domain-Specific Specialized Instructions 📋
 
-### 2.1 Instrucciones para API Development
-**Enfoque**: Endpoints, controladores, middleware, autorización
+### 2.1 API Development Instructions
+**Focus**: Endpoints, controllers, middleware, authorization
 
-**Contenido clave**:
-- Patrones de controladores RESTful
-- Manejo de errores estandardizado
-- Autorización JWT específica del proyecto
-- Versionado de APIs (/api/v1/)
-- Documentación OpenAPI/Swagger
+**Key content**:
+- RESTful controller patterns
+- Standardized error handling
+- Project-specific JWT authorization
+- API versioning (/api/v1/)
+- OpenAPI/Swagger documentation
 
-### 2.2 Instrucciones para Testing
-**Enfoque**: Unit tests, integration tests, patrones AAA
+### 2.2 Testing Instructions
+**Focus**: Unit tests, integration tests, AAA patterns
 
-**Contenido clave**:
-- Convenciones de naming para tests
-- Uso de xUnit, FluentAssertions, Moq
-- Patrones de mocking específicos del proyecto
-- Cobertura mínima 80%
-- Estructura AAA (Arrange, Act, Assert)
+**Key content**:
+- Test naming conventions
+- Usage of xUnit, FluentAssertions, Moq
+- Project-specific mocking patterns
+- Minimum 80% coverage
+- AAA structure (Arrange, Act, Assert)
 
-### 2.3 Instrucciones para Database
-**Enfoque**: Entity Framework, migraciones, repository pattern
+### 2.3 Database Instructions
+**Focus**: Entity Framework, migrations, repository pattern
 
-**Contenido clave**:
-- Configuración de entidades
-- Patrones de migración
-- Repository y Unit of Work patterns
-- Convenciones de naming para base de datos
+**Key content**:
+- Entity configuration
+- Migration patterns
+- Repository and Unit of Work patterns
+- Database naming conventions
 
-### 2.4 Instrucciones de Arquitectura
-**Enfoque**: Clean Architecture, CQRS, DDD patterns
+### 2.4 Architecture Instructions
+**Focus**: Clean Architecture, CQRS, DDD patterns
 
-**Contenido clave**:
-- Separación de capas estricta
-- Patrones Command/Query con MediatR
-- Domain events y agregados
+**Key content**:
+- Strict layer separation
+- Command/Query patterns with MediatR
+- Domain events and aggregates
 - Dependency injection patterns
 
 ---
 
-## FASE 3: Prompts y Templates Reutilizables 🔄
+## PHASE 3: Reusable Prompts and Templates 🔄
 
-### 3.1 Prompts para Tareas Comunes
-**Archivo**: `.github/prompts/common-tasks.md`
+### 3.1 Common Tasks Prompts
+**File**: `.github/prompts/common-tasks.md`
 
-**Prompts específicos**:
-- Crear nuevo Command Handler con validación
-- Crear nuevo Query Handler con paginación
-- Agregar nuevo endpoint REST completo
-- Crear nueva entidad con repositorio
-- Implementar nueva feature completa (Command + Query + Controller + Tests)
+**Specific prompts**:
+- Create new Command Handler with validation
+- Create new Query Handler with pagination
+- Add complete new REST endpoint
+- Create new entity with repository
+- Implement complete new feature (Command + Query + Controller + Tests)
 
-### 3.2 Templates de Código
-**Archivo**: `.vscode/snippets/csharp.json`
+### 3.2 Code Templates
+**File**: `.vscode/snippets/csharp.json`
 
-**Snippets para**:
+**Snippets for**:
 - Command Handler boilerplate
 - Query Handler boilerplate
 - Controller action boilerplate
 - Entity configuration boilerplate
 - Test class boilerplate
 
-### 3.3 Templates para Archivos Nuevos
-**Directorio**: `templates/`
+### 3.3 New File Templates
+**Directory**: `templates/`
 
-**Templates para**:
-- Nueva entidad de dominio
-- Nuevo command/query
-- Nuevo controlador
-- Nueva clase de pruebas
+**Templates for**:
+- New domain entity
+- New command/query
+- New controller
+- New test class
 
 ---
 
-## FASE 4: Configuración Avanzada y Herramientas 🛠️
+## PHASE 4: Advanced Configuration and Tools 🛠️
 
-### 4.1 Configuración de Extensiones VS Code
-**Extensiones recomendadas adicionales**:
+### 4.1 VS Code Extensions Configuration
+**Additional recommended extensions**:
 - GitHub Copilot Labs
-- C# Dev Kit optimizaciones
-- REST Client para testing APIs
-- .NET Analyzers adicionales
+- C# Dev Kit optimizations
+- REST Client for API testing
+- Additional .NET Analyzers
 
-### 4.2 Optimización del Context7 MCP Server
-**Mejoras al archivo existente** `.vscode/mcp.json`:
-- Configurar para documentación .NET específica
-- Agregar contexto de Entity Framework
-- Configurar para patrones Clean Architecture
+### 4.2 Context7 MCP Server Optimization
+**Improvements to existing file** `.vscode/mcp.json`:
+- Configure for .NET-specific documentation
+- Add Entity Framework context
+- Configure for Clean Architecture patterns
 
-### 4.3 Scripts de Automatización
-**Crear scripts para**:
-- Setup inicial de nuevas features
-- Generación de boilerplate para CRUD completo
-- Ejecución de tests con reportes
-- Validación de arquitectura
+### 4.3 Automation Scripts
+**Create scripts for**:
+- Initial setup of new features
+- Complete CRUD boilerplate generation
+- Test execution with reports
+- Architecture validation
 
 ---
 
-## FASE 5: Documentación y ADRs 📚
+## PHASE 5: Documentation and ADRs 📚
 
 ### 5.1 Architecture Decision Records (ADRs)
-**Directorio**: `docs/ADRs/`
+**Directory**: `docs/ADRs/`
 
-**Documentar decisiones clave**:
+**Document key decisions**:
 - ADR-001: Clean Architecture implementation
 - ADR-002: CQRS with MediatR pattern
 - ADR-003: JWT Authentication strategy
 - ADR-004: Testing strategy and patterns
 
-### 5.2 Documentación de Patrones
-**Archivo**: `docs/DEVELOPMENT_PATTERNS.md`
+### 5.2 Patterns Documentation
+**File**: `docs/DEVELOPMENT_PATTERNS.md`
 
-**Contenido**:
-- Patrones de código estandardizados
-- Flujos de trabajo típicos
-- Ejemplos de implementación
-- Mejores prácticas específicas del proyecto
-
----
-
-## MÉTRICAS DE ÉXITO 📊
-
-### Indicadores de Optimización:
-1. **Tiempo de desarrollo reducido** en 30% para features nuevas
-2. **Consistencia de código mejorada** (menos reviews por patrones)
-3. **Cobertura de tests mantenida** >= 80%
-4. **Reducción de bugs en producción** por mejor adherencia a patrones
-5. **Satisfacción del desarrollador** con sugerencias más precisas
-
-### Métricas Cuantificables:
-- Líneas de código generadas por Copilot vs escritas manualmente
-- Tiempo promedio para implementar CRUD completo
-- Número de iteraciones necesarias para aprobar PRs
-- Adherencia a convenciones de arquitectura
+**Content**:
+- Standardized code patterns
+- Typical workflows
+- Implementation examples
+- Project-specific best practices
 
 ---
 
-## CRONOGRAMA ESTIMADO ⏰
+## SUCCESS METRICS 📊
 
-| Fase | Duración Estimada | Prioridad |
-|------|------------------|-----------|
-| Fase 1: Configuración Base | 2-3 horas | Alta |
-| Fase 2: Instrucciones Especializadas | 4-5 horas | Alta |
-| Fase 3: Prompts y Templates | 3-4 horas | Media |
-| Fase 4: Configuración Avanzada | 2-3 horas | Media |
-| Fase 5: Documentación ADRs | 2-3 horas | Baja |
+### Optimization Indicators:
+1. **Reduced development time** by 30% for new features
+2. **Improved code consistency** (fewer reviews for patterns)
+3. **Maintained test coverage** >= 80%
+4. **Reduced production bugs** through better pattern adherence
+5. **Developer satisfaction** with more precise suggestions
 
-**Total estimado**: 13-18 horas de trabajo distribuido en 1-2 semanas
+### Quantifiable Metrics:
+- Lines of code generated by Copilot vs manually written
+- Average time to implement complete CRUD
+- Number of iterations needed to approve PRs
+- Adherence to architectural conventions
 
 ---
 
-## PRÓXIMOS PASOS INMEDIATOS 🚀
+## ESTIMATED TIMELINE ⏰
 
-1. **Revisar y aprobar este plan** con el equipo de desarrollo
-2. **Priorizar las fases** según necesidades inmediatas del proyecto
-3. **Comenzar con Fase 1** - configuración base del workspace
-4. **Establecer checkpoint de evaluación** después de Fase 2
+| Phase | Estimated Duration | Priority |
+|-------|-------------------|----------|
+| Phase 1: Base Configuration | 2-3 hours | High |
+| Phase 2: Specialized Instructions | 4-5 hours | High |
+| Phase 3: Prompts and Templates | 3-4 hours | Medium |
+| Phase 4: Advanced Configuration | 2-3 hours | Medium |
+| Phase 5: ADRs Documentation | 2-3 hours | Low |
 
-**¿Estás listo para comenzar con la implementación de este plan?**
+**Total estimated**: 13-18 hours of work distributed over 1-2 weeks
+
+---
+
+## IMMEDIATE NEXT STEPS 🚀
+
+1. **Review and approve this plan** with the development team
+2. **Prioritize phases** according to immediate project needs
+3. **Start with Phase 1** - workspace base configuration
+4. **Establish evaluation checkpoint** after Phase 2
+
+**Are you ready to begin implementing this plan?**
