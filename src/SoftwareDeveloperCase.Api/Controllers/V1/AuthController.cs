@@ -62,7 +62,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error during login for email: {Email}", request.Email);
+            _logger.SafeError("Unexpected error during login for email: {Email}. Error: {Error}", request.Email, ex.Message);
             return BadRequest(new { message = "An error occurred during login" });
         }
     }
@@ -98,7 +98,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error during token refresh");
+            _logger.SafeError("Unexpected error during token refresh. Error: {Error}", ex.Message);
             return BadRequest(new { message = "An error occurred during token refresh" });
         }
     }
@@ -135,7 +135,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during logout for user: {UserId}", userId);
+            _logger.SafeError("Error during logout for user: {UserId}. Error: {Error}", userId, ex.Message);
             return BadRequest(new { message = "An error occurred during logout" });
         }
     }

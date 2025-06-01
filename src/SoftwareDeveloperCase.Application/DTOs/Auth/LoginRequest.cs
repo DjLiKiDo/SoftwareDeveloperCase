@@ -1,3 +1,5 @@
+using SoftwareDeveloperCase.Application.Attributes;
+
 namespace SoftwareDeveloperCase.Application.DTOs.Auth;
 
 /// <summary>
@@ -13,5 +15,6 @@ public class LoginRequest
     /// <summary>
     /// Gets or sets the password
     /// </summary>
+    [SkipSanitization("Password should not be sanitized as it could alter the authentication credential")]
     public string Password { get; set; } = string.Empty;
 }

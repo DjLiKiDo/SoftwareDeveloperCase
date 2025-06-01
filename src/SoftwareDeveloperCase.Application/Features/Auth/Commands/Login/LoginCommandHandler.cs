@@ -5,6 +5,7 @@ using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Application.DTOs.Auth;
 using SoftwareDeveloperCase.Application.Exceptions;
+using SoftwareDeveloperCase.Application.Services;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
 
 namespace SoftwareDeveloperCase.Application.Features.Auth.Commands.Login;
@@ -48,27 +49,35 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationR
     /// </summary>
     public async Task<AuthenticationResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Processing login request for email: {Email}", request.Email);
+        // Sanitize and validate email specifically for authentication
+        var sanitizedEmail = InputSanitizer.SanitizeEmail(request.Email);
+        if (sanitizedEmail == null)
+        {
+            throw new AuthenticationException("Invalid email format");
+        }
+
+        var logSafeEmail = InputSanitizer.SanitizeForLogging(sanitizedEmail);
+        _logger.LogInformation("Processing login request for email: {Email}", logSafeEmail);
 
         // Get user by email with roles
-        var user = await _userRepository.GetByEmailWithRolesAsync(request.Email, cancellationToken);
+        var user = await _userRepository.GetByEmailWithRolesAsync(sanitizedEmail, cancellationToken);
         if (user == null)
         {
-            _logger.LogWarning("Login failed: User not found for email: {Email}", request.Email);
+            _logger.LogWarning("Login failed: User not found for email: {Email}", logSafeEmail);
             throw new AuthenticationException("Invalid email or password");
         }
 
         // Check if user is active
         if (!user.IsActive)
         {
-            _logger.LogWarning("Login failed: User account is inactive for email: {Email}", request.Email);
+            _logger.LogWarning("Login failed: User account is inactive for email: {Email}", logSafeEmail);
             throw new AuthenticationException("Account is inactive");
         }
 
-        // Verify password
+        // Verify password (use original password, not sanitized)
         if (!_passwordService.VerifyPassword(request.Password, user.Password))
         {
-            _logger.LogWarning("Login failed: Invalid password for email: {Email}", request.Email);
+            _logger.LogWarning("Login failed: Invalid password for email: {Email}", logSafeEmail);
             throw new AuthenticationException("Invalid email or password");
         }
 
