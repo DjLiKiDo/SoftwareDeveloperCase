@@ -28,7 +28,14 @@ public class SecurityHeadersMiddleware
         // Content Security Policy (adjust as needed for your app)
         context.Response.Headers.Append("Content-Security-Policy",
             "default-src 'self'; " +
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+            "script-src 'self'; " +  // Removed 'unsafe-inline' and 'unsafe-eval' for better XSS protection
+            "style-src 'self'; " +
+            "img-src 'self' data:; " +
+            "font-src 'self'; " +
+            "connect-src 'self'; " +
+            "frame-ancestors 'none'; " + // Prevents site from being embedded in iframes
+            "form-action 'self'; " +     // Restricts where forms can be submitted
+            "base-uri 'self'; " +        // Restricts base tags to same origin
             "style-src 'self' 'unsafe-inline'; " +
             "img-src 'self' data: https:; " +
             "font-src 'self'; " +

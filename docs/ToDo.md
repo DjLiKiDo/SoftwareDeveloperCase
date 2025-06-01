@@ -1,5 +1,5 @@
 [ ] Cambiar namespace a SDC.
-[ ] Log entries created from user input Sanitize input parameters
+[X] Log entries created from user input Sanitize input parameters
 [ ] 
 [ ] 
 [ ] 
