@@ -8,6 +8,11 @@ namespace SoftwareDeveloperCase.Api.Configuration;
 /// </summary>
 public class EnumSchemaFilter : ISchemaFilter
 {
+    /// <summary>
+    /// Applies the enum schema filter to convert enum values to strings in Swagger
+    /// </summary>
+    /// <param name="schema">The OpenAPI schema</param>
+    /// <param name="context">The schema filter context</param>
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
         if (context.Type.IsEnum)

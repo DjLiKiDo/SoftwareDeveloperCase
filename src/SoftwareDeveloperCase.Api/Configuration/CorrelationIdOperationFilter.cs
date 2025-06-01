@@ -8,6 +8,11 @@ namespace SoftwareDeveloperCase.Api.Configuration;
 /// </summary>
 public class CorrelationIdOperationFilter : IOperationFilter
 {
+    /// <summary>
+    /// Applies the correlation ID operation filter to the Swagger specification
+    /// </summary>
+    /// <param name="operation">The OpenAPI operation</param>
+    /// <param name="context">The operation filter context</param>
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
         operation.Parameters ??= new List<OpenApiParameter>();

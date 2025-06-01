@@ -8,6 +8,10 @@ namespace SoftwareDeveloperCase.Api.Filters;
 /// </summary>
 public class ModelValidationActionFilter : ActionFilterAttribute
 {
+    /// <summary>
+    /// Called before the action method is invoked to validate the model state
+    /// </summary>
+    /// <param name="context">The action executing context</param>
     public override void OnActionExecuting(ActionExecutingContext context)
     {
         if (!context.ModelState.IsValid)

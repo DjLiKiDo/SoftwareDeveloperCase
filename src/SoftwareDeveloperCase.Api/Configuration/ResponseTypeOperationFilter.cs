@@ -8,6 +8,11 @@ namespace SoftwareDeveloperCase.Api.Configuration;
 /// </summary>
 public class ResponseTypeOperationFilter : IOperationFilter
 {
+    /// <summary>
+    /// Applies the response type operation filter to add standard response types to the Swagger specification
+    /// </summary>
+    /// <param name="operation">The OpenAPI operation</param>
+    /// <param name="context">The operation filter context</param>
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
         // Add common error responses

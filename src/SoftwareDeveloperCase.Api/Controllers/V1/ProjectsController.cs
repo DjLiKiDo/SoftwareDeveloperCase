@@ -14,6 +14,9 @@ using CreateTaskRequest = SoftwareDeveloperCase.Application.Features.Tasks.DTOs.
 
 namespace SoftwareDeveloperCase.Api.Controllers.V1;
 
+/// <summary>
+/// Controller for managing projects
+/// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]
 [Authorize]
@@ -22,6 +25,11 @@ public class ProjectsController : ControllerBase
     private readonly ILogger<ProjectsController> _logger;
     private readonly IMediator _mediator;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProjectsController"/> class
+    /// </summary>
+    /// <param name="logger">The logger</param>
+    /// <param name="mediator">The mediator for handling commands and queries</param>
     public ProjectsController(ILogger<ProjectsController> logger, IMediator mediator)
     {
         _logger = logger;

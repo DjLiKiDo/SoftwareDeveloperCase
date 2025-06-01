@@ -12,12 +12,21 @@ public class RateLimitingMiddleware
     private readonly Dictionary<string, TokenBucketRateLimiter> _rateLimiters = new();
     private readonly object _lock = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RateLimitingMiddleware"/> class
+    /// </summary>
+    /// <param name="next">The next middleware in the pipeline</param>
+    /// <param name="logger">The logger</param>
     public RateLimitingMiddleware(RequestDelegate next, ILogger<RateLimitingMiddleware> logger)
     {
         _next = next;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Processes an HTTP request to apply rate limiting
+    /// </summary>
+    /// <param name="context">The HTTP context</param>
     public async Task InvokeAsync(HttpContext context)
     {
         var clientId = GetClientIdentifier(context);

@@ -8,12 +8,21 @@ public class SecurityHeadersMiddleware
     private readonly RequestDelegate _next;
     private readonly ILogger<SecurityHeadersMiddleware> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SecurityHeadersMiddleware"/> class
+    /// </summary>
+    /// <param name="next">The next middleware in the pipeline</param>
+    /// <param name="logger">The logger</param>
     public SecurityHeadersMiddleware(RequestDelegate next, ILogger<SecurityHeadersMiddleware> logger)
     {
         _next = next;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Processes an HTTP request to add security headers to the response
+    /// </summary>
+    /// <param name="context">The HTTP context</param>
     public async Task InvokeAsync(HttpContext context)
     {
         // Remove server header for security

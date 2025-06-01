@@ -6,6 +6,9 @@ using SoftwareDeveloperCase.Application.Features.Tasks.DTOs;
 
 namespace SoftwareDeveloperCase.Api.Controllers.V1;
 
+/// <summary>
+/// Controller for managing tasks
+/// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]
 [Authorize]
@@ -13,6 +16,10 @@ public class TasksController : ControllerBase
 {
     private readonly ILogger<TasksController> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TasksController"/> class
+    /// </summary>
+    /// <param name="logger">The logger</param>
     public TasksController(ILogger<TasksController> logger)
     {
         _logger = logger;
