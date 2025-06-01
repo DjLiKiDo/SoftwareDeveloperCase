@@ -50,4 +50,9 @@ public class User : BaseEntity
     /// Gets or sets the collection of task comments created by this user.
     /// </summary>
     public ICollection<TaskComment> TaskComments { get; set; } = new List<TaskComment>();
+
+    /// <summary>
+    /// Gets or sets the collection of refresh tokens for this user.
+    /// </summary>
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }
