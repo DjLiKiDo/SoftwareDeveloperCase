@@ -16,6 +16,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Complete project documentation (PRD, MVP, technical guides)
 - Domain model specifications for Team, Project, and Task entities
 - Decorator pattern implementation for cached repositories
+- **MAJOR: JWT Bearer Authentication with Refresh Tokens (Task TD-002):**
+  - OAuth2-compliant token-based authentication flow with 15-minute access tokens
+  - Secure refresh token system with 7-day expiration and automatic rotation
+  - Role-based authorization support for Admin, Manager, and Developer roles
+  - HMAC-SHA256 token signing with comprehensive validation
+  - `RefreshToken` domain entity with user relationships and expiration tracking
+  - `IJwtTokenService` contract with clean architecture dependency inversion
+  - Authentication endpoints: login, refresh, logout, and current user info
+  - Enhanced user entity with refresh token collection management
+  - Input sanitization protection for sensitive authentication data (passwords, tokens)
+  - Comprehensive unit tests for authentication flows and security validation
 - **MAJOR: Comprehensive input sanitization system with 91% security coverage:**
   - 12 specialized sanitization methods covering all major attack vectors
   - Professional-grade HTML sanitization using HtmlSanitizer library

@@ -2,6 +2,7 @@ using MediatR;
 using System.Collections.Concurrent;
 using System.Reflection;
 using SoftwareDeveloperCase.Application.Services;
+using SoftwareDeveloperCase.Application.Attributes;
 
 namespace SoftwareDeveloperCase.Application.Behaviours;
 
@@ -58,6 +59,12 @@ public class SanitizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReq
 
         foreach (var property in properties)
         {
+            // Check if property has SkipSanitizationAttribute
+            if (property.GetCustomAttribute<SkipSanitizationAttribute>() != null)
+            {
+                continue; // Skip sanitization for this property
+            }
+
             // Handle string properties
             if (property.PropertyType == typeof(string) && property.CanWrite)
             {

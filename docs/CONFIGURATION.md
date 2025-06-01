@@ -25,6 +25,11 @@ All configuration sections use strongly-typed classes with validation:
 - **Class**: `SoftwareDeveloperCase.Application.Models.EmailSettings`
 - **Purpose**: SMTP email service configuration
 
+### JwtSettings
+- **Section**: `Jwt`
+- **Class**: `SoftwareDeveloperCase.Application.Models.JwtSettings`
+- **Purpose**: JWT token authentication configuration including signing keys, expiration times, and issuer details
+
 ## Environment Variables for Sensitive Data
 
 Sensitive configuration values should be provided through environment variables:
@@ -37,16 +42,25 @@ Sensitive configuration values should be provided through environment variables:
 - `EMAIL_PASSWORD` - SMTP authentication password
 - `EMAIL_FROM_ADDRESS` - Override sender email address
 
+### JWT Configuration
+- `JWT_SECRET` - JWT signing secret key (minimum 32 characters for HMAC-SHA256)
+- `JWT_ISSUER` - JWT token issuer identifier
+- `JWT_AUDIENCE` - JWT token audience identifier
+- `JWT_EXPIRATION_MINUTES` - Access token expiration time in minutes (default: 15)
+- `JWT_REFRESH_EXPIRATION_DAYS` - Refresh token expiration time in days (default: 7)
+
 ## Configuration Validation
 
 Configuration is validated using the IValidateOptions pattern:
 - `EmailSettingsValidator` - Validates email configuration
 - `DatabaseSettingsValidator` - Validates database configuration
+- `JwtSettingsValidator` - Validates JWT authentication configuration
 
 Validation can be performed manually using extension methods:
 ```csharp
 var emailValidation = emailSettings.ValidateEmailSettings();
 var databaseValidation = databaseSettings.ValidateDatabaseSettings();
+var jwtValidation = jwtSettings.ValidateJwtSettings();
 ```
 
 ## Environment Setup
