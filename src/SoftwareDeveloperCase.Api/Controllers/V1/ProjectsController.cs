@@ -56,9 +56,14 @@ public class ProjectsController : ControllerBase
         var sanitizedSearchTerm = InputSanitizer.SanitizeString(searchTerm);
         
         // Use safe logging extension to prevent log injection
-        _logger.SafeInformation("Getting projects with searchTerm: {SearchTerm}", searchTerm);
+        _logger.SafeInformation("Getting projects with searchTerm: {SearchTerm}", sanitizedSearchTerm);
+        
+        // Sanitize other parameters for logging
+        var sanitizedStatus = InputSanitizer.SanitizeForLogging(status);
+        var sanitizedTeamId = teamId?.ToString() ?? "null";
+        
         _logger.LogInformation("Getting projects with pageNumber: {PageNumber}, pageSize: {PageSize}, status: {Status}, teamId: {TeamId}",
-            pageNumber, pageSize, status, teamId);
+            pageNumber, pageSize, sanitizedStatus, sanitizedTeamId);
 
         var query = new GetProjectsQuery
         {
@@ -318,8 +323,9 @@ public class ProjectsController : ControllerBase
         // Example of manual sanitization
         var sanitizedKeyword = InputSanitizer.SanitizeString(keyword);
         
-        // Log the sanitized input
-        _logger.LogInformation("Searching projects with sanitized keyword: {Keyword}", sanitizedKeyword);
+        // Log the sanitized input - use SanitizeForLogging for extra protection
+        _logger.LogInformation("Searching projects with sanitized keyword: {Keyword}", 
+            InputSanitizer.SanitizeForLogging(sanitizedKeyword));
         
         // Create a custom search query 
         var query = new GetProjectsQuery

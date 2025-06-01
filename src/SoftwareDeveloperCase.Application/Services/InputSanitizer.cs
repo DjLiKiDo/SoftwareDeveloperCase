@@ -184,4 +184,38 @@ public static class InputSanitizer
         // Keep only digits, spaces, and common phone number symbols
         return Regex.Replace(phoneNumber, @"[^\d\s+\-().]", string.Empty, RegexOptions.Compiled);
     }
+
+    /// <summary>
+    /// Sanitizes a string input specifically for logging to prevent log injection attacks
+    /// </summary>
+    /// <param name="input">The input string to sanitize</param>
+    /// <returns>Sanitized string safe for logging or null if input was null</returns>
+    public static string? SanitizeForLogging(string? input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return input;
+        }
+
+        // First apply basic string sanitization
+        var sanitized = SanitizeString(input);
+        
+        if (string.IsNullOrEmpty(sanitized))
+        {
+            return sanitized;
+        }
+
+        // Remove newline characters that can be used for log injection
+        sanitized = sanitized.Replace("\r\n", " ")
+                             .Replace("\r", " ")
+                             .Replace("\n", " ");
+
+        // Remove other potential log injection vectors
+        sanitized = sanitized.Replace("\t", " ");
+
+        // Collapse multiple spaces into single space
+        sanitized = Regex.Replace(sanitized, @"\s+", " ", RegexOptions.Compiled).Trim();
+
+        return sanitized;
+    }
 }

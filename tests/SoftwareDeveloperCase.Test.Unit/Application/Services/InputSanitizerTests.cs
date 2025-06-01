@@ -125,4 +125,23 @@ public class InputSanitizerTests
         // Assert
         Assert.Equal(expected, result);
     }
+
+    [Theory]
+    [InlineData("Normal log message", "Normal log message")]
+    [InlineData("Message with\nnewline", "Message withnewline")]
+    [InlineData("Message with\r\nCRLF", "Message withCRLF")]
+    [InlineData("Message with\ttab", "Message withtab")]
+    [InlineData("Message  with   multiple    spaces", "Message with multiple spaces")]
+    [InlineData("<script>alert('XSS')</script>", "&lt;script&gt;alert(&#39;XSS&#39;)&lt;/script&gt;")]
+    [InlineData("Log injection\nFAKE LOG: User admin deleted", "Log injectionFAKE LOG: User admin deleted")]
+    [InlineData("", "")]
+    [InlineData(null, null)]
+    public void SanitizeForLogging_ShouldRemoveLogInjectionVectors(string? input, string? expected)
+    {
+        // Act
+        var result = InputSanitizer.SanitizeForLogging(input);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
 }
