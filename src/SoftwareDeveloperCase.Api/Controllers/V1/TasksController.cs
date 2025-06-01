@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Api.Extensions;
 using SoftwareDeveloperCase.Application.Models; // Changed from Common.Models
 using SoftwareDeveloperCase.Application.Features.Tasks.DTOs;

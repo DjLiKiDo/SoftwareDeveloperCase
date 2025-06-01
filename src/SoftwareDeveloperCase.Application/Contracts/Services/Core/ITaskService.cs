@@ -1,7 +1,3 @@
-using SoftwareDeveloperCase.Domain.Entities.Task;
-using SoftwareDeveloperCase.Domain.Entities.Team;
-using SoftwareDeveloperCase.Domain.Entities.Project;
-using SoftwareDeveloperCase.Domain.Enums.Core;
 using TaskEntity = SoftwareDeveloperCase.Domain.Entities.Task.Task;
 using TaskStatusEnum = SoftwareDeveloperCase.Domain.Enums.Core.TaskStatus;
 

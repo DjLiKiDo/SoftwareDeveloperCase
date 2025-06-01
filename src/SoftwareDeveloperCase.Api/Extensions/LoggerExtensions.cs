@@ -1,6 +1,4 @@
-using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Services;
-using System.Linq;
 
 namespace SoftwareDeveloperCase.Api.Extensions;
 

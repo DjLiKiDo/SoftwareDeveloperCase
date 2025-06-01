@@ -1,5 +1,4 @@
 using SoftwareDeveloperCase.Domain.Common;
-using SoftwareDeveloperCase.Domain.Entities;
 
 namespace SoftwareDeveloperCase.Domain.Entities.Identity;
 

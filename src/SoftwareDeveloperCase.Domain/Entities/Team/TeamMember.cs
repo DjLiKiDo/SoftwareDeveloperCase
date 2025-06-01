@@ -1,6 +1,4 @@
 using SoftwareDeveloperCase.Domain.Common;
-using SoftwareDeveloperCase.Domain.Entities;
-using SoftwareDeveloperCase.Domain.Entities.Identity;
 using SoftwareDeveloperCase.Domain.Enums.Core;
 
 namespace SoftwareDeveloperCase.Domain.Entities.Team;

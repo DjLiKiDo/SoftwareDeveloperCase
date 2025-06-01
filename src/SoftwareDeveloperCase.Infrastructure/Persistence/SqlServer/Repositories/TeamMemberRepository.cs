@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
 using SoftwareDeveloperCase.Domain.Entities.Team;
 using SoftwareDeveloperCase.Domain.Enums.Core;
-using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
 
 namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Repositories;
 

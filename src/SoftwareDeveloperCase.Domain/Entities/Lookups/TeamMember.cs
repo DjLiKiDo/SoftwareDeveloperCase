@@ -1,5 +1,4 @@
 using SoftwareDeveloperCase.Domain.Common;
-using SoftwareDeveloperCase.Domain.Entities.Team;
 using SoftwareDeveloperCase.Domain.Enums.Core;
 
 namespace SoftwareDeveloperCase.Domain.Entities.Lookups;

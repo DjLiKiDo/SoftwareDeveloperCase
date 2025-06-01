@@ -1,6 +1,3 @@
-using SoftwareDeveloperCase.Domain.Common;
-using SoftwareDeveloperCase.Domain.Enums.Core;
-
 namespace SoftwareDeveloperCase.Domain.Events.Core;
 
 /// <summary>

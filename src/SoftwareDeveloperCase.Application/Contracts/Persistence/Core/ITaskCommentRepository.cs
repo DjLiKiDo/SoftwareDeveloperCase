@@ -1,4 +1,3 @@
-using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Domain.Entities.Task;
 
 namespace SoftwareDeveloperCase.Application.Contracts.Persistence.Core;

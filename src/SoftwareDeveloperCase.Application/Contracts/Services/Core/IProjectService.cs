@@ -1,6 +1,4 @@
 using SoftwareDeveloperCase.Domain.Entities.Project;
-using SoftwareDeveloperCase.Domain.Entities.Task;
-using SoftwareDeveloperCase.Domain.Entities.Team;
 using SoftwareDeveloperCase.Domain.Enums.Core;
 
 namespace SoftwareDeveloperCase.Application.Contracts.Services.Core;

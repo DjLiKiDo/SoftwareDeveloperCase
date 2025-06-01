@@ -1,6 +1,5 @@
 using MediatR;
 using SoftwareDeveloperCase.Domain.Enums.Core;
-using System;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Commands.UpdateProject;
 

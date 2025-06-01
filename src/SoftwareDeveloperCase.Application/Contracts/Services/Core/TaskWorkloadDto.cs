@@ -1,6 +1,3 @@
-using SoftwareDeveloperCase.Domain.Enums.Core;
-using TaskStatusEnum = SoftwareDeveloperCase.Domain.Enums.Core.TaskStatus;
-
 namespace SoftwareDeveloperCase.Application.Contracts.Services.Core;
 
 /// <summary>

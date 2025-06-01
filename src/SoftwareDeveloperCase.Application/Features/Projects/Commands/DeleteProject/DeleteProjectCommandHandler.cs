@@ -2,9 +2,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Exceptions;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Commands.DeleteProject;
 

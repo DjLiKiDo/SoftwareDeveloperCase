@@ -1,5 +1,3 @@
-using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Domain.Entities.Task;
 using SoftwareDeveloperCase.Domain.Enums.Core;
 using TaskEntity = SoftwareDeveloperCase.Domain.Entities.Task.Task;
 using TaskStatusEnum = SoftwareDeveloperCase.Domain.Enums.Core.TaskStatus;

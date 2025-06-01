@@ -1,9 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
-using SoftwareDeveloperCase.Domain.Entities.Task;
-using SoftwareDeveloperCase.Domain.Entities.Project;
-using SoftwareDeveloperCase.Domain.Enums.Core;
-using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
 using TaskEntity = SoftwareDeveloperCase.Domain.Entities.Task.Task;
 using DomainTaskStatus = SoftwareDeveloperCase.Domain.Enums.Core.TaskStatus;
 

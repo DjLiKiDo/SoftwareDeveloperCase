@@ -63,3 +63,6 @@ nunit-*.xml
 
 # User secrets (if used)
 secrets.json
+
+# Custom
+.DS_Store
