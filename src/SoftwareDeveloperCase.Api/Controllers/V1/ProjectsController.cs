@@ -200,11 +200,11 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]
     public async Task<ActionResult<PagedResult<TaskDto>>> GetProjectTasks(
-        int id,
+        Guid id,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? status = null,
-        [FromQuery] int? assignedUserId = null,
+        [FromQuery] Guid? assignedUserId = null,
         CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting tasks for project ID: {ProjectId} with pageNumber: {PageNumber}, pageSize: {PageSize}, status: {Status}, assignedUserId: {AssignedUserId}",
@@ -238,13 +238,13 @@ public class ProjectsController : ControllerBase
     /// <param name="request">Task creation request</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Created task</returns>
-    [HttpPost("{id:int}/tasks")]
+    [HttpPost("{id:guid}/tasks")]
     [ProducesResponseType(typeof(TaskDto), 201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
-    public async Task<ActionResult<TaskDto>> CreateProjectTask(int id, CreateTaskRequest request, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<TaskDto>> CreateProjectTask(Guid id, CreateTaskRequest request, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Creating new task in project ID: {ProjectId}", id);
 
@@ -271,11 +271,11 @@ public class ProjectsController : ControllerBase
     /// <param name="id">Project ID</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Project statistics</returns>
-    [HttpGet("{id:int}/statistics")]
+    [HttpGet("{id:guid}/statistics")]
     [ProducesResponseType(typeof(ProjectStatisticsDto), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]
-    public async Task<ActionResult<ProjectStatisticsDto>> GetProjectStatistics(int id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<ProjectStatisticsDto>> GetProjectStatistics(Guid id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting statistics for project ID: {ProjectId}", id);
 
