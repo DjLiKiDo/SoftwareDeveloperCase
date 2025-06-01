@@ -29,19 +29,26 @@ public class RequestSanitizationMiddleware
     public async Task InvokeAsync(HttpContext context)
     {
         // Sanitize query string parameters
-        foreach (var key in context.Request.Query.Keys)
+        var sanitizedQuery = new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>();
+        foreach (var kvp in context.Request.Query)
         {
-            if (context.Request.Query.TryGetValue(key, out var values))
+            var sanitizedValues = new List<string>();
+            foreach (var value in kvp.Value)
             {
-                for (var i = 0; i < values.Count; i++)
+                if (!string.IsNullOrEmpty(value))
                 {
-                    if (!string.IsNullOrEmpty(values[i]))
-                    {
-                        values[i] = InputSanitizer.SanitizeString(values[i]);
-                    }
+                    sanitizedValues.Add(InputSanitizer.SanitizeString(value) ?? string.Empty);
+                }
+                else
+                {
+                    sanitizedValues.Add(value ?? string.Empty);
                 }
             }
+            sanitizedQuery[kvp.Key] = new Microsoft.Extensions.Primitives.StringValues(sanitizedValues.ToArray());
         }
+
+        // Replace the query collection with sanitized values
+        context.Request.Query = new Microsoft.AspNetCore.Http.QueryCollection(sanitizedQuery);
 
         // Continue to next middleware
         await _next(context);
