@@ -30,7 +30,7 @@ public static class LoggerExtensions
     public static void SafeInformation(this ILogger logger, string message, params object?[] args)
     {
         // Sanitize any string arguments that might contain user input
-        var sanitizedArgs = args.Select(arg => 
+        var sanitizedArgs = args.Select(arg =>
             arg is string str ? InputSanitizer.SanitizeForLogging(str) : arg).ToArray();
         logger.LogInformation(message, sanitizedArgs);
     }
@@ -55,7 +55,7 @@ public static class LoggerExtensions
     /// <param name="args">Parameters for the message template</param>
     public static void SafeWarning(this ILogger logger, string message, params object?[] args)
     {
-        var sanitizedArgs = args.Select(arg => 
+        var sanitizedArgs = args.Select(arg =>
             arg is string str ? InputSanitizer.SanitizeForLogging(str) : arg).ToArray();
         logger.LogWarning(message, sanitizedArgs);
     }
@@ -80,7 +80,7 @@ public static class LoggerExtensions
     /// <param name="args">Parameters for the message template</param>
     public static void SafeError(this ILogger logger, string message, params object?[] args)
     {
-        var sanitizedArgs = args.Select(arg => 
+        var sanitizedArgs = args.Select(arg =>
             arg is string str ? InputSanitizer.SanitizeForLogging(str) : arg).ToArray();
         logger.LogError(message, sanitizedArgs);
     }
@@ -105,7 +105,7 @@ public static class LoggerExtensions
     /// <param name="args">Parameters for the message template</param>
     public static void SafeDebug(this ILogger logger, string message, params object?[] args)
     {
-        var sanitizedArgs = args.Select(arg => 
+        var sanitizedArgs = args.Select(arg =>
             arg is string str ? InputSanitizer.SanitizeForLogging(str) : arg).ToArray();
         logger.LogDebug(message, sanitizedArgs);
     }
