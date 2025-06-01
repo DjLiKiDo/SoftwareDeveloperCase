@@ -1,7 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SoftwareDeveloperCase.Api.Extensions;
 using SoftwareDeveloperCase.Application.Models;
+using SoftwareDeveloperCase.Application.Services;
 using SoftwareDeveloperCase.Application.Features.Projects.Commands.CreateProject;
 using SoftwareDeveloperCase.Application.Features.Projects.Commands.UpdateProject;
 using SoftwareDeveloperCase.Application.Features.Projects.Commands.DeleteProject;
@@ -50,14 +52,19 @@ public class ProjectsController : ControllerBase
         [FromQuery] Guid? teamId = null,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Getting projects with pageNumber: {PageNumber}, pageSize: {PageSize}, searchTerm: {SearchTerm}, status: {Status}, teamId: {TeamId}",
-            pageNumber, pageSize, searchTerm, status, teamId);
+        // Sanitize the search term input
+        var sanitizedSearchTerm = InputSanitizer.SanitizeString(searchTerm);
+        
+        // Use safe logging extension to prevent log injection
+        _logger.SafeInformation("Getting projects with searchTerm: {SearchTerm}", searchTerm);
+        _logger.LogInformation("Getting projects with pageNumber: {PageNumber}, pageSize: {PageSize}, status: {Status}, teamId: {TeamId}",
+            pageNumber, pageSize, status, teamId);
 
         var query = new GetProjectsQuery
         {
             PageNumber = pageNumber,
             PageSize = pageSize,
-            SearchTerm = searchTerm,
+            SearchTerm = sanitizedSearchTerm,
             Status = status != null ? Enum.Parse<Domain.Enums.Core.ProjectStatus>(status) : null,
             TeamId = teamId
         };
@@ -292,5 +299,38 @@ public class ProjectsController : ControllerBase
 
         await Task.CompletedTask;
         return NotFound($"Project with ID {id} not found");
+    }
+
+    /// <summary>
+    /// Searches for projects by keyword in name or description
+    /// </summary>
+    /// <param name="keyword">The search keyword</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of matching projects</returns>
+    [HttpGet("search")]
+    [ProducesResponseType(typeof(List<ProjectDto>), 200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    public async Task<ActionResult<List<ProjectDto>>> SearchProjects(
+        [FromQuery] string keyword,
+        CancellationToken cancellationToken = default)
+    {
+        // Example of manual sanitization
+        var sanitizedKeyword = InputSanitizer.SanitizeString(keyword);
+        
+        // Log the sanitized input
+        _logger.LogInformation("Searching projects with sanitized keyword: {Keyword}", sanitizedKeyword);
+        
+        // Create a custom search query 
+        var query = new GetProjectsQuery
+        {
+            PageNumber = 1,
+            PageSize = 100, // Returning all matches
+            SearchTerm = sanitizedKeyword
+            // We're intentionally not filtering by status or team here
+        };
+
+        var result = await _mediator.Send(query, cancellationToken);
+        return Ok(result.Items);
     }
 }

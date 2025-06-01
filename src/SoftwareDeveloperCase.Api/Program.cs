@@ -1,5 +1,6 @@
 using Serilog;
 using SoftwareDeveloperCase.Api;
+using SoftwareDeveloperCase.Api.Extensions;
 using SoftwareDeveloperCase.Api.Middleware;
 using SoftwareDeveloperCase.Api.Filters;
 using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
@@ -39,6 +40,7 @@ app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseMiddleware<RateLimitingMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+app.UseSanitizeRequestParameters(); // Add request parameter sanitization
 
 // Add Serilog request logging
 app.UseSerilogRequestLogging(options =>
