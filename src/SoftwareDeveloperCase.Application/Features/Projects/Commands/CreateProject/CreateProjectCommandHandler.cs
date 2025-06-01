@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Services;
 using SoftwareDeveloperCase.Domain.Entities.Project;
 using SoftwareDeveloperCase.Domain.Enums.Core;
 using System;
@@ -40,7 +41,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
     /// <returns>The ID of the created project</returns>
     public async Task<Guid> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Creating new project with name: {ProjectName}", request.Name);
+        _logger.LogInformation("Creating new project with name: {ProjectName}", InputSanitizer.SanitizeForLogging(request.Name));
 
         var project = new Project
         {

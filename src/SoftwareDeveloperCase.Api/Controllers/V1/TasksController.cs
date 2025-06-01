@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SoftwareDeveloperCase.Api.Extensions;
 using SoftwareDeveloperCase.Application.Models; // Changed from Common.Models
 using SoftwareDeveloperCase.Application.Features.Tasks.DTOs;
 
@@ -47,7 +49,7 @@ public class TasksController : ControllerBase
         [FromQuery] DateTime? dueDateTo = null,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Getting tasks with pageNumber: {PageNumber}, pageSize: {PageSize}, searchTerm: {SearchTerm}, status: {Status}, priority: {Priority}, assignedUserId: {AssignedUserId}, projectId: {ProjectId}",
+        _logger.SafeInformation("Getting tasks with pageNumber: {PageNumber}, pageSize: {PageSize}, searchTerm: {SearchTerm}, status: {Status}, priority: {Priority}, assignedUserId: {AssignedUserId}, projectId: {ProjectId}",
             pageNumber, pageSize, searchTerm, status, priority, assignedUserId, projectId);
 
         // TODO: Implement GetTasksQuery when available in Phase 5
@@ -107,7 +109,7 @@ public class TasksController : ControllerBase
     [ProducesResponseType(403)]
     public async Task<ActionResult<TaskDto>> CreateTask(CreateTaskRequest request, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Creating new task: {TaskTitle}", request.Title);
+        _logger.SafeInformation("Creating new task: {TaskTitle}", request.Title);
 
         // TODO: Implement CreateTaskCommand when available in Phase 5
         // var command = new CreateTaskCommand(request.Title, request.Description, request.ProjectId, request.AssignedUserId, request.Priority, request.ParentTaskId, request.DueDate);
@@ -173,7 +175,7 @@ public class TasksController : ControllerBase
     [ProducesResponseType(403)]
     public async Task<ActionResult<TaskDto>> UpdateTaskStatus(int id, UpdateTaskStatusRequest request, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Updating status for task with ID: {TaskId} to {Status}", id, request.Status);
+        _logger.SafeInformation("Updating status for task with ID: {TaskId} to {Status}", id, request.Status);
 
         // TODO: Implement UpdateTaskStatusCommand when available in Phase 5
         // var command = new UpdateTaskStatusCommand(id, request.Status);

@@ -55,9 +55,9 @@ public class ProjectsController : ControllerBase
         // Use safe logging extension to prevent log injection
         _logger.SafeInformation("Getting projects with searchTerm: {SearchTerm}", searchTerm);
 
-        // Use safe logging for other parameters
+        // Log other parameters safely
         _logger.SafeInformation("Getting projects with pageNumber: {PageNumber}, pageSize: {PageSize}, status: {Status}, teamId: {TeamId}",
-            $"pageNumber: {pageNumber}, pageSize: {pageSize}, status: {status ?? "null"}, teamId: {teamId?.ToString() ?? "null"}");
+            pageNumber, pageSize, status ?? "null", teamId?.ToString() ?? "null");
 
         var query = new GetProjectsQuery
         {
@@ -103,7 +103,7 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(403)]
     public async Task<ActionResult<Guid>> CreateProject(CreateProjectCommand request, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Creating new project: {ProjectName}", request.Name);
+        _logger.SafeInformation("Creating new project: {ProjectName}", request.Name);
 
         try
         {
@@ -213,7 +213,7 @@ public class ProjectsController : ControllerBase
         [FromQuery] Guid? assignedUserId = null,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Getting tasks for project ID: {ProjectId} with pageNumber: {PageNumber}, pageSize: {PageSize}, status: {Status}, assignedUserId: {AssignedUserId}",
+        _logger.SafeInformation("Getting tasks for project ID: {ProjectId} with pageNumber: {PageNumber}, pageSize: {PageSize}, status: {Status}, assignedUserId: {AssignedUserId}",
             id, pageNumber, pageSize, status, assignedUserId);
 
         // TODO: Implement GetProjectTasksQuery when available in Phase 5
