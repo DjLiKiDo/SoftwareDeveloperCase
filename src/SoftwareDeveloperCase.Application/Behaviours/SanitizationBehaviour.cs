@@ -1,4 +1,5 @@
 using MediatR;
+using System.Collections.Concurrent;
 using System.Reflection;
 using SoftwareDeveloperCase.Application.Services;
 
@@ -12,6 +13,10 @@ namespace SoftwareDeveloperCase.Application.Behaviours;
 public class SanitizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
+    /// <summary>
+    /// Cache for property reflection metadata to improve performance
+    /// </summary>
+    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> PropertyCache = new();
     /// <summary>
     /// Handles the request pipeline and sanitizes string properties before proceeding
     /// </summary>
@@ -46,8 +51,10 @@ public class SanitizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReq
             return;
         }
 
-        // Get all properties of the object
-        var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        // Get all properties of the object using cached reflection metadata
+        var objectType = obj.GetType();
+        var properties = PropertyCache.GetOrAdd(objectType, 
+            type => type.GetProperties(BindingFlags.Public | BindingFlags.Instance));
 
         foreach (var property in properties)
         {

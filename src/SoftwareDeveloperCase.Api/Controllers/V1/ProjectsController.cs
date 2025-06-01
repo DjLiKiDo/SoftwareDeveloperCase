@@ -52,24 +52,18 @@ public class ProjectsController : ControllerBase
         [FromQuery] Guid? teamId = null,
         CancellationToken cancellationToken = default)
     {
-        // Sanitize the search term input
-        var sanitizedSearchTerm = InputSanitizer.SanitizeString(searchTerm)?.Replace("\n", "").Replace("\r", "");
-
         // Use safe logging extension to prevent log injection
-        _logger.SafeInformation("Getting projects with searchTerm: {SearchTerm}", sanitizedSearchTerm);
+        _logger.SafeInformation("Getting projects with searchTerm: {SearchTerm}", searchTerm);
 
-        // Sanitize other parameters for logging
-        var sanitizedStatus = status?.Replace("\n", "").Replace("\r", "") ?? "null";
-        var sanitizedTeamId = teamId?.ToString() ?? "null";
-
-        _logger.LogInformation("Getting projects with pageNumber: {PageNumber}, pageSize: {PageSize}, status: {Status}, teamId: {TeamId}",
-            pageNumber, pageSize, sanitizedStatus, sanitizedTeamId);
+        // Use safe logging for other parameters
+        _logger.SafeInformation("Getting projects with pageNumber: {PageNumber}, pageSize: {PageSize}, status: {Status}, teamId: {TeamId}",
+            $"pageNumber: {pageNumber}, pageSize: {pageSize}, status: {status ?? "null"}, teamId: {teamId?.ToString() ?? "null"}");
 
         var query = new GetProjectsQuery
         {
             PageNumber = pageNumber,
             PageSize = pageSize,
-            SearchTerm = sanitizedSearchTerm,
+            SearchTerm = searchTerm,
             Status = status != null ? Enum.Parse<Domain.Enums.Core.ProjectStatus>(status) : null,
             TeamId = teamId
         };
@@ -320,19 +314,15 @@ public class ProjectsController : ControllerBase
         [FromQuery] string keyword,
         CancellationToken cancellationToken = default)
     {
-        // Example of manual sanitization
-        var sanitizedKeyword = InputSanitizer.SanitizeString(keyword);
-
-        // Log the sanitized input - use SanitizeForLogging for extra protection
-        _logger.LogInformation("Searching projects with sanitized keyword: {Keyword}",
-            InputSanitizer.SanitizeForLogging(sanitizedKeyword)?.Replace("\n", "").Replace("\r", ""));
+        // Use safe logging extension to prevent log injection
+        _logger.SafeInformation("Searching projects with keyword: {Keyword}", keyword);
 
         // Create a custom search query 
         var query = new GetProjectsQuery
         {
             PageNumber = 1,
             PageSize = 100, // Returning all matches
-            SearchTerm = sanitizedKeyword
+            SearchTerm = keyword
             // We're intentionally not filtering by status or team here
         };
 
