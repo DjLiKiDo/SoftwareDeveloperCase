@@ -104,6 +104,7 @@ public static class DependencyInjection
         // Register services
         services.AddSingleton<IDateTimeService, DateTimeService>();
         services.AddTransient<ICacheKeyService, CacheKeyService>();
+        services.AddTransient<IPasswordService, PasswordService>();
 
         // Configure strongly-typed configuration with validation
         services.Configure<DatabaseSettings>(configuration.GetSection(DatabaseSettings.SECTION_NAME));

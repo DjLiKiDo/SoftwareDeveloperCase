@@ -20,6 +20,7 @@ public class InsertUserCommandHandler : IRequestHandler<InsertUserCommand, Guid>
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEmailService _emailService;
+    private readonly IPasswordService _passwordService;
 
     /// <summary>
     /// Initializes a new instance of the InsertUserCommandHandler class
@@ -28,12 +29,14 @@ public class InsertUserCommandHandler : IRequestHandler<InsertUserCommand, Guid>
     /// <param name="mapper">The AutoMapper instance</param>
     /// <param name="unitOfWork">The unit of work instance</param>
     /// <param name="emailService">The email service for sending notifications</param>
-    public InsertUserCommandHandler(ILogger<InsertUserCommandHandler> logger, IMapper mapper, IUnitOfWork unitOfWork, IEmailService emailService)
+    /// <param name="passwordService">The password service for hashing passwords</param>
+    public InsertUserCommandHandler(ILogger<InsertUserCommandHandler> logger, IMapper mapper, IUnitOfWork unitOfWork, IEmailService emailService, IPasswordService passwordService)
     {
         _logger = logger;
         _mapper = mapper;
         _unitOfWork = unitOfWork;
         _emailService = emailService;
+        _passwordService = passwordService;
     }
 
     /// <summary>
@@ -45,6 +48,12 @@ public class InsertUserCommandHandler : IRequestHandler<InsertUserCommand, Guid>
     public async Task<Guid> Handle(InsertUserCommand request, CancellationToken cancellationToken)
     {
         var user = _mapper.Map<UserEntity>(request);
+
+        // Hash the password before saving
+        if (!string.IsNullOrWhiteSpace(user.Password))
+        {
+            user.Password = _passwordService.HashPassword(user.Password);
+        }
 
         _unitOfWork.UserRepository.Insert(user);
 
