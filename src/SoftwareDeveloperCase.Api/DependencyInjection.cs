@@ -23,6 +23,45 @@ public static class DependencyInjection
     /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
+        // Configure JWT authentication and authorization
+        services.AddJwtAuthentication(configuration);
+
+        // Configure controllers with filters
+        services.AddControllers(options =>
+        {
+            options.Filters.Add<ModelValidationActionFilter>();
+            options.Filters.Add<PerformanceLoggingActionFilter>();
+            options.Filters.Add<ResourceAccessAuthorizationFilter>();
+        });
+
+        // Configure API filters
+        services.AddScoped<ModelValidationActionFilter>();
+        services.AddScoped<PerformanceLoggingActionFilter>();
+        services.AddScoped<ResourceAccessAuthorizationFilter>();
+
+        // Configure Swagger with enhanced documentation
+        services.AddSwaggerDocumentation();
+
+        // Add health checks
+        services.AddHealthChecks()
+            .AddDbContextCheck<SoftwareDeveloperCaseDbContext>("database")
+            .AddCheck<EmailServiceHealthCheck>("email_service");
+
+        services
+            .AddApplicationServices()
+            .AddInfrastructureServices(configuration);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Configures JWT authentication and authorization policies.
+    /// </summary>
+    /// <param name="services">The service collection to add services to.</param>
+    /// <param name="configuration">The application configuration.</param>
+    /// <returns>The service collection for chaining.</returns>
+    private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
         // Configure JWT authentication
         var jwtSettings = new JwtSettings();
         configuration.GetSection("JwtSettings").Bind(jwtSettings);
@@ -54,31 +93,6 @@ public static class DependencyInjection
             options.AddPolicy("ManagerOrAdmin", policy => policy.RequireRole("Manager", "Admin"));
             options.AddPolicy("DeveloperOrManager", policy => policy.RequireRole("Developer", "Manager", "Admin"));
         });
-
-        // Configure controllers with filters
-        services.AddControllers(options =>
-        {
-            options.Filters.Add<ModelValidationActionFilter>();
-            options.Filters.Add<PerformanceLoggingActionFilter>();
-            options.Filters.Add<ResourceAccessAuthorizationFilter>();
-        });
-
-        // Configure API filters
-        services.AddScoped<ModelValidationActionFilter>();
-        services.AddScoped<PerformanceLoggingActionFilter>();
-        services.AddScoped<ResourceAccessAuthorizationFilter>();
-
-        // Configure Swagger with enhanced documentation
-        services.AddSwaggerDocumentation();
-
-        // Add health checks
-        services.AddHealthChecks()
-            .AddDbContextCheck<SoftwareDeveloperCaseDbContext>("database")
-            .AddCheck<EmailServiceHealthCheck>("email_service");
-
-        services
-            .AddApplicationServices()
-            .AddInfrastructureServices(configuration);
 
         return services;
     }
