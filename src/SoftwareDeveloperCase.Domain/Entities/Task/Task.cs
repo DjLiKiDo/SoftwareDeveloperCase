@@ -1,6 +1,4 @@
 using SoftwareDeveloperCase.Domain.Common;
-using SoftwareDeveloperCase.Domain.Entities;
-using SoftwareDeveloperCase.Domain.Entities.Project;
 using SoftwareDeveloperCase.Domain.Enums.Core;
 using SoftwareDeveloperCase.Domain.ValueObjects;
 

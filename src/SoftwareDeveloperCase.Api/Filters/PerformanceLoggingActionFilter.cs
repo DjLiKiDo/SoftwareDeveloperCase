@@ -11,11 +11,19 @@ public class PerformanceLoggingActionFilter : ActionFilterAttribute
     private readonly ILogger<PerformanceLoggingActionFilter> _logger;
     private const string StopwatchKey = "ActionStopwatch";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PerformanceLoggingActionFilter"/> class
+    /// </summary>
+    /// <param name="logger">The logger</param>
     public PerformanceLoggingActionFilter(ILogger<PerformanceLoggingActionFilter> logger)
     {
         _logger = logger;
     }
 
+    /// <summary>
+    /// Called before the action method is invoked to start performance tracking
+    /// </summary>
+    /// <param name="context">The action executing context</param>
     public override void OnActionExecuting(ActionExecutingContext context)
     {
         var stopwatch = Stopwatch.StartNew();
@@ -32,6 +40,10 @@ public class PerformanceLoggingActionFilter : ActionFilterAttribute
         base.OnActionExecuting(context);
     }
 
+    /// <summary>
+    /// Called after the action method is executed to log performance metrics
+    /// </summary>
+    /// <param name="context">The action executed context</param>
     public override void OnActionExecuted(ActionExecutedContext context)
     {
         if (context.HttpContext.Items[StopwatchKey] is Stopwatch stopwatch)

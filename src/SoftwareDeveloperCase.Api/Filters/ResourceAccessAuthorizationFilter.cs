@@ -11,11 +11,19 @@ public class ResourceAccessAuthorizationFilter : ActionFilterAttribute
 {
     private readonly ILogger<ResourceAccessAuthorizationFilter> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ResourceAccessAuthorizationFilter"/> class
+    /// </summary>
+    /// <param name="logger">The logger</param>
     public ResourceAccessAuthorizationFilter(ILogger<ResourceAccessAuthorizationFilter> logger)
     {
         _logger = logger;
     }
 
+    /// <summary>
+    /// Called before the action method is invoked to verify user authorization
+    /// </summary>
+    /// <param name="context">The action executing context</param>
     public override void OnActionExecuting(ActionExecutingContext context)
     {
         var user = context.HttpContext.User;

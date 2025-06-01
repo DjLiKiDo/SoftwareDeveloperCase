@@ -1,6 +1,5 @@
 using MediatR;
 using SoftwareDeveloperCase.Application.Features.Projects.DTOs;
-using System;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Queries.GetProjectById;
 

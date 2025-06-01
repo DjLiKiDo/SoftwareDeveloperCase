@@ -1,7 +1,3 @@
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 using SoftwareDeveloperCase.Application.Services;
 
 namespace SoftwareDeveloperCase.Api.Middleware;

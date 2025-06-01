@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 using SoftwareDeveloperCase.Application.Contracts.Services;
 
 namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Domain.Common;
-using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
 using System.Linq.Expressions;
 
 namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Repositories;

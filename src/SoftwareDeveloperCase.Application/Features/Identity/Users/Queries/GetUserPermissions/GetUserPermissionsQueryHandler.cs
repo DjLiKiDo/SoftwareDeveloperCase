@@ -2,7 +2,6 @@ using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using System.Linq;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Users.Queries.GetUserPermissions;
 

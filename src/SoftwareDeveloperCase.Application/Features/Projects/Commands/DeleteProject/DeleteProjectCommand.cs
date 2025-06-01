@@ -1,5 +1,4 @@
 using MediatR;
-using System;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Commands.DeleteProject;
 

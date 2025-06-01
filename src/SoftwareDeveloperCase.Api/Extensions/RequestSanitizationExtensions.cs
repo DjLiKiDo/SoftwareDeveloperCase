@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Builder;
 using SoftwareDeveloperCase.Api.Middleware;
 
 namespace SoftwareDeveloperCase.Api.Extensions;

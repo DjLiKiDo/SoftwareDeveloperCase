@@ -2,7 +2,6 @@ using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
 using SoftwareDeveloperCase.Domain.Common;
-using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
 using System.Collections;
 using Microsoft.Extensions.Logging;
 

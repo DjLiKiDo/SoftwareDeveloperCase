@@ -1,5 +1,3 @@
-using SoftwareDeveloperCase.Domain.Enums.Core;
-
 namespace SoftwareDeveloperCase.Application.Features.Teams.DTOs;
 
 /// <summary>

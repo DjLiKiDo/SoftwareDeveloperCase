@@ -1,11 +1,7 @@
 using Microsoft.AspNetCore.Http;
-using Moq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Xunit;
 using SoftwareDeveloperCase.Api.Middleware;
 using Microsoft.Extensions.Primitives;
-using System.Threading.Tasks;
 
 namespace SoftwareDeveloperCase.Test.Unit.Api.Middleware;
 

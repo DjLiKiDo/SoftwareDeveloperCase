@@ -1,5 +1,4 @@
 using SoftwareDeveloperCase.Application.DTOs.Common;
-using SoftwareDeveloperCase.Domain.Enums.Core;
 
 namespace SoftwareDeveloperCase.Application.Features.Teams.DTOs;
 

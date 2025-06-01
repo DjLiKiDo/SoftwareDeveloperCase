@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Caching.Memory;
 using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Application.Contracts.Services;
-using SoftwareDeveloperCase.Domain.Common;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
 using System.Linq.Expressions;
 

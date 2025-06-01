@@ -1,6 +1,5 @@
 using FluentValidation;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using System.Net.Mail;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.InsertUser;
 

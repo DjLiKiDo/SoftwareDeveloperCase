@@ -1,5 +1,3 @@
-using SoftwareDeveloperCase.Domain.Common;
-
 namespace SoftwareDeveloperCase.Domain.Events.Core;
 
 /// <summary>
