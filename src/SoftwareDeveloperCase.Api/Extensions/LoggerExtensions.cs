@@ -19,7 +19,7 @@ public static class LoggerExtensions
         var sanitizedInput = InputSanitizer.SanitizeForLogging(userInput)?.Replace("\n", "").Replace("\r", "");
         logger.LogInformation(message, sanitizedInput);
     }
-    
+
     /// <summary>
     /// Logs warning with sanitized user input to prevent log injection
     /// </summary>
@@ -31,7 +31,7 @@ public static class LoggerExtensions
         var sanitizedInput = InputSanitizer.SanitizeForLogging(userInput)?.Replace("\n", "").Replace("\r", "");
         logger.LogWarning(message, sanitizedInput);
     }
-    
+
     /// <summary>
     /// Logs error with sanitized user input to prevent log injection
     /// </summary>
@@ -43,7 +43,7 @@ public static class LoggerExtensions
         var sanitizedInput = InputSanitizer.SanitizeForLogging(userInput)?.Replace("\n", "").Replace("\r", "");
         logger.LogError(message, sanitizedInput);
     }
-    
+
     /// <summary>
     /// Logs debug information with sanitized user input to prevent log injection
     /// </summary>

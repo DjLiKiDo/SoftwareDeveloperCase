@@ -30,11 +30,11 @@ public static class InputSanitizer
         HtmlSanitizerInstance.AllowedTags.Add("h4");
         HtmlSanitizerInstance.AllowedTags.Add("h5");
         HtmlSanitizerInstance.AllowedTags.Add("h6");
-        
+
         HtmlSanitizerInstance.AllowedAttributes.Clear();
         HtmlSanitizerInstance.AllowedAttributes.Add("href");
         HtmlSanitizerInstance.AllowedAttributes.Add("target");
-        
+
         // Ensure only http/https links are allowed
         HtmlSanitizerInstance.AllowedSchemes.Clear();
         HtmlSanitizerInstance.AllowedSchemes.Add("http");
@@ -75,7 +75,7 @@ public static class InputSanitizer
 
         // Remove HTML tags first
         var withoutHtml = Regex.Replace(input, @"<[^>]*>", string.Empty, RegexOptions.Compiled);
-        
+
         // Remove potentially dangerous characters, leaving only alphanumeric, spaces, and common punctuation
         return Regex.Replace(
             withoutHtml,
@@ -112,7 +112,7 @@ public static class InputSanitizer
         var reservedNames = new[] { "CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
         var nameWithoutExtension = Path.GetFileNameWithoutExtension(sanitized);
         var extension = Path.GetExtension(sanitized);
-        
+
         if (reservedNames.Contains(nameWithoutExtension.ToUpperInvariant()))
         {
             nameWithoutExtension = "_" + nameWithoutExtension;
@@ -213,7 +213,7 @@ public static class InputSanitizer
         url = url.Trim();
 
         // Try to parse the URL to ensure it's valid
-        if (!Uri.TryCreate(url, UriKind.Absolute, out var uriResult) || 
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uriResult) ||
             (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
         {
             return null; // Invalid URL
@@ -252,7 +252,7 @@ public static class InputSanitizer
 
         // First apply basic string sanitization
         var sanitized = SanitizeString(input);
-        
+
         if (string.IsNullOrEmpty(sanitized))
         {
             return sanitized;
@@ -393,7 +393,7 @@ public static class InputSanitizer
 
         // Remove or escape dangerous command characters
         var dangerousChars = new[] { ';', '&', '|', '`', '$', '(', ')', '<', '>', '\n', '\r' };
-        
+
         var sanitized = input;
         foreach (var dangerousChar in dangerousChars)
         {

@@ -14,7 +14,7 @@ public class SanitizationBehaviourTests
         public string? PlainText { get; set; }
         public string? HtmlContent { get; set; }
         public NestedClass? Nested { get; set; }
-        
+
         public class NestedClass
         {
             public string? NestedText { get; set; }
@@ -36,7 +36,7 @@ public class SanitizationBehaviourTests
         };
 
         var sanitizationBehaviour = new SanitizationBehaviour<TestRequest, string>();
-        
+
         var mockNextHandler = new Mock<RequestHandlerDelegate<string>>();
         mockNextHandler.Setup(x => x(It.IsAny<CancellationToken>())).ReturnsAsync("Response");
 
@@ -47,7 +47,7 @@ public class SanitizationBehaviourTests
         Assert.Equal("Hello&lt;script&gt;alert(&#39;XSS&#39;)&lt;/script&gt;", request.PlainText);
         Assert.Equal("&lt;p onclick=&quot;alert(&#39;evil&#39;)&quot;&gt;Click me&lt;/p&gt;", request.HtmlContent);
         Assert.Equal("Nested&lt;script&gt;evil()&lt;/script&gt;", request.Nested.NestedText);
-        
+
         mockNextHandler.Verify(x => x(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -58,13 +58,13 @@ public class SanitizationBehaviourTests
         TestRequest? request = null;
 
         var sanitizationBehaviour = new SanitizationBehaviour<TestRequest, string>();
-        
+
         var mockNextHandler = new Mock<RequestHandlerDelegate<string>>();
         mockNextHandler.Setup(x => x(It.IsAny<CancellationToken>())).ReturnsAsync("Response");
 
         // Act & Assert (no exceptions should be thrown)
         await sanitizationBehaviour.Handle(request!, mockNextHandler.Object, CancellationToken.None);
-        
+
         mockNextHandler.Verify(x => x(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -83,7 +83,7 @@ public class SanitizationBehaviourTests
         };
 
         var sanitizationBehaviour = new SanitizationBehaviour<TestRequest, string>();
-        
+
         var mockNextHandler = new Mock<RequestHandlerDelegate<string>>();
         mockNextHandler.Setup(x => x(It.IsAny<CancellationToken>())).ReturnsAsync("Response");
 
@@ -94,7 +94,7 @@ public class SanitizationBehaviourTests
         Assert.Equal("", request.PlainText);
         Assert.Null(request.HtmlContent);
         Assert.Equal("", request.Nested.NestedText);
-        
+
         mockNextHandler.Verify(x => x(It.IsAny<CancellationToken>()), Times.Once);
     }
 }

@@ -55,7 +55,7 @@ public class SanitizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReq
             if (property.PropertyType == typeof(string) && property.CanWrite)
             {
                 var value = property.GetValue(obj) as string;
-                
+
                 // Skip null or empty strings
                 if (!string.IsNullOrEmpty(value))
                 {
@@ -64,11 +64,11 @@ public class SanitizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReq
                 }
             }
             // Handle collection properties
-            else if (typeof(System.Collections.IEnumerable).IsAssignableFrom(property.PropertyType) && 
+            else if (typeof(System.Collections.IEnumerable).IsAssignableFrom(property.PropertyType) &&
                     property.PropertyType != typeof(string))
             {
                 var collection = property.GetValue(obj) as System.Collections.IEnumerable;
-                
+
                 if (collection != null)
                 {
                     foreach (var item in collection)
@@ -81,7 +81,7 @@ public class SanitizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReq
                 }
             }
             // Recursively handle complex objects
-            else if (!property.PropertyType.IsPrimitive && 
+            else if (!property.PropertyType.IsPrimitive &&
                     property.PropertyType != typeof(decimal) &&
                     property.PropertyType != typeof(DateTime) &&
                     property.PropertyType != typeof(DateTimeOffset) &&

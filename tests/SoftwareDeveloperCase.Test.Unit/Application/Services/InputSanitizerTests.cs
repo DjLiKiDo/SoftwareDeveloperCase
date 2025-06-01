@@ -66,7 +66,7 @@ public class InputSanitizerTests
     {
         // Act
         var result = InputSanitizer.SanitizeHtml(input);
-        
+
         // Assert
         Assert.Equal(expected, result);
     }
