@@ -1,4 +1,17 @@
+---
+applyTo: "tests/**/*.cs"
+---
+
 # Testing Instructions
+
+## File Type Application
+
+**Applies to:** All test C# files (\*.cs)
+
+- Unit test files (`SoftwareDeveloperCase.Test.Unit/**/*.cs`)
+- Integration test files (`SoftwareDeveloperCase.Test.Integration/**/*.cs`)
+- Test utilities and fixtures (`**/Common/**/*.cs`)
+- Test builders and helpers (`**/Builders/**/*.cs`, `**/Helpers/**/*.cs`)
 
 ## SoftwareDeveloperCase - Testing Guidelines
 

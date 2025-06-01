@@ -1,4 +1,20 @@
+---
+applyTo: "src/SoftwareDeveloperCase.Api/**/*.cs"
+---
+
 # API Development Instructions
+
+## File Type Application
+
+**Applies to:** All API layer C# files (\*.cs)
+
+- Controllers (`Controllers/**/*.cs`)
+- Middleware (`Middleware/**/*.cs`)
+- Filters (`Filters/**/*.cs`)
+- Extensions (`Extensions/**/*.cs`)
+- Models (`Models/**/*.cs`)
+- Configuration files (`Configuration/**/*.cs`)
+- Program.cs and DependencyInjection.cs
 
 ## SoftwareDeveloperCase - REST API Guidelines
 

@@ -1,4 +1,19 @@
+---
+applyTo: "src/SoftwareDeveloperCase.Infrastructure/**/*.cs"
+---
+
 # Database Instructions
+
+## File Type Application
+
+**Applies to:** All Infrastructure layer database-related C# files (\*.cs)
+
+- Entity configurations (`Persistence/Configurations/**/*.cs`)
+- DbContext implementations (`Persistence/Contexts/**/*.cs`)
+- Repository implementations (`Persistence/Repositories/**/*.cs`)
+- Migration files (`Persistence/Migrations/**/*.cs`)
+- Database seeders (`Persistence/Seeders/**/*.cs`)
+- Unit of Work implementations (`Persistence/**/*UnitOfWork*.cs`)
 
 ## SoftwareDeveloperCase - Entity Framework & Database Guidelines
 

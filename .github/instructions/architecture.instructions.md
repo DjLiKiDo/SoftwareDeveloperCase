@@ -1,4 +1,17 @@
+---
+applyTo: "src/**/*.cs"
+---
+
 # Clean Architecture Instructions for GitHub Copilot
+
+## File Type Application
+
+**Applies to:** All C# source files in the `src/` directory (\*.cs)
+
+- Domain entities and value objects
+- Application handlers and services
+- Infrastructure repositories and configurations
+- API controllers and middleware
 
 ## Overview
 

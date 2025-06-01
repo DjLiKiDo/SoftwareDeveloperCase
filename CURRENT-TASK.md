@@ -42,10 +42,26 @@
 - `docs/COPILOT_OPTIMIZATION_PLAN.md` - Complete optimization plan (English version)
 - `.vscode/settings.json` - VS Code workspace optimization for Copilot
 - `.vscode/extensions.json` - Recommended extensions for development
-- `.github/instructions/api.instructions.md` - REST API development guidelines
-- `.github/instructions/testing.instructions.md` - Testing patterns and practices
-- `.github/instructions/database.instructions.md` - Entity Framework and data access patterns
-- `.github/instructions/architecture.instructions.md` - Clean Architecture guidelines and patterns
+- `.github/instructions/api.instructions.md` - REST API development guidelines (with file type specifications)
+- `.github/instructions/testing.instructions.md` - Testing patterns and practices (with file type specifications)
+- `.github/instructions/database.instructions.md` - Entity Framework and data access patterns (with file type specifications)
+- `.github/instructions/architecture.instructions.md` - Clean Architecture guidelines and patterns (with file type specifications)
+- `.github/instructions/application.instructions.md` - Application layer CQRS, DTOs, and validation patterns (with file type specifications)
+- `.github/instructions/domain.instructions.md` - Domain layer DDD patterns, entities, and value objects (with file type specifications)
+- `.github/workflows/copilot-setup-steps.yml` - Automated development environment setup for GitHub Copilot (moved to workflows directory)
+
+## Latest Improvements
+
+- ✅ Added `applyTo` directives to all instruction files for precise file targeting
+- ✅ Enhanced each instruction file with specific file type applications
+- ✅ Created comprehensive Application layer instructions (CQRS, DTOs, validation)
+- ✅ Created comprehensive Domain layer instructions (DDD, entities, value objects)
+- ✅ All instruction files now include detailed patterns and examples for their specific scope
+- ✅ **REGENERATED** `copilot-setup-steps.yml` following official GitHub Actions format
+- ✅ Optimized environment setup based on official GitHub Copilot documentation
+- ✅ Added comprehensive .NET 8 development environment configuration
+- ✅ Integrated automated testing, database setup, and development tools installation
+- ✅ Created development helper scripts for common tasks
 
 ## Decisions Made
 
