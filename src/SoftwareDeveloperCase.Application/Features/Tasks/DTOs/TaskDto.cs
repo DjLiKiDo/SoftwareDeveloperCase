@@ -12,7 +12,7 @@ public class TaskDto : AuditableDto
     /// <summary>
     /// Task unique identifier
     /// </summary>
-    public new int Id { get; set; }
+    public new Guid Id { get; set; }
 
     /// <summary>
     /// Task title
@@ -27,7 +27,7 @@ public class TaskDto : AuditableDto
     /// <summary>
     /// Project ID the task belongs to
     /// </summary>
-    public int ProjectId { get; set; }
+    public Guid ProjectId { get; set; }
 
     /// <summary>
     /// Project name
@@ -37,7 +37,7 @@ public class TaskDto : AuditableDto
     /// <summary>
     /// Assigned user ID
     /// </summary>
-    public int? AssigneeId { get; set; }
+    public Guid? AssigneeId { get; set; }
 
     /// <summary>
     /// Assigned user name
@@ -57,7 +57,7 @@ public class TaskDto : AuditableDto
     /// <summary>
     /// Parent task ID (for subtasks)
     /// </summary>
-    public int? ParentTaskId { get; set; }
+    public Guid? ParentTaskId { get; set; }
 
     /// <summary>
     /// Parent task title

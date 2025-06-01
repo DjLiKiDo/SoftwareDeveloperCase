@@ -11,7 +11,7 @@ public class ProjectDto : AuditableDto
     /// <summary>
     /// Project unique identifier
     /// </summary>
-    public new int Id { get; set; }
+    public new Guid Id { get; set; }
 
     /// <summary>
     /// Project name
@@ -26,7 +26,7 @@ public class ProjectDto : AuditableDto
     /// <summary>
     /// Team ID that owns the project
     /// </summary>
-    public int TeamId { get; set; }
+    public Guid TeamId { get; set; }
 
     /// <summary>
     /// Team name

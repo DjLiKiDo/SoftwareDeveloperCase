@@ -8,9 +8,9 @@ using SoftwareDeveloperCase.Application.Features.Projects.Commands.DeleteProject
 using SoftwareDeveloperCase.Application.Features.Projects.Queries.GetProjectById;
 using SoftwareDeveloperCase.Application.Features.Projects.Queries.GetProjects;
 using ProjectDto = SoftwareDeveloperCase.Application.Features.Projects.DTOs.ProjectDto;
+using ProjectStatisticsDto = SoftwareDeveloperCase.Application.Features.Projects.DTOs.ProjectStatisticsDto;
 using TaskDto = SoftwareDeveloperCase.Application.Features.Tasks.DTOs.TaskDto;
 using CreateTaskRequest = SoftwareDeveloperCase.Application.Features.Tasks.DTOs.CreateTaskRequest;
-using SoftwareDeveloperCase.Api.Models.Responses;
 
 namespace SoftwareDeveloperCase.Api.Controllers.V1;
 
