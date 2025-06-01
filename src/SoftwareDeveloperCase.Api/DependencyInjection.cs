@@ -1,4 +1,8 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using SoftwareDeveloperCase.Application;
+using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Infrastructure;
 using SoftwareDeveloperCase.Api.HealthChecks;
 using SoftwareDeveloperCase.Api.Filters;
@@ -19,6 +23,38 @@ public static class DependencyInjection
     /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
+        // Configure JWT authentication
+        var jwtSettings = new JwtSettings();
+        configuration.GetSection("JwtSettings").Bind(jwtSettings);
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.SecretKey)),
+                ValidateIssuer = true,
+                ValidIssuer = jwtSettings.Issuer,
+                ValidateAudience = true,
+                ValidAudience = jwtSettings.Audience,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+        });
+
+        // Configure authorization policies
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+            options.AddPolicy("ManagerOrAdmin", policy => policy.RequireRole("Manager", "Admin"));
+            options.AddPolicy("DeveloperOrManager", policy => policy.RequireRole("Developer", "Manager", "Admin"));
+        });
+
         // Configure controllers with filters
         services.AddControllers(options =>
         {

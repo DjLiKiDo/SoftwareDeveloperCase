@@ -38,6 +38,11 @@ public class SoftwareDeveloperCaseDbContext : DbContext
     /// </summary>
     public DbSet<UserRole>? UserRoles { get; set; }
 
+    /// <summary>
+    /// Gets or sets the RefreshTokens database set
+    /// </summary>
+    public DbSet<RefreshToken>? RefreshTokens { get; set; }
+
     // Core Domain Entities
 
     /// <summary>

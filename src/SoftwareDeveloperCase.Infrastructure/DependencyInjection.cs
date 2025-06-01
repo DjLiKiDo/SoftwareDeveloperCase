@@ -34,6 +34,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserRoleRepository, UserRoleRepository>();
         services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
         // Register repository base classes
         services.AddScoped<RoleRepository>();
@@ -105,11 +106,15 @@ public static class DependencyInjection
         services.AddSingleton<IDateTimeService, DateTimeService>();
         services.AddTransient<ICacheKeyService, CacheKeyService>();
         services.AddTransient<IPasswordService, PasswordService>();
+        services.AddTransient<IJwtTokenService, JwtTokenService>();
 
         // Configure strongly-typed configuration with validation
         services.Configure<DatabaseSettings>(configuration.GetSection(DatabaseSettings.SECTION_NAME));
         // Register configuration validators
         services.AddSingleton<IValidateOptions<DatabaseSettings>, DatabaseSettingsValidator>();
+
+        // Configure JWT settings
+        services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
         services.Configure<EmailSettings>(options =>
         {
