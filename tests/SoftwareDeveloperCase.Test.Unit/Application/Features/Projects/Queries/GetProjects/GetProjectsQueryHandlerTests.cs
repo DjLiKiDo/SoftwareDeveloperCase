@@ -77,7 +77,7 @@ public class GetProjectsQueryHandlerTests
         var fromDate = DateTime.UtcNow.AddDays(-10);
         var toDate = DateTime.UtcNow.AddDays(-1);
         var query = new GetProjectsQuery(1, 10, createdFrom: fromDate, createdTo: toDate);
-        
+
         var projects = new List<Project>
         {
             new() { Id = Guid.NewGuid(), Name = "Project 1", CreatedOn = DateTime.UtcNow.AddDays(-5) },
@@ -99,10 +99,10 @@ public class GetProjectsQueryHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.TotalCount.Should().Be(1);
-        
+
         // Verify that the repository was called with the correct parameters
         _mockProjectRepository.Verify(r => r.CountAsync(
-            It.IsAny<IQueryable<Project>>(), 
+            It.IsAny<IQueryable<Project>>(),
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -162,10 +162,10 @@ public class GetProjectsQueryHandlerTests
         // Assert
         result.Should().NotBeNull();
         result.Items.Should().HaveCount(3);
-        
+
         // Verify that ordering is applied correctly
         _mockProjectRepository.Verify(r => r.GetPagedAsync(
-            It.IsAny<IQueryable<Project>>(), 
+            It.IsAny<IQueryable<Project>>(),
             It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 

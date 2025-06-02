@@ -29,7 +29,7 @@ public class MappingProfile : Profile
         CreateMap<InsertRoleCommand, Role>();
         CreateMap<AssignRoleCommand, UserRole>();
         CreateMap<AssignPermissionCommand, RolePermission>();
-        
+
         // Project mappings
         CreateMap<Project, ProjectDto>()
             .ForMember(dest => dest.TeamName, opt => opt.Ignore())
