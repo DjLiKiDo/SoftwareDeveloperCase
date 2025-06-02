@@ -1,0 +1,192 @@
+# GitHub Copilot Environment Setup for SoftwareDeveloperCase
+# Optimized environment configuration for GitHub Copilot Coding Agent
+# Following official GitHub Actions workflow format for copilot-setup-steps
+
+name: "Copilot Setup Steps"
+
+# Allow manual testing from repository's Actions tab
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # REQUIRED: Job must be named 'copilot-setup-steps' for Copilot to recognize it
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    permissions:
+      contents: read
+
+    steps:
+      # Checkout repository for Copilot access
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Install .NET 8 SDK (required for the project)
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+          cache: true
+
+      # Install essential .NET global tools for development productivity
+      - name: Install .NET development tools
+        run: |
+          dotnet tool install --global dotnet-ef --version 8.*
+          dotnet tool install --global dotnet-format --version 5.*
+          dotnet tool install --global dotnet-outdated-tool
+          dotnet tool install --global coverlet.console
+          dotnet tool install --global dotnet-reportgenerator-globaltool
+      # Restore NuGet packages with caching for faster subsequent runs
+      - name: Restore project dependencies
+        run: |
+          dotnet restore SoftwareDeveloperCase.sln --verbosity minimal
+      # Setup SQL Server for Entity Framework operations
+      - name: Setup SQL Server for development
+        run: |
+          # Start SQL Server container for development
+          docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=DevPassword123!" \
+            -p 1433:1433 --name sqlserver-dev -d \
+            mcr.microsoft.com/mssql/server:2022-latest
+          # Wait for SQL Server to be ready
+          echo "Waiting for SQL Server to start..."
+          sleep 30
+      # Configure development secrets for local development
+      - name: Initialize development configuration
+        run: |
+          cd src/SoftwareDeveloperCase.Api
+          dotnet user-secrets init
+          dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost,1433;Database=SoftwareDeveloperCase_Dev;User Id=sa;Password=DevPassword123!;TrustServerCertificate=true"
+          dotnet user-secrets set "JwtSettings:Secret" "super-secret-key-for-development-only-minimum-32-characters-long"
+          dotnet user-secrets set "JwtSettings:Issuer" "SoftwareDeveloperCase.Api"
+          dotnet user-secrets set "JwtSettings:Audience" "SoftwareDeveloperCase.Client"
+          dotnet user-secrets set "JwtSettings:ExpirationInMinutes" "60"
+      # Apply Entity Framework migrations to setup database schema
+      - name: Setup database schema
+        run: |
+          dotnet ef database update \
+            --project src/SoftwareDeveloperCase.Infrastructure \
+            --startup-project src/SoftwareDeveloperCase.Api \
+            --connection "Server=localhost,1433;Database=SoftwareDeveloperCase_Dev;User Id=sa;Password=DevPassword123!;TrustServerCertificate=true"
+      # Build solution to verify everything is working
+      - name: Build solution
+        run: |
+          dotnet build SoftwareDeveloperCase.sln \
+            --configuration Debug \
+            --no-restore \
+            --verbosity minimal
+      # Run tests to ensure project health
+      - name: Run unit tests
+        run: |
+          dotnet test tests/SoftwareDeveloperCase.Test.Unit/SoftwareDeveloperCase.Test.Unit.csproj \
+            --configuration Debug \
+            --no-build \
+            --verbosity minimal \
+            --logger "console;verbosity=minimal"
+      # Verify API can start (health check)
+      - name: Verify API startup
+        run: |
+          cd src/SoftwareDeveloperCase.Api
+          timeout 30s dotnet run --no-build --configuration Debug &
+          sleep 15
+          # Check if process is running
+          if pgrep -f "SoftwareDeveloperCase.Api" > /dev/null; then
+            echo "✅ API started successfully"
+            pkill -f "SoftwareDeveloperCase.Api"
+          else
+            echo "❌ API failed to start"
+            exit 1
+          fi
+      # Setup development environment variables for Copilot context
+      - name: Configure environment for Copilot
+        run: |
+          echo "ASPNETCORE_ENVIRONMENT=Development" >> $GITHUB_ENV
+          echo "DOTNET_ENVIRONMENT=Development" >> $GITHUB_ENV
+          echo "ASPNETCORE_URLS=https://localhost:7001;http://localhost:5001" >> $GITHUB_ENV
+          # Create .env file for local development reference
+          cat > .env << 'EOF'
+          # Development Environment Configuration
+          ASPNETCORE_ENVIRONMENT=Development
+          DOTNET_ENVIRONMENT=Development
+          ASPNETCORE_URLS=https://localhost:7001;http://localhost:5001
+          # Database Connection (for reference - use user secrets in practice)
+          # ConnectionStrings__DefaultConnection=Server=localhost,1433;Database=SoftwareDeveloperCase_Dev;User Id=sa;Password=DevPassword123!;TrustServerCertificate=true
+          # Project Information for Copilot Context
+          PROJECT_FRAMEWORK=".NET 8"
+          PROJECT_ARCHITECTURE="Clean Architecture"
+          PROJECT_PATTERNS="CQRS,DDD,Repository,UnitOfWork"
+          EOF
+      # Create development helper scripts
+      - name: Create development helper scripts
+        run: |
+          mkdir -p scripts
+          # Create build script
+          cat > scripts/build.sh << 'EOF'
+          #!/bin/bash
+          echo "🔨 Building SoftwareDeveloperCase solution..."
+          dotnet build SoftwareDeveloperCase.sln --configuration Debug
+          EOF
+          # Create test script
+          cat > scripts/test.sh << 'EOF'
+          #!/bin/bash
+          echo "🧪 Running unit tests..."
+          dotnet test --configuration Debug --verbosity minimal
+          EOF
+          # Create migration script
+          cat > scripts/add-migration.sh << 'EOF'
+          #!/bin/bash
+          if [ -z "$1" ]; then
+            echo "Usage: ./add-migration.sh <MigrationName>"
+            exit 1
+          fi
+          echo "📦 Adding migration: $1"
+          dotnet ef migrations add "$1" \
+            --project src/SoftwareDeveloperCase.Infrastructure \
+            --startup-project src/SoftwareDeveloperCase.Api
+          EOF
+          # Create database update script
+          cat > scripts/update-database.sh << 'EOF'
+          #!/bin/bash
+          echo "🗄️ Updating database..."
+          dotnet ef database update \
+            --project src/SoftwareDeveloperCase.Infrastructure \
+            --startup-project src/SoftwareDeveloperCase.Api
+          EOF
+          # Make scripts executable
+          chmod +x scripts/*.sh
+      # Final setup verification
+      - name: Verify setup completion
+        run: |
+          echo "✅ GitHub Copilot environment setup completed successfully!"
+          echo ""
+          echo "📋 Setup Summary:"
+          echo "• .NET 8 SDK installed and configured"
+          echo "• Essential .NET tools installed globally"
+          echo "• Project dependencies restored"
+          echo "• SQL Server container running on port 1433"
+          echo "• Database schema applied via EF migrations"
+          echo "• Solution builds successfully"
+          echo "• Unit tests pass"
+          echo "• API startup verified"
+          echo "• Development scripts created"
+          echo ""
+          echo "🚀 Environment is ready for GitHub Copilot Coding Agent!"
+          # Display useful information for Copilot
+          echo ""
+          echo "📁 Project Structure:"
+          echo "• src/SoftwareDeveloperCase.Domain → Core business entities and rules"
+          echo "• src/SoftwareDeveloperCase.Application → Use cases, DTOs, CQRS handlers"
+          echo "• src/SoftwareDeveloperCase.Infrastructure → Data access, external services"
+          echo "• src/SoftwareDeveloperCase.Api → REST API controllers and configuration"
+          echo "• tests/SoftwareDeveloperCase.Test.Unit → Unit tests for all layers"
+          echo ""
+          echo "🛠️ Common Commands:"
+          echo "• Build: dotnet build SoftwareDeveloperCase.sln"
+          echo "• Test: dotnet test"
+          echo "• Run API: dotnet run --project src/SoftwareDeveloperCase.Api"
+          echo "• Format: dotnet format"
+          echo "• Add Migration: ./scripts/add-migration.sh <name>"
+          echo "• Update DB: ./scripts/update-database.sh"
