@@ -9,6 +9,7 @@ using SoftwareDeveloperCase.Application.Features.Projects.DTOs;
 using SoftwareDeveloperCase.Domain.Entities;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
 using SoftwareDeveloperCase.Domain.Entities.Project;
+using SoftwareDeveloperCase.Domain.Entities.Team;
 
 namespace SoftwareDeveloperCase.Application.Mappings;
 
@@ -32,6 +33,7 @@ public class MappingProfile : Profile
         // Project mappings
         CreateMap<Project, ProjectDto>()
             .ForMember(dest => dest.TeamName, opt => opt.Ignore())
+            .ForMember(dest => dest.TeamMemberCount, opt => opt.Ignore())
             .ForMember(dest => dest.TaskCount, opt => opt.Ignore())
             .ForMember(dest => dest.CompletedTaskCount, opt => opt.Ignore())
             .ForMember(dest => dest.OverdueTaskCount, opt => opt.Ignore())

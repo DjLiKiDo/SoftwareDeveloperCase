@@ -100,9 +100,9 @@ public class GetProjectsQueryHandlerTests
         result.Should().NotBeNull();
         result.TotalCount.Should().Be(1);
         
-        // Verify that the repository was called with the correct queryable that includes date filtering
+        // Verify that the repository was called with the correct parameters
         _mockProjectRepository.Verify(r => r.CountAsync(
-            It.Is<IQueryable<Project>>(q => VerifyDateFiltering(q, fromDate, toDate)), 
+            It.IsAny<IQueryable<Project>>(), 
             It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -165,21 +165,8 @@ public class GetProjectsQueryHandlerTests
         
         // Verify that ordering is applied correctly
         _mockProjectRepository.Verify(r => r.GetPagedAsync(
-            It.Is<IQueryable<Project>>(q => VerifyOrdering(q)), 
+            It.IsAny<IQueryable<Project>>(), 
             It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    private static bool VerifyDateFiltering(IQueryable<Project> query, DateTime fromDate, DateTime toDate)
-    {
-        // This is a simplified verification - in a real scenario you might want to extract the expression
-        // and verify the filtering conditions
-        return true; // For now, just verify the method was called with a queryable
-    }
-
-    private static bool VerifyOrdering(IQueryable<Project> query)
-    {
-        // This is a simplified verification - in a real scenario you might want to extract the expression
-        // and verify the ordering conditions
-        return true; // For now, just verify the method was called with a queryable
-    }
 }
