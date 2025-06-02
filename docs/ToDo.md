@@ -3,8 +3,8 @@
 [ ] Complete review of current state of the project and update documentation
 [ ] Full unit test suite
 [ ] Integration Tests
-[ ] E2E tests
-[ ] FIle to make http requests to all endpoints
+[ ] Generate .http file to test endpoints
+[ ] Generate class with APiTestScenarios to perform e2e tests in CI/CD
 [ ] 
 [ ] 
 [ ] 

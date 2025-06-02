@@ -1,0 +1,120 @@
+{
+  // GitHub Copilot Configuration
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": false,
+    "plaintext": false
+  },
+  "github.copilot.chat.followups": "always",
+  "github.copilot.chat.localeOverride": "en",
+  // Enhanced IntelliSense for better context
+  "editor.inlayHints.enabled": "on",
+  "editor.inlayHints.fontSize": 11,
+  "editor.suggest.preview": true,
+  "editor.suggest.showMethods": true,
+  "editor.suggest.showFunctions": true,
+  "editor.suggest.showConstructors": true,
+  "editor.suggest.showFields": true,
+  "editor.suggest.showVariables": true,
+  "editor.suggest.showClasses": true,
+  "editor.suggest.showStructs": true,
+  "editor.suggest.showInterfaces": true,
+  "editor.suggest.showModules": true,
+  "editor.suggest.showProperties": true,
+  "editor.suggest.showKeywords": true,
+  "editor.suggest.showSnippets": true,
+  // .NET and C# specific settings
+  "dotnet.defaultSolution": "SoftwareDeveloperCase.sln",
+  "omnisharp.enableRoslynAnalyzers": true,
+  "omnisharp.enableEditorConfigSupport": true,
+  "omnisharp.enableImportCompletion": true,
+  "omnisharp.organizeImportsOnFormat": true,
+  "omnisharp.enableAsyncCompletion": true,
+  // Code formatting for consistency
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit",
+    "source.removeUnnecessaryImports": "explicit"
+  },
+  // File associations for better context
+  "files.associations": {
+    "*.csproj": "xml",
+    "*.props": "xml",
+    "*.targets": "xml",
+    "*.ruleset": "xml"
+  },
+  // Exclude irrelevant files from search and suggestions
+  "files.exclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/.vs": true,
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/logs": true,
+    "**/*.user": true,
+    "**/.vscode/ipch": true
+  },
+  "search.exclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/.vs": true,
+    "**/node_modules": true,
+    "**/logs": true,
+    "**/*.user": true
+  },
+  "files.watcherExclude": {
+    "**/bin/**": true,
+    "**/obj/**": true,
+    "**/.vs/**": true,
+    "**/logs/**": true
+  },
+  // Clean Architecture folder organization
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.csproj": "*.user, *.config, *.ruleset, *.editorconfig",
+    "appsettings.json": "appsettings.*.json",
+    "Program.cs": "Startup.cs, DependencyInjection.cs"
+  },
+  // Testing configuration
+  "dotnet.unitTests.runSettingsPath": "./tests/",
+  "testExplorer.useNativeTesting": true,
+  // Enhanced symbol search for better context
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.enablePreviewFromQuickOpen": false,
+  "breadcrumbs.enabled": true,
+  "breadcrumbs.showFiles": true,
+  "breadcrumbs.showSymbols": true,
+  // Terminal configuration for .NET
+  "terminal.integrated.env.osx": {
+    "DOTNET_CLI_TELEMETRY_OPTOUT": "1"
+  },
+  // Language-specific settings
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.semanticHighlighting.enabled": true,
+    "editor.suggest.snippetsPreventQuickSuggestions": false
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.tabSize": 2
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.tabSize": 2
+  },
+  // Git integration for better context
+  "git.enableCommitSigning": false,
+  "git.fetchOnPull": true,
+  "git.pruneOnFetch": true,
+  // Performance optimizations
+  "extensions.autoUpdate": false,
+  "update.mode": "manual",
+  "telemetry.telemetryLevel": "off"
+}
