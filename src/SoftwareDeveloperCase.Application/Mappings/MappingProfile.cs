@@ -5,8 +5,10 @@ using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.AssignR
 using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.InsertUser;
 using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.UpdateUser;
 using SoftwareDeveloperCase.Application.Features.Identity.Users.Queries.GetUserPermissions;
+using SoftwareDeveloperCase.Application.Features.Projects.DTOs;
 using SoftwareDeveloperCase.Domain.Entities;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
+using SoftwareDeveloperCase.Domain.Entities.Project;
 
 namespace SoftwareDeveloperCase.Application.Mappings;
 
@@ -26,5 +28,17 @@ public class MappingProfile : Profile
         CreateMap<InsertRoleCommand, Role>();
         CreateMap<AssignRoleCommand, UserRole>();
         CreateMap<AssignPermissionCommand, RolePermission>();
+        
+        // Project mappings
+        CreateMap<Project, ProjectDto>()
+            .ForMember(dest => dest.TeamName, opt => opt.Ignore())
+            .ForMember(dest => dest.TaskCount, opt => opt.Ignore())
+            .ForMember(dest => dest.CompletedTaskCount, opt => opt.Ignore())
+            .ForMember(dest => dest.OverdueTaskCount, opt => opt.Ignore())
+            .ForMember(dest => dest.ProgressPercentage, opt => opt.Ignore())
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.CreatedOn))
+            .ForMember(dest => dest.EndDate, opt => opt.Ignore())
+            .ForMember(dest => dest.EstimatedCompletionDate, opt => opt.Ignore())
+            .ForMember(dest => dest.ActualCompletionDate, opt => opt.Ignore());
     }
 }

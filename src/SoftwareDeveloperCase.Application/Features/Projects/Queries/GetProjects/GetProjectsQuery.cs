@@ -36,6 +36,16 @@ public class GetProjectsQuery : IRequest<PagedResult<ProjectDto>>
     public Guid? TeamId { get; set; }
 
     /// <summary>
+    /// Gets or sets the optional start date to filter projects by creation date
+    /// </summary>
+    public DateTime? CreatedFrom { get; set; }
+
+    /// <summary>
+    /// Gets or sets the optional end date to filter projects by creation date
+    /// </summary>
+    public DateTime? CreatedTo { get; set; }
+
+    /// <summary>
     /// Initializes a new instance of the GetProjectsQuery class
     /// </summary>
     public GetProjectsQuery()
@@ -50,7 +60,9 @@ public class GetProjectsQuery : IRequest<PagedResult<ProjectDto>>
     /// <param name="searchTerm">Optional search term for project name or description</param>
     /// <param name="status">Optional project status filter</param>
     /// <param name="teamId">Optional team ID filter</param>
-    public GetProjectsQuery(int pageNumber, int pageSize, string? searchTerm = null, string? status = null, Guid? teamId = null)
+    /// <param name="createdFrom">Optional start date to filter projects by creation date</param>
+    /// <param name="createdTo">Optional end date to filter projects by creation date</param>
+    public GetProjectsQuery(int pageNumber, int pageSize, string? searchTerm = null, string? status = null, Guid? teamId = null, DateTime? createdFrom = null, DateTime? createdTo = null)
     {
         PageNumber = pageNumber < 1 ? 1 : pageNumber;
         PageSize = pageSize < 1 ? 10 : pageSize;
@@ -62,5 +74,7 @@ public class GetProjectsQuery : IRequest<PagedResult<ProjectDto>>
         }
 
         TeamId = teamId;
+        CreatedFrom = createdFrom;
+        CreatedTo = createdTo;
     }
 }

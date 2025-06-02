@@ -40,8 +40,8 @@ public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, PagedRe
     /// <returns>A paged result containing project DTOs</returns>
     public async Task<PagedResult<ProjectDto>> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Getting projects with pageNumber: {PageNumber}, pageSize: {PageSize}, searchTerm: {SearchTerm}, status: {Status}, teamId: {TeamId}",
-            request.PageNumber, request.PageSize, request.SearchTerm, request.Status, request.TeamId);
+        _logger.LogInformation("Getting projects with pageNumber: {PageNumber}, pageSize: {PageSize}, searchTerm: {SearchTerm}, status: {Status}, teamId: {TeamId}, createdFrom: {CreatedFrom}, createdTo: {CreatedTo}",
+            request.PageNumber, request.PageSize, request.SearchTerm, request.Status, request.TeamId, request.CreatedFrom, request.CreatedTo);
 
         // Build the query
         var query = _unitOfWork.ProjectRepository.GetQueryable();
@@ -64,6 +64,20 @@ public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, PagedRe
         {
             query = query.Where(p => p.TeamId == request.TeamId.Value);
         }
+
+        // Apply date range filters
+        if (request.CreatedFrom.HasValue)
+        {
+            query = query.Where(p => p.CreatedOn >= request.CreatedFrom.Value);
+        }
+
+        if (request.CreatedTo.HasValue)
+        {
+            query = query.Where(p => p.CreatedOn <= request.CreatedTo.Value);
+        }
+
+        // Apply sorting by creation date descending
+        query = query.OrderByDescending(p => p.CreatedOn);
 
         // Get total count
         var totalCount = await _unitOfWork.ProjectRepository.CountAsync(query, cancellationToken);
