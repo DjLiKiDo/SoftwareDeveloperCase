@@ -77,4 +77,9 @@ public class ProjectDto : AuditableDto
     /// Number of overdue tasks
     /// </summary>
     public int OverdueTaskCount { get; set; }
+
+    /// <summary>
+    /// Number of active team members in the project's team
+    /// </summary>
+    public int TeamMemberCount { get; set; }
 }
