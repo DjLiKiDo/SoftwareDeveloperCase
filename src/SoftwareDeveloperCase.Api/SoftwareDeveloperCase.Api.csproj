@@ -8,6 +8,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors />
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <UserSecretsId>bd95038b-978c-4d8f-82d1-c131959910d4</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

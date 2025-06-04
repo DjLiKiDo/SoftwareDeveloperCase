@@ -5,6 +5,7 @@ using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Services;
 using SoftwareDeveloperCase.Domain.Entities.Project;
 using SoftwareDeveloperCase.Domain.Enums.Core;
+using SoftwareDeveloperCase.Domain.Events.Core;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Commands.CreateProject;
 
@@ -40,10 +41,26 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
     {
         _logger.LogInformation("Creating new project with name: {ProjectName}", InputSanitizer.SanitizeForLogging(request.Name));
 
+        // Validate team exists (this is also validated by the validator, but added here for safety)
+        var teams = await _unitOfWork.TeamRepository.GetAsync(t => t.Id == request.TeamId, cancellationToken);
+        if (!teams.Any())
+        {
+            throw new Application.Exceptions.NotFoundException($"Team with ID {request.TeamId} not found");
+        }
+
+        // Validate unique project name within team (this is also validated by the validator, but added here for safety)
+        var nameExists = await _unitOfWork.ProjectRepository
+            .IsProjectNameExistsInTeamAsync(request.TeamId, request.Name, null, cancellationToken);
+        if (nameExists)
+        {
+            throw new Application.Exceptions.BusinessRuleViolationException($"Project name '{request.Name}' already exists in the specified team");
+        }
+
         var project = new Project
         {
             Name = request.Name,
             Description = request.Description,
+            TeamId = request.TeamId,
             Status = ProjectStatus.Planning,
             Priority = request.Priority
         };
@@ -52,6 +69,10 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation("Project created successfully with ID: {ProjectId}", createdProject.Id);
+
+        // TODO: Publish ProjectCreatedEvent when domain event infrastructure is available
+        // TODO: Add user permission validation when current user service is available
+        // TODO: Assign creator as project member when team membership logic is available
 
         return createdProject.Id;
     }
