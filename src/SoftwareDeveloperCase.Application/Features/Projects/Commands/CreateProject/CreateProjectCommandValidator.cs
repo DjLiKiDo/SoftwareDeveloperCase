@@ -24,7 +24,7 @@ public class CreateProjectCommandValidator : AbstractValidator<CreateProjectComm
             .NotEmpty().WithMessage("{PropertyName} cannot be empty")
             .NotNull().WithMessage("{PropertyName} cannot be null")
             .Length(3, 100).WithMessage("{PropertyName} must be between 3 and 100 characters")
-            .MustAsync(async (command, name, cancellationToken) => 
+            .MustAsync(async (command, name, cancellationToken) =>
                 await NotExistingProjectNameInTeam(command.TeamId, name, cancellationToken))
             .WithMessage("Project name already exists in the specified team");
 

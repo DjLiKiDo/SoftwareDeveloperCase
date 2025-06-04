@@ -71,7 +71,7 @@ internal class TaskRepository : Repository<TaskEntity>, ITaskRepository
         {
             // Recursively delete all subtasks first
             await DeleteSubtasksRecursively(taskWithSubtasks, cancellationToken);
-            
+
             // Then delete the task itself
             _context.Set<TaskEntity>().Remove(taskWithSubtasks);
             await _context.SaveChangesAsync(cancellationToken);
@@ -99,7 +99,7 @@ internal class TaskRepository : Repository<TaskEntity>, ITaskRepository
                 {
                     // Recursively delete children first
                     await DeleteSubtasksRecursively(subtaskWithChildren, cancellationToken);
-                    
+
                     // Then remove the subtask
                     _context.Set<TaskEntity>().Remove(subtaskWithChildren);
                 }

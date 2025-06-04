@@ -83,8 +83,8 @@ public class CreateProjectCommandHandlerTests
 
         // Assert
         result.Should().Be(projectId);
-        
-        _mockProjectRepository.Verify(x => x.InsertAsync(It.Is<Project>(p => 
+
+        _mockProjectRepository.Verify(x => x.InsertAsync(It.Is<Project>(p =>
             p.Name == command.Name &&
             p.Description == command.Description &&
             p.TeamId == teamId &&
@@ -109,11 +109,11 @@ public class CreateProjectCommandHandlerTests
             .ReturnsAsync(new List<Team>()); // No teams found
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<NotFoundException>(() => 
+        var exception = await Assert.ThrowsAsync<NotFoundException>(() =>
             _handler.Handle(command, CancellationToken.None));
 
         exception.Message.Should().Contain($"Team with ID {teamId} not found");
-        
+
         _mockProjectRepository.Verify(x => x.InsertAsync(It.IsAny<Project>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -137,11 +137,11 @@ public class CreateProjectCommandHandlerTests
             .ReturnsAsync(true); // Project name exists
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<BusinessRuleViolationException>(() => 
+        var exception = await Assert.ThrowsAsync<BusinessRuleViolationException>(() =>
             _handler.Handle(command, CancellationToken.None));
 
         exception.Message.Should().Contain($"Project name '{command.Name}' already exists in the specified team");
-        
+
         _mockProjectRepository.Verify(x => x.InsertAsync(It.IsAny<Project>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -177,7 +177,7 @@ public class CreateProjectCommandHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        _mockProjectRepository.Verify(x => x.InsertAsync(It.Is<Project>(p => 
+        _mockProjectRepository.Verify(x => x.InsertAsync(It.Is<Project>(p =>
             p.Status == ProjectStatus.Planning), It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -211,7 +211,7 @@ public class CreateProjectCommandHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        _mockProjectRepository.Verify(x => x.InsertAsync(It.Is<Project>(p => 
+        _mockProjectRepository.Verify(x => x.InsertAsync(It.Is<Project>(p =>
             p.TeamId == teamId), It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -299,7 +299,7 @@ public class CreateProjectCommandHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        _mockProjectRepository.Verify(x => x.InsertAsync(It.Is<Project>(p => 
+        _mockProjectRepository.Verify(x => x.InsertAsync(It.Is<Project>(p =>
             p.Priority == priority), It.IsAny<CancellationToken>()), Times.Once);
     }
 }
