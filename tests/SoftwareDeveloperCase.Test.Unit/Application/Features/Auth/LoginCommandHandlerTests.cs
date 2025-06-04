@@ -166,7 +166,7 @@ public class LoginCommandHandlerTests
         {
             Id = userId,
             Name = "Test User",
-            Email = new Domain.ValueObjects.Email(email),
+            Email = new SoftwareDeveloperCase.Domain.ValueObjects.Email(email),
             Password = "hashedpassword",
             IsActive = true,
             UserRoles = new List<UserRole> { userRole },

@@ -147,7 +147,7 @@ public class JwtTokenServiceTests
         {
             Id = userId,
             Name = "Test User",
-            Email = new Domain.ValueObjects.Email("test@example.com"),
+            Email = new SoftwareDeveloperCase.Domain.ValueObjects.Email("test@example.com"),
             Password = "hashedpassword",
             IsActive = true,
             UserRoles = new List<UserRole> { userRole },

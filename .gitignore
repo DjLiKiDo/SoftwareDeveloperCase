@@ -66,3 +66,8 @@ secrets.json
 
 # Custom
 .DS_Store
+
+# Code coverage reports
+CoverageReport/
+coverage.xml
+TestResults/
