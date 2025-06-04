@@ -16,6 +16,98 @@ internal class TaskRepository : Repository<TaskEntity>, ITaskRepository
     }
 
     /// <summary>
+    /// Gets a task by ID with all required related entities included
+    /// </summary>
+    /// <param name="id">Task ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Task with Project, AssignedTo, SubTasks included or null if not found</returns>
+    public new async Task<TaskEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await (_context.Tasks?
+            .Include(t => t.Project)
+            .Include(t => t.AssignedTo)
+            .Include(t => t.SubTasks)
+            .ThenInclude(st => st.AssignedTo) ?? throw new InvalidOperationException("Tasks DbSet is null"))
+            .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+    }
+
+    /// <summary>
+    /// Updates a task with optimistic concurrency handling
+    /// </summary>
+    /// <param name="entity">Task entity to update</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Updated task entity</returns>
+    /// <exception cref="DbUpdateConcurrencyException">Thrown when concurrency conflict occurs</exception>
+    public new async Task<TaskEntity> UpdateAsync(TaskEntity entity, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            _context.Set<TaskEntity>().Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync(cancellationToken);
+            return entity;
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            // Re-throw to allow caller to handle concurrency conflicts appropriately
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Deletes a task and cascades to all subtasks
+    /// </summary>
+    /// <param name="entity">Task entity to delete</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public new async Task DeleteAsync(TaskEntity entity, CancellationToken cancellationToken = default)
+    {
+        // Load the task with all its subtasks for cascade deletion
+        var taskWithSubtasks = await (_context.Tasks?
+            .Include(t => t.SubTasks)
+            .ThenInclude(st => st.SubTasks) ?? throw new InvalidOperationException("Tasks DbSet is null"))
+            .FirstOrDefaultAsync(t => t.Id == entity.Id, cancellationToken);
+
+        if (taskWithSubtasks != null)
+        {
+            // Recursively delete all subtasks first
+            await DeleteSubtasksRecursively(taskWithSubtasks, cancellationToken);
+            
+            // Then delete the task itself
+            _context.Set<TaskEntity>().Remove(taskWithSubtasks);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    /// <summary>
+    /// Recursively deletes all subtasks of a given task
+    /// </summary>
+    /// <param name="task">Parent task</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    private async Task DeleteSubtasksRecursively(TaskEntity task, CancellationToken cancellationToken)
+    {
+        if (task.SubTasks?.Any() == true)
+        {
+            foreach (var subtask in task.SubTasks.ToList())
+            {
+                // Load subtask with its own subtasks
+                var subtaskWithChildren = await (_context.Tasks?
+                    .Include(t => t.SubTasks)
+                    .ThenInclude(st => st.SubTasks) ?? throw new InvalidOperationException("Tasks DbSet is null"))
+                    .FirstOrDefaultAsync(t => t.Id == subtask.Id, cancellationToken);
+
+                if (subtaskWithChildren != null)
+                {
+                    // Recursively delete children first
+                    await DeleteSubtasksRecursively(subtaskWithChildren, cancellationToken);
+                    
+                    // Then remove the subtask
+                    _context.Set<TaskEntity>().Remove(subtaskWithChildren);
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Gets tasks by project ID with assigned user information
     /// </summary>
     /// <param name="projectId">Project ID</param>
