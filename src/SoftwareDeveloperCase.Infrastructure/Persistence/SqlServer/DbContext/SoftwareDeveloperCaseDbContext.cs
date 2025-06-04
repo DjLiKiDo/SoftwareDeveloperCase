@@ -7,6 +7,7 @@ using SoftwareDeveloperCase.Domain.Entities.Project;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
 using SoftwareDeveloperCase.Domain.ValueObjects;
 using SoftwareDeveloperCase.Infrastructure.Persistence.Extensions;
+using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Configurations;
 
 namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
 
@@ -116,40 +117,18 @@ public class SoftwareDeveloperCaseDbContext : DbContext
     /// <param name="modelBuilder">The model builder</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Configure Email value object conversion
-        modelBuilder.Entity<User>()
-            .Property(u => u.Email)
-            .HasConversion(
-                email => email.Value,
-                value => new Email(value))
-            .HasMaxLength(255);
-
-        // Configure TaskHierarchy value object as owned entity
-        modelBuilder.Entity<Domain.Entities.Task.Task>()
-            .OwnsOne(t => t.Hierarchy, hierarchy =>
-            {
-                hierarchy.Property(h => h.Level)
-                    .HasColumnName("HierarchyLevel")
-                    .IsRequired();
-
-                hierarchy.Property(h => h.Path)
-                    .HasColumnName("HierarchyPath")
-                    .HasMaxLength(500)
-                    .IsRequired();
-
-                hierarchy.Property(h => h.Order)
-                    .HasColumnName("HierarchyOrder")
-                    .IsRequired();
-            });
-
-        // Configure Task decimal properties with precision and scale
-        modelBuilder.Entity<Domain.Entities.Task.Task>()
-            .Property(t => t.EstimatedHours)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<Domain.Entities.Task.Task>()
-            .Property(t => t.ActualHours)
-            .HasPrecision(18, 2);
+        // Apply all entity configurations
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new RoleConfiguration());
+        modelBuilder.ApplyConfiguration(new PermissionConfiguration());
+        modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+        modelBuilder.ApplyConfiguration(new RolePermissionConfiguration());
+        modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
+        modelBuilder.ApplyConfiguration(new TeamConfiguration());
+        modelBuilder.ApplyConfiguration(new TeamMemberConfiguration());
+        modelBuilder.ApplyConfiguration(new ProjectConfiguration());
+        modelBuilder.ApplyConfiguration(new TaskConfiguration());
+        modelBuilder.ApplyConfiguration(new TaskCommentConfiguration());
 
         modelBuilder.UseSingularTableNameConvention();
 
