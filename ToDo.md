@@ -5,21 +5,18 @@
 [ ] Integration Tests
 [ ] Generate .http file to test endpoints
 [ ] Generate class with APiTestScenarios to perform e2e tests in CI/CD
-[ ] 
-[ ] 
-[ ] 
-[ ] 
-[ ] 
-[ ] 
-[ ] 
-[ ] 
-[ ] 
-[ ] 
-[ ] 
-[ ] 
-[ ] 
-
-
-
+[ ] user context service to handle authorization for user permission checks
+[ ]
+[ ]
+[ ]
+[ ]
+[ ]
+[ ]
+[ ]
+[ ]
+[ ]
+[ ]
+[ ]
+[ ]
 
 [X] Log entries created from user input Sanitize input parameters
