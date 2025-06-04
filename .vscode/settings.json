@@ -27,8 +27,6 @@
   "dotnet.defaultSolution": "SoftwareDeveloperCase.sln",
   "omnisharp.enableRoslynAnalyzers": true,
   "omnisharp.enableEditorConfigSupport": true,
-  "omnisharp.enableImportCompletion": true,
-  "omnisharp.organizeImportsOnFormat": true,
   "omnisharp.enableAsyncCompletion": true,
   // Code formatting for consistency
   "editor.formatOnSave": true,
@@ -116,5 +114,7 @@
   // Performance optimizations
   "extensions.autoUpdate": false,
   "update.mode": "manual",
-  "telemetry.telemetryLevel": "off"
+  "telemetry.telemetryLevel": "off",
+  "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+  "dotnet.formatting.organizeImportsOnFormat": true
 }
