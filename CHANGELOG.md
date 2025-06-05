@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - Production-ready CI/CD pipeline with automated testing, building, and deployment
 - Docker containerization with multi-stage builds and security scanning
 - Comprehensive security scanning (CodeQL, dependency vulnerabilities, Renovate bot)
@@ -16,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Complete project documentation (PRD, MVP, technical guides)
 - Domain model specifications for Team, Project, and Task entities
 - Decorator pattern implementation for cached repositories
-- **MAJOR: JWT Bearer Authentication with Refresh Tokens (Task TD-002):**
+- **MAJOR: JWT Bearer Authentication with Refresh Tokens (Task TD-001) ✅ COMPLETED:**
   - OAuth2-compliant token-based authentication flow with 15-minute access tokens
   - Secure refresh token system with 7-day expiration and automatic rotation
   - Role-based authorization support for Admin, Manager, and Developer roles
@@ -37,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 99 comprehensive unit tests ensuring robust protection
 
 ### Security
+
 - **CRITICAL: Comprehensive security improvement from 62% to 91% protection coverage**
 - Fixed log injection vulnerabilities identified by CodeQL analysis in ProjectsController and LoggerExtensions
   - Replaced unsafe string concatenation/interpolation in log statements with structured logging
@@ -59,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced Content Security Policy headers for XSS protection
 
 ### Changed
+
 - Project scope expanded to team-based project management system
 - Enhanced build optimization with improved NuGet caching
 - Documentation updated with CI/CD setup and Docker usage instructions
@@ -69,6 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced feature organization in Application layer with vertical slicing (by feature)
 
 ### Fixed
+
 - Code formatting issues across all source files
 - Docker workflow configuration and environment setup
 - NuGet caching errors related to packages.lock.json
@@ -77,6 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Repository pattern implementation inconsistencies
 
 ### Security
+
 - Automated vulnerability scanning and dependency monitoring
 - Non-privileged container execution
 - Proper secret management in CI/CD workflows
@@ -84,6 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - [Planned]
 
 ### Added
+
 - Team management with member roles and permissions
 - Project management with lifecycle tracking
 - Hierarchical task system with time tracking
@@ -93,18 +99,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Performance optimizations and caching
 
 ### Changed
+
 - Enhanced domain model with Team, Project, and Task entities
 - Improved error handling and validation
 - Updated API documentation
 
 ### Security
+
 - Rate limiting implementation
 - Enhanced security headers
 - Improved input validation
 
+## [1.0.1] - 2025-06-05
+
+### Completed ✅
+
+- **CRITICAL MILESTONE: JWT Authentication System (TD-001)**
+  - Complete OAuth2-compliant JWT Bearer authentication implementation
+  - 15-minute access tokens with HMAC-SHA256 signature verification
+  - 7-day refresh tokens with automatic rotation and revocation
+  - Role-based authorization with Admin, Manager, Developer role support
+  - Comprehensive authentication endpoints: login, refresh, logout, user info
+  - `RefreshTokenRepository` with secure token storage and validation
+  - `JwtTokenService` with full token lifecycle management
+  - Integration with input sanitization system for authentication security
+  - 100% unit test coverage + comprehensive integration test suite
+  - Complete API documentation in `/docs/AUTHENTICATION.md`
+
+### Security
+
+- Enhanced authentication security with proper token validation
+- Secure refresh token storage with expiration tracking
+- Role-based claims integration for fine-grained authorization
+- Protection against token replay and tampering attacks
+
 ## [1.0.0] - 2024-01-01
 
 ### Added
+
 - Initial SoftwareDeveloperCase API release
 - User and role management endpoints
 - JWT authentication and authorization
@@ -116,16 +148,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unit test framework
 
 ### Changed
+
 - Migrated from .NET 6.0 to .NET 8.0
 - Improved async validation patterns
 - Enhanced null safety handling
 - Switched to in-memory database for testing
 
 ### Fixed
+
 - Resolved compiler warnings for null references
 - Fixed HTTP status code mapping for exceptions
 - Corrected role validation logic
 
-[Unreleased]: https://github.com/yourusername/SoftwareDeveloperCase/compare/v1.0.0...HEAD
-[1.1.0]: https://github.com/yourusername/SoftwareDeveloperCase/compare/v1.0.0...v1.1.0
+[Unreleased]: https://github.com/yourusername/SoftwareDeveloperCase/compare/v1.0.1...HEAD
+[1.1.0]: https://github.com/yourusername/SoftwareDeveloperCase/compare/v1.0.1...v1.1.0
+[1.0.1]: https://github.com/yourusername/SoftwareDeveloperCase/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/yourusername/SoftwareDeveloperCase/releases/tag/v1.0.0

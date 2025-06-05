@@ -9,6 +9,7 @@ This API provides a robust solution for managing teams, projects, and tasks with
 ## 🏗️ Architecture
 
 This solution follows Clean Architecture principles with the following layers:
+
 - **Domain**: Core business entities, enums, and business rules
 - **Application**: Use cases, DTOs, validators, and business logic
 - **Infrastructure**: Data persistence, external services, and identity
@@ -70,6 +71,7 @@ src/
 ```
 
 ### Key Patterns
+
 - **CQRS**: Command Query Responsibility Segregation using MediatR
 - **Repository Pattern**: With Unit of Work for data access
 - **Domain-Driven Design**: Rich domain models with business logic
@@ -89,12 +91,14 @@ This project strictly adheres to SOLID principles:
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - .NET 8 SDK
 - SQL Server (LocalDB or full instance)
 - Visual Studio 2022 or VS Code
 - Git
 
 ### Installation
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/SoftwareDeveloperCase.git
@@ -131,14 +135,16 @@ dotnet build /warnaserror
 # Update only database without generating new migration
 dotnet ef database update -p src/SoftwareDeveloperCase.Infrastructure -s src/SoftwareDeveloperCase.Api
 ```
-dotnet run --project SoftwareDeveloperCase.Api
-```
 
-### Quick Start
-1. Register a new user via POST `/api/v1/auth/register`
-2. Login to get JWT tokens via POST `/api/v1/auth/login`
-3. Use the access token in Authorization header: `Bearer {access_token}`
-4. Refresh tokens automatically when access token expires
+dotnet run --project SoftwareDeveloperCase.Api
+
+````
+
+### Quick Start ✅ **AUTHENTICATION READY**
+1. ~~Register a new user via POST `/api/v1/auth/register`~~ *(Registration endpoint pending)*
+2. **Login to get JWT tokens via POST `/api/v1/auth/login`** ✅
+3. **Use the access token in Authorization header: `Bearer {access_token}`** ✅
+4. **Refresh tokens automatically when access token expires** ✅
 5. Create a team, project, and start managing tasks!
 
 ## 🧪 Testing
@@ -146,14 +152,16 @@ dotnet run --project SoftwareDeveloperCase.Api
 Run all tests:
 ```bash
 dotnet test
-```
+````
 
 Run with coverage:
+
 ```bash
 dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 ```
 
 Run specific test category:
+
 ```bash
 dotnet test --filter Category=Unit
 dotnet test --filter Category=Integration
@@ -162,6 +170,7 @@ dotnet test --filter Category=Integration
 ## 📚 API Documentation
 
 When running locally, Swagger UI is available at:
+
 ```
 https://localhost:7001/swagger
 ```
@@ -169,6 +178,7 @@ https://localhost:7001/swagger
 ### Core Endpoints
 
 #### Authentication
+
 - `POST /api/v1/auth/register` - Register new user
 - `POST /api/v1/auth/login` - Login with credentials and receive JWT tokens
 - `POST /api/v1/auth/refresh` - Exchange refresh token for new access token
@@ -176,6 +186,7 @@ https://localhost:7001/swagger
 - `GET /api/v1/auth/me` - Get current authenticated user information
 
 #### Teams
+
 - `GET /api/v1/teams` - List all teams (paginated)
 - `GET /api/v1/teams/{id}` - Get team details
 - `POST /api/v1/teams` - Create new team (Manager/Admin)
@@ -185,6 +196,7 @@ https://localhost:7001/swagger
 - `DELETE /api/v1/teams/{id}/members/{userId}` - Remove member
 
 #### Projects
+
 - `GET /api/v1/projects` - List projects (filterable)
 - `GET /api/v1/projects/{id}` - Get project details
 - `POST /api/v1/projects` - Create new project
@@ -193,6 +205,7 @@ https://localhost:7001/swagger
 - `PATCH /api/v1/projects/{id}/status` - Update status
 
 #### Tasks
+
 - `GET /api/v1/tasks` - List tasks (filterable)
 - `GET /api/v1/tasks/{id}` - Get task details
 - `POST /api/v1/tasks` - Create new task
@@ -206,6 +219,7 @@ https://localhost:7001/swagger
 ## 🏛️ Domain Model
 
 ### Core Entities
+
 - **User**: System users with authentication
 - **Team**: Groups of users working together
 - **TeamMember**: User membership in teams
@@ -214,6 +228,7 @@ https://localhost:7001/swagger
 - **TaskComment**: Collaboration on tasks
 
 ### Enumerations
+
 - **Role**: Admin, Manager, Developer
 - **TeamRole**: Leader, Member
 - **MemberStatus**: Active, Inactive, OnLeave
@@ -245,6 +260,7 @@ https://localhost:7001/swagger
 8. Open a Pull Request
 
 ### Coding Standards
+
 - Follow Microsoft C# naming conventions
 - Use file-scoped namespaces
 - Write XML documentation for public APIs
@@ -256,6 +272,7 @@ https://localhost:7001/swagger
 **Current Version**: 1.0.0-preview (MVP)
 
 ### Completed Features ✅
+
 - User authentication and authorization
 - Team management
 - Project lifecycle management
@@ -264,6 +281,7 @@ https://localhost:7001/swagger
 - Task comments
 
 ### Upcoming Features 🚧
+
 - Email notifications
 - File attachments
 - Advanced reporting
@@ -273,6 +291,7 @@ https://localhost:7001/swagger
 ## 📝 Technical Requirements
 
 ### Business Rules
+
 - Users belong to one or more teams
 - Teams have capacity limits (default: 10)
 - Projects belong to a single team
@@ -281,6 +300,7 @@ https://localhost:7001/swagger
 - All users can comment on accessible tasks
 
 ### Performance Targets
+
 - API response time < 300ms (MVP)
 - Support 100 concurrent users (MVP)
 - 95% uptime SLA
@@ -288,6 +308,7 @@ https://localhost:7001/swagger
 ## 🔧 Configuration
 
 ### Environment Variables
+
 ```bash
 # Database
 ConnectionStrings__DefaultConnection="Server=...;Database=...;Trusted_Connection=true;"
@@ -304,6 +325,7 @@ Serilog__MinimumLevel__Default="Information"
 ```
 
 ### appsettings.json Structure
+
 ```json
 {
   "Logging": {
@@ -325,11 +347,13 @@ Serilog__MinimumLevel__Default="Information"
 ### Common Issues
 
 1. **Database Connection Failed**
+
    - Verify SQL Server is running
    - Check connection string
    - Ensure database exists
 
 2. **JWT Token Invalid**
+
    - Check token expiration
    - Verify secret key matches
    - Ensure bearer format
@@ -344,6 +368,7 @@ Serilog__MinimumLevel__Default="Information"
 This project includes a comprehensive GitHub Actions workflow that provides:
 
 ### Features
+
 - **Multi-stage Testing**: Unit tests, integration tests, and performance tests
 - **Code Quality**: Format verification, vulnerability scanning, and code coverage
 - **Security**: Dependency vulnerability checks and CodeQL analysis
@@ -353,28 +378,33 @@ This project includes a comprehensive GitHub Actions workflow that provides:
 
 ### Workflow Jobs
 
-1. **Test & Code Quality**: 
+1. **Test & Code Quality**:
+
    - Runs unit tests with coverage reporting
    - Verifies code formatting with `dotnet format`
    - Scans for vulnerable and deprecated packages
    - Uploads test results and coverage reports
 
 2. **Build & Package**:
+
    - Builds release artifacts
    - Publishes API for deployment
    - Uploads build artifacts
 
 3. **Integration Tests**:
+
    - Runs with SQL Server container
    - Tests full application stack
    - Validates database interactions
 
 4. **Performance Tests**:
+
    - Basic load testing framework
    - API health checks
    - Performance baseline validation
 
 5. **Docker**:
+
    - Builds and pushes container images
    - Uses GitHub Container Registry (ghcr.io)
    - Implements proper caching strategies
@@ -387,17 +417,21 @@ This project includes a comprehensive GitHub Actions workflow that provides:
 ### Configuration
 
 #### Required Secrets (Optional)
+
 - `CODECOV_TOKEN`: For Codecov integration (optional)
 - `DOCKER_USERNAME`/`DOCKER_PASSWORD`: For Docker Hub (optional, uses GHCR by default)
 
 #### GitHub Environments
+
 To enable deployment protection rules, configure these environments in your repository:
+
 - `staging`: For develop branch deployments
 - `production`: For main branch deployments
 
 #### Workflow Triggers
+
 - **Push**: `main` and `develop` branches
-- **Pull Request**: `main` and `develop` branches  
+- **Pull Request**: `main` and `develop` branches
 - **Release**: Published releases
 - **Manual**: `workflow_dispatch` for manual runs
 
@@ -416,6 +450,7 @@ docker run -p 8080:8080 -p 8081:8081 \
 ### Code Quality Standards
 
 The CI pipeline enforces:
+
 - **Code Coverage**: Minimum 80% for Domain/Application layers
 - **Code Formatting**: Consistent style with `dotnet format`
 - **Security**: No vulnerable dependencies
@@ -438,4 +473,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Documentation**: [/docs](./docs)  
 **API Version**: v1  
 **Last Updated**: May 2025
-

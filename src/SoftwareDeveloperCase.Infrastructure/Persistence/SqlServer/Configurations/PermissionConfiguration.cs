@@ -13,18 +13,18 @@ public class PermissionConfiguration : IEntityTypeConfiguration<Permission>
     {
         // Table name
         builder.ToTable("Permission");
-        
+
         // Primary key
         builder.HasKey(p => p.Id);
-        
+
         // Properties
         builder.Property(p => p.Name)
             .IsRequired()
             .HasMaxLength(100);
-            
+
         builder.Property(p => p.Description)
             .HasMaxLength(500);
-            
+
         // Indexes
         builder.HasIndex(p => p.Name)
             .IsUnique()

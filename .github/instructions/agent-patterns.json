@@ -1,0 +1,45 @@
+{
+  "patterns": [
+    {
+      "id": "error-recovery-001",
+      "name": "Compilation Error Recovery",
+      "trigger": "Build fails after code changes",
+      "solution": {
+        "steps": [
+          "Save current state",
+          "Identify changed files",
+          "Revert changes incrementally",
+          "Test after each revert",
+          "Identify problematic change",
+          "Apply fix or alternative approach"
+        ]
+      },
+      "success_rate": 0.92,
+      "usage_count": 15
+    },
+    {
+      "id": "context-load-001",
+      "name": "Session Context Recovery",
+      "trigger": "New session with existing CURRENT-TASK.md",
+      "solution": {
+        "steps": [
+          "Read CURRENT-TASK.md",
+          "Load last checkpoint",
+          "Verify file states",
+          "Summarize progress",
+          "Confirm continuation approach"
+        ]
+      },
+      "success_rate": 0.98,
+      "usage_count": 23
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "anti-001",
+      "name": "Assuming Without Asking",
+      "description": "Making implementation decisions without confirmation",
+      "prevention": "Always present options and wait for selection"
+    }
+  ]
+}

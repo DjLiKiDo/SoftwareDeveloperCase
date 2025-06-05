@@ -16,9 +16,10 @@ internal class RefreshTokenRepository : Repository<RefreshToken>, IRefreshTokenR
     /// </summary>
     public async Task<RefreshToken?> GetActiveRefreshTokenAsync(string token, CancellationToken cancellationToken = default)
     {
-        return await _context.RefreshTokens
+        var now = DateTime.UtcNow;
+        return await _context.RefreshTokens?
             .Include(rt => rt.User)
-            .FirstOrDefaultAsync(rt => rt.Token == token && rt.IsActive, cancellationToken);
+            .FirstOrDefaultAsync(rt => rt.Token == token && !rt.IsRevoked && rt.ExpiresAt > now, cancellationToken) ?? null;
     }
 
     /// <summary>
@@ -26,9 +27,10 @@ internal class RefreshTokenRepository : Repository<RefreshToken>, IRefreshTokenR
     /// </summary>
     public async Task<IEnumerable<RefreshToken>> GetActiveRefreshTokensByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        return await _context.RefreshTokens
-            .Where(rt => rt.UserId == userId && rt.IsActive)
-            .ToListAsync(cancellationToken);
+        var now = DateTime.UtcNow;
+        return await _context.RefreshTokens?
+            .Where(rt => rt.UserId == userId && !rt.IsRevoked && rt.ExpiresAt > now)
+            .ToListAsync(cancellationToken) ?? new List<RefreshToken>();
     }
 
     /// <summary>
@@ -36,9 +38,10 @@ internal class RefreshTokenRepository : Repository<RefreshToken>, IRefreshTokenR
     /// </summary>
     public async Task RevokeAllUserRefreshTokensAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var activeTokens = await _context.RefreshTokens
-            .Where(rt => rt.UserId == userId && rt.IsActive)
-            .ToListAsync(cancellationToken);
+        var now = DateTime.UtcNow;
+        var activeTokens = await _context.RefreshTokens?
+            .Where(rt => rt.UserId == userId && !rt.IsRevoked && rt.ExpiresAt > now)
+            .ToListAsync(cancellationToken) ?? new List<RefreshToken>();
 
         foreach (var token in activeTokens)
         {
@@ -48,7 +51,7 @@ internal class RefreshTokenRepository : Repository<RefreshToken>, IRefreshTokenR
 
         if (activeTokens.Any())
         {
-            _context.RefreshTokens.UpdateRange(activeTokens);
+            _context.RefreshTokens?.UpdateRange(activeTokens);
         }
     }
 }

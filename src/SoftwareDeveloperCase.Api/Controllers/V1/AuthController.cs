@@ -2,11 +2,11 @@ using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SoftwareDeveloperCase.Api.Extensions;
 using SoftwareDeveloperCase.Application.DTOs.Auth;
 using SoftwareDeveloperCase.Application.Features.Auth.Commands.Login;
 using SoftwareDeveloperCase.Application.Features.Auth.Commands.Logout;
 using SoftwareDeveloperCase.Application.Features.Auth.Commands.RefreshToken;
-using SoftwareDeveloperCase.Api.Extensions;
 
 namespace SoftwareDeveloperCase.Api.Controllers.V1;
 
@@ -38,6 +38,7 @@ public class AuthController : ControllerBase
     /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>Authentication response with tokens</returns>
     [HttpPost("login")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(AuthenticationResponse), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
@@ -74,6 +75,7 @@ public class AuthController : ControllerBase
     /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>New authentication response with tokens</returns>
     [HttpPost("refresh")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(AuthenticationResponse), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]

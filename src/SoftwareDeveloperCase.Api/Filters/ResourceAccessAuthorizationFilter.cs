@@ -1,6 +1,7 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Security.Claims;
 
 namespace SoftwareDeveloperCase.Api.Filters;
 
@@ -26,6 +27,16 @@ public class ResourceAccessAuthorizationFilter : ActionFilterAttribute
     /// <param name="context">The action executing context</param>
     public override void OnActionExecuting(ActionExecutingContext context)
     {
+        // Skip authorization if the action has AllowAnonymous attribute
+        var hasAllowAnonymous = context.ActionDescriptor.EndpointMetadata
+            .Any(em => em.GetType() == typeof(AllowAnonymousAttribute));
+
+        if (hasAllowAnonymous)
+        {
+            base.OnActionExecuting(context);
+            return;
+        }
+
         var user = context.HttpContext.User;
         var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         var userRole = user.FindFirst(ClaimTypes.Role)?.Value;
