@@ -2,15 +2,15 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SoftwareDeveloperCase.Api.Extensions;
-using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Application.Features.Projects.Commands.CreateProject;
-using SoftwareDeveloperCase.Application.Features.Projects.Commands.UpdateProject;
 using SoftwareDeveloperCase.Application.Features.Projects.Commands.DeleteProject;
+using SoftwareDeveloperCase.Application.Features.Projects.Commands.UpdateProject;
 using SoftwareDeveloperCase.Application.Features.Projects.Queries.GetProjects;
+using SoftwareDeveloperCase.Application.Models;
+using CreateTaskRequest = SoftwareDeveloperCase.Application.Features.Tasks.DTOs.CreateTaskRequest;
 using ProjectDto = SoftwareDeveloperCase.Application.Features.Projects.DTOs.ProjectDto;
 using ProjectStatisticsDto = SoftwareDeveloperCase.Application.Features.Projects.DTOs.ProjectStatisticsDto;
 using TaskDto = SoftwareDeveloperCase.Application.Features.Tasks.DTOs.TaskDto;
-using CreateTaskRequest = SoftwareDeveloperCase.Application.Features.Tasks.DTOs.CreateTaskRequest;
 
 namespace SoftwareDeveloperCase.Api.Controllers.V1;
 
@@ -47,6 +47,7 @@ public class ProjectsController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Paginated list of projects</returns>
     [HttpGet]
+    [Authorize(Policy = "DeveloperOrManager")]
     [ProducesResponseType(typeof(PagedResult<ProjectDto>), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
@@ -85,6 +86,7 @@ public class ProjectsController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Project details</returns>
     [HttpGet("{id:guid}")]
+    [Authorize(Policy = "ProjectRead")]
     [ProducesResponseType(typeof(ProjectDto), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]
@@ -103,6 +105,7 @@ public class ProjectsController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Created project</returns>
     [HttpPost]
+    [Authorize(Policy = "ManagerOrAdmin")]
     [ProducesResponseType(typeof(Guid), 201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
@@ -130,6 +133,7 @@ public class ProjectsController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Updated project</returns>
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "ProjectUpdate")]
     [ProducesResponseType(typeof(bool), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
@@ -167,6 +171,7 @@ public class ProjectsController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>No content</returns>
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]
@@ -208,6 +213,7 @@ public class ProjectsController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Paginated list of tasks for the project</returns>
     [HttpGet("{id:guid}/tasks")]
+    [Authorize(Policy = "ProjectRead")]
     [ProducesResponseType(typeof(PagedResult<TaskDto>), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]
@@ -251,6 +257,7 @@ public class ProjectsController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Created task</returns>
     [HttpPost("{id:guid}/tasks")]
+    [Authorize(Policy = "ProjectManageTasks")]
     [ProducesResponseType(typeof(TaskDto), 201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
@@ -284,6 +291,7 @@ public class ProjectsController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Project statistics</returns>
     [HttpGet("{id:guid}/statistics")]
+    [Authorize(Policy = "ProjectRead")]
     [ProducesResponseType(typeof(ProjectStatisticsDto), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]
@@ -313,6 +321,7 @@ public class ProjectsController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>List of matching projects</returns>
     [HttpGet("search")]
+    [Authorize(Policy = "DeveloperOrManager")]
     [ProducesResponseType(typeof(List<ProjectDto>), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]

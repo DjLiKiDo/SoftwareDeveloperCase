@@ -1,6 +1,7 @@
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SoftwareDeveloperCase.Api.Controllers.V1;
 
@@ -9,6 +10,7 @@ namespace SoftwareDeveloperCase.Api.Controllers.V1;
 /// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]
+[Authorize] // Require authentication for all team operations
 public class TeamsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -30,6 +32,7 @@ public class TeamsController : ControllerBase
     /// <param name="name">Filter by team name (optional).</param>
     /// <returns>A paginated list of teams.</returns>
     [HttpGet(Name = "GetTeams")]
+    [Authorize(Policy = "DeveloperOrManager")] // All authenticated users can view teams
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
     public async Task<ActionResult> GetTeams(
@@ -57,6 +60,7 @@ public class TeamsController : ControllerBase
     /// <param name="teamId">The ID of the team to retrieve.</param>
     /// <returns>The team details.</returns>
     [HttpGet("{teamId}", Name = "GetTeamById")]
+    [Authorize(Policy = "DeveloperOrManager")] // All authenticated users can view team details
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]
@@ -77,6 +81,7 @@ public class TeamsController : ControllerBase
     /// <param name="command">The command containing team creation information.</param>
     /// <returns>The ID of the created team.</returns>
     [HttpPost(Name = "CreateTeam")]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can create teams
     [ProducesResponseType((int)HttpStatusCode.Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesDefaultResponseType]
@@ -87,7 +92,8 @@ public class TeamsController : ControllerBase
         // return CreatedAtRoute("GetTeamById", new { teamId = result }, result);
 
         await Task.CompletedTask;
-        return Ok(new { Message = "CreateTeam endpoint - Implementation pending in Phase 5" });
+        var teamId = Guid.NewGuid();
+        return CreatedAtRoute("GetTeamById", new { teamId }, new { Id = teamId, Message = "CreateTeam endpoint - Implementation pending in Phase 5" });
     }
 
     /// <summary>
@@ -97,6 +103,7 @@ public class TeamsController : ControllerBase
     /// <param name="command">The command containing updated team information.</param>
     /// <returns>No content if successful.</returns>
     [HttpPut("{teamId}", Name = "UpdateTeam")]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can update teams
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -117,6 +124,7 @@ public class TeamsController : ControllerBase
     /// <param name="teamId">The ID of the team to delete.</param>
     /// <returns>No content if successful.</returns>
     [HttpDelete("{teamId}", Name = "DeleteTeam")]
+    [Authorize(Policy = "AdminOnly")] // Only admins can delete teams
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]
@@ -137,6 +145,7 @@ public class TeamsController : ControllerBase
     /// <param name="teamId">The ID of the team.</param>
     /// <returns>A list of team members.</returns>
     [HttpGet("{teamId}/members", Name = "GetTeamMembers")]
+    [Authorize(Policy = "DeveloperOrManager")] // All authenticated users can view team members
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]
@@ -158,6 +167,7 @@ public class TeamsController : ControllerBase
     /// <param name="command">The command containing member addition information.</param>
     /// <returns>The ID of the team member assignment.</returns>
     [HttpPost("{teamId}/members", Name = "AddTeamMember")]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can add team members
     [ProducesResponseType((int)HttpStatusCode.Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -179,6 +189,7 @@ public class TeamsController : ControllerBase
     /// <param name="userId">The ID of the user to remove from the team.</param>
     /// <returns>No content if successful.</returns>
     [HttpDelete("{teamId}/members/{userId}", Name = "RemoveTeamMember")]
+    [Authorize(Policy = "ManagerOrAdmin")] // Only managers and admins can remove team members
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]

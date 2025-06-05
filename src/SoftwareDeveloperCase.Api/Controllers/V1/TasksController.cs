@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SoftwareDeveloperCase.Api.Extensions;
-using SoftwareDeveloperCase.Application.Models; // Changed from Common.Models
 using SoftwareDeveloperCase.Application.Features.Tasks.DTOs;
+using SoftwareDeveloperCase.Application.Models; // Changed from Common.Models
 
 namespace SoftwareDeveloperCase.Api.Controllers.V1;
 
@@ -40,6 +40,7 @@ public class TasksController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Paginated list of tasks</returns>
     [HttpGet]
+    [Authorize(Policy = "DeveloperOrManager")]
     [ProducesResponseType(typeof(PagedResult<TaskDto>), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
@@ -80,6 +81,7 @@ public class TasksController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Task details</returns>
     [HttpGet("{id:int}")]
+    [Authorize(Policy = "TaskRead")]
     [ProducesResponseType(typeof(TaskDetailDto), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]
@@ -109,6 +111,7 @@ public class TasksController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Created task</returns>
     [HttpPost]
+    [Authorize(Policy = "TaskCreate")]
     [ProducesResponseType(typeof(TaskDto), 201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
@@ -140,6 +143,7 @@ public class TasksController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Updated task</returns>
     [HttpPut("{id:int}")]
+    [Authorize(Policy = "TaskUpdate")]
     [ProducesResponseType(typeof(TaskDto), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
@@ -174,6 +178,7 @@ public class TasksController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Updated task</returns>
     [HttpPatch("{id:int}/status")]
+    [Authorize(Policy = "TaskUpdateStatus")]
     [ProducesResponseType(typeof(TaskDto), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
@@ -208,6 +213,7 @@ public class TasksController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Updated task</returns>
     [HttpPatch("{id:int}/assign")]
+    [Authorize(Policy = "TaskAssign")]
     [ProducesResponseType(typeof(TaskDto), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
@@ -241,6 +247,7 @@ public class TasksController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>No content</returns>
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]
@@ -248,6 +255,9 @@ public class TasksController : ControllerBase
     public async Task<IActionResult> DeleteTask(int id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Deleting task with ID: {TaskId}", id);
+
+        // For testing purposes, simulate that task exists but check authorization first
+        // This allows proper authorization testing before resource existence check
 
         // TODO: Implement DeleteTaskCommand when available in Phase 5
         // var command = new DeleteTaskCommand(id);
@@ -262,7 +272,11 @@ public class TasksController : ControllerBase
         // 
         // return NoContent();
 
+        // For now, simulate that the task exists for authorization testing
+        // In a real implementation, this check would be done in the command handler
         await Task.CompletedTask;
+
+        // If we get here, authorization passed, but task doesn't exist
         return NotFound($"Task with ID {id} not found");
     }
 
@@ -275,6 +289,7 @@ public class TasksController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Paginated list of task comments</returns>
     [HttpGet("{id:int}/comments")]
+    [Authorize(Policy = "TaskRead")]
     [ProducesResponseType(typeof(PagedResult<TaskCommentDto>), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]
@@ -316,6 +331,7 @@ public class TasksController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Created comment</returns>
     [HttpPost("{id:int}/comments")]
+    [Authorize(Policy = "TaskAddComment")]
     [ProducesResponseType(typeof(TaskCommentDto), 201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
@@ -350,6 +366,7 @@ public class TasksController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Paginated list of subtasks</returns>
     [HttpGet("{id:int}/subtasks")]
+    [Authorize(Policy = "TaskRead")]
     [ProducesResponseType(typeof(PagedResult<TaskDto>), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]
@@ -392,6 +409,7 @@ public class TasksController : ControllerBase
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Paginated list of time entries</returns>
     [HttpGet("{id:int}/time-entries")]
+    [Authorize(Policy = "TaskRead")]
     [ProducesResponseType(typeof(PagedResult<TimeEntryDto>), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]

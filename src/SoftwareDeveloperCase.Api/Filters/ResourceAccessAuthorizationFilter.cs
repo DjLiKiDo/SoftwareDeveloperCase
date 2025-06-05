@@ -2,30 +2,41 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using SoftwareDeveloperCase.Api.Authorization.Requirements;
+using SoftwareDeveloperCase.Api.Authorization.Services;
 
 namespace SoftwareDeveloperCase.Api.Filters;
 
 /// <summary>
-/// Authorization filter to ensure users can only access resources they own or have permission to access
+/// Enhanced authorization filter that integrates with the policy-based authorization system
 /// </summary>
 public class ResourceAccessAuthorizationFilter : ActionFilterAttribute
 {
     private readonly ILogger<ResourceAccessAuthorizationFilter> _logger;
+    private readonly IAuthorizationService _authorizationService;
+    private readonly IResourceAuthorizationService _resourceAuthorizationService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ResourceAccessAuthorizationFilter"/> class
     /// </summary>
     /// <param name="logger">The logger</param>
-    public ResourceAccessAuthorizationFilter(ILogger<ResourceAccessAuthorizationFilter> logger)
+    /// <param name="authorizationService">The authorization service</param>
+    /// <param name="resourceAuthorizationService">The resource authorization service</param>
+    public ResourceAccessAuthorizationFilter(
+        ILogger<ResourceAccessAuthorizationFilter> logger,
+        IAuthorizationService authorizationService,
+        IResourceAuthorizationService resourceAuthorizationService)
     {
         _logger = logger;
+        _authorizationService = authorizationService;
+        _resourceAuthorizationService = resourceAuthorizationService;
     }
 
     /// <summary>
     /// Called before the action method is invoked to verify user authorization
     /// </summary>
     /// <param name="context">The action executing context</param>
-    public override void OnActionExecuting(ActionExecutingContext context)
+    public override async void OnActionExecuting(ActionExecutingContext context)
     {
         // Skip authorization if the action has AllowAnonymous attribute
         var hasAllowAnonymous = context.ActionDescriptor.EndpointMetadata
@@ -39,7 +50,6 @@ public class ResourceAccessAuthorizationFilter : ActionFilterAttribute
 
         var user = context.HttpContext.User;
         var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var userRole = user.FindFirst(ClaimTypes.Role)?.Value;
 
         if (string.IsNullOrEmpty(userId))
         {
@@ -48,34 +58,168 @@ public class ResourceAccessAuthorizationFilter : ActionFilterAttribute
             return;
         }
 
-        // Check if user is accessing their own resources
-        var resourceUserId = GetResourceUserId(context);
-        var teamId = GetResourceTeamId(context);
+        // Get resource identifiers from the request based on controller context
+        var controllerName = context.RouteData.Values["controller"]?.ToString()?.ToLower();
 
-        // Admin users can access all resources
-        if (userRole == "Admin")
+        var teamId = GetResourceId(context, "teamId", "teamid");
+        var projectId = controllerName == "projects" ? GetResourceId(context, "projectId", "projectid", "id") : GetResourceId(context, "projectId", "projectid");
+        var taskId = controllerName == "tasks" ? GetResourceId(context, "taskId", "taskid", "id") : GetResourceId(context, "taskId", "taskid");
+
+        try
         {
-            base.OnActionExecuting(context);
+            // Check authorization based on resource type and operation
+            var authorized = await CheckResourceAuthorizationAsync(context, teamId, projectId, taskId);
+
+            if (!authorized)
+            {
+                _logger.LogWarning("Access denied for user {UserId} to resource. TeamId: {TeamId}, ProjectId: {ProjectId}, TaskId: {TaskId}",
+                    userId, teamId, projectId, taskId);
+                context.Result = new ForbidResult();
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during resource authorization for user {UserId}", userId);
+            context.Result = new StatusCodeResult(500);
             return;
         }
 
-        // Users can access their own resources
-        if (!string.IsNullOrEmpty(resourceUserId) && resourceUserId == userId)
-        {
-            base.OnActionExecuting(context);
-            return;
-        }
-
-        // TODO: Add team membership validation when team context is available
-        // This would require checking if the user is a member of the team
-        // that owns the resource
-
-        _logger.LogWarning("Access denied for user {UserId} to resource owned by {ResourceUserId}",
-            userId, resourceUserId);
-
-        // For now, allow access but log the attempt
-        // In a real implementation, this would check team membership
         base.OnActionExecuting(context);
+    }
+
+    /// <summary>
+    /// Checks resource authorization based on the type of resource and operation
+    /// </summary>
+    private async Task<bool> CheckResourceAuthorizationAsync(
+        ActionExecutingContext context,
+        Guid? teamId,
+        Guid? projectId,
+        Guid? taskId)
+    {
+        var httpMethod = context.HttpContext.Request.Method;
+        var operation = GetOperationFromHttpMethod(httpMethod);
+        var controllerName = context.RouteData.Values["controller"]?.ToString()?.ToLower();
+
+        // Prioritize resource type based on controller context
+        if (controllerName == "tasks" && taskId.HasValue)
+        {
+            return await _resourceAuthorizationService.AuthorizeTaskAccessAsync(taskId.Value, operation);
+        }
+
+        if (controllerName == "projects" && projectId.HasValue)
+        {
+            return await _resourceAuthorizationService.AuthorizeProjectAccessAsync(projectId.Value, operation);
+        }
+
+        if (controllerName == "teams" && teamId.HasValue)
+        {
+            return await _resourceAuthorizationService.AuthorizeTeamAccessAsync(teamId.Value, operation);
+        }
+
+        // Fallback to general resource checking if controller-specific logic doesn't apply
+        if (taskId.HasValue)
+        {
+            return await _resourceAuthorizationService.AuthorizeTaskAccessAsync(taskId.Value, operation);
+        }
+
+        if (projectId.HasValue)
+        {
+            return await _resourceAuthorizationService.AuthorizeProjectAccessAsync(projectId.Value, operation);
+        }
+
+        if (teamId.HasValue)
+        {
+            return await _resourceAuthorizationService.AuthorizeTeamAccessAsync(teamId.Value, operation);
+        }
+
+        // If no specific resource ID found, check general authorization policies
+        var user = context.HttpContext.User;
+        var policyName = GetPolicyNameFromContext(context);
+
+        if (!string.IsNullOrEmpty(policyName))
+        {
+            var authResult = await _authorizationService.AuthorizeAsync(user, policyName);
+            return authResult.Succeeded;
+        }
+
+        // Default to allowing access if no specific authorization is required
+        return true;
+    }
+
+    /// <summary>
+    /// Gets the operation type from HTTP method
+    /// </summary>
+    private static string GetOperationFromHttpMethod(string httpMethod)
+    {
+        return httpMethod.ToUpper() switch
+        {
+            "GET" => TeamAccessRequirement.Operations.Read,
+            "POST" => TeamAccessRequirement.Operations.Create,
+            "PUT" => TeamAccessRequirement.Operations.Update,
+            "PATCH" => TeamAccessRequirement.Operations.Update,
+            "DELETE" => TeamAccessRequirement.Operations.Delete,
+            _ => TeamAccessRequirement.Operations.Read
+        };
+    }
+
+    /// <summary>
+    /// Gets the policy name from the action context based on controller and action
+    /// </summary>
+    private static string? GetPolicyNameFromContext(ActionExecutingContext context)
+    {
+        var controllerName = context.RouteData.Values["controller"]?.ToString();
+        var actionName = context.RouteData.Values["action"]?.ToString();
+
+        return (controllerName?.ToLower(), actionName?.ToLower()) switch
+        {
+            ("teams", "getteams") => "DeveloperOrManager",
+            ("teams", "createteam") => "ManagerOrAdmin",
+            ("projects", "getprojects") => "DeveloperOrManager",
+            ("projects", "createproject") => "ManagerOrAdmin",
+            ("tasks", "gettasks") => "DeveloperOrManager",
+            ("tasks", "createtask") => "TaskCreate",
+            _ => null
+        };
+    }
+
+    /// <summary>
+    /// Gets a resource ID from route parameters or action arguments
+    /// </summary>
+    private static Guid? GetResourceId(ActionExecutingContext context, params string[] parameterNames)
+    {
+        // Check route parameters first
+        foreach (var paramName in parameterNames)
+        {
+            if (context.RouteData.Values.TryGetValue(paramName, out var routeValue))
+            {
+                if (Guid.TryParse(routeValue?.ToString(), out var routeGuid))
+                {
+                    return routeGuid;
+                }
+            }
+        }
+
+        // Check action arguments
+        foreach (var paramName in parameterNames)
+        {
+            foreach (var parameter in context.ActionArguments)
+            {
+                if (parameter.Key.Equals(paramName, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (parameter.Value is Guid guidValue)
+                    {
+                        return guidValue;
+                    }
+                    if (Guid.TryParse(parameter.Value?.ToString(), out var parsedGuid))
+                    {
+                        return parsedGuid;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     private static string? GetResourceUserId(ActionExecutingContext context)

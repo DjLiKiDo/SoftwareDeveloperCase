@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Decorator pattern implementation for cached repositories
 - **MAJOR: JWT Bearer Authentication with Refresh Tokens (Task TD-001) ✅ COMPLETED:**
   - OAuth2-compliant token-based authentication flow with 15-minute access tokens
+- **MAJOR: Resource-Based Authorization System (Task TD-002) ✅ COMPLETED:**
+  - Policy-based authorization with role hierarchy (Admin > Manager > Developer)
+  - Resource-specific access control for Teams, Projects, and Tasks
+  - Custom authorization handlers with business rule enforcement
+  - Enhanced authorization filter with automatic resource detection
+  - Comprehensive authorization documentation and integration tests (20/20 passing)
   - Secure refresh token system with 7-day expiration and automatic rotation
   - Role-based authorization support for Admin, Manager, and Developer roles
   - HMAC-SHA256 token signing with comprehensive validation

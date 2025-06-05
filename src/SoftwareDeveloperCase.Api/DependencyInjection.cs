@@ -1,11 +1,13 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using SoftwareDeveloperCase.Api.Authorization.Extensions;
+using SoftwareDeveloperCase.Api.Authorization.Services;
+using SoftwareDeveloperCase.Api.Filters;
+using SoftwareDeveloperCase.Api.HealthChecks;
 using SoftwareDeveloperCase.Application;
 using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Infrastructure;
-using SoftwareDeveloperCase.Api.HealthChecks;
-using SoftwareDeveloperCase.Api.Filters;
 using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
 
 namespace SoftwareDeveloperCase.Api;
@@ -23,8 +25,13 @@ public static class DependencyInjection
     /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Configure JWT authentication and authorization
+        // Configure JWT authentication and comprehensive authorization
         services.AddJwtAuthentication(configuration);
+        services.AddComprehensiveAuthorization();
+
+        // Register authorization services
+        services.AddScoped<IResourceAuthorizationService, ResourceAuthorizationService>();
+        services.AddHttpContextAccessor();
 
         // Configure controllers with filters
         services.AddControllers(options =>
@@ -89,6 +96,7 @@ public static class DependencyInjection
         // Configure authorization policies
         services.AddAuthorization(options =>
         {
+            // Basic role-based policies (extended by comprehensive authorization)
             options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
             options.AddPolicy("ManagerOrAdmin", policy => policy.RequireRole("Manager", "Admin"));
             options.AddPolicy("DeveloperOrManager", policy => policy.RequireRole("Developer", "Manager", "Admin"));
