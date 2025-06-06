@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Security.Claims;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
@@ -6,8 +7,11 @@ using Moq;
 using SoftwareDeveloperCase.Api.Authorization.Handlers;
 using SoftwareDeveloperCase.Api.Authorization.Requirements;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Domain.Entities;
-using SoftwareDeveloperCase.Domain.Enums;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
+using SoftwareDeveloperCase.Domain.Entities.Project;
+using SoftwareDeveloperCase.Domain.Entities.Team;
+using SoftwareDeveloperCase.Domain.Enums.Core;
+using SoftwareDeveloperCase.Domain.Enums.Identity;
 using Xunit;
 
 namespace SoftwareDeveloperCase.Test.Unit.Authorization.Handlers;
@@ -40,7 +44,8 @@ public class ProjectAccessHandlerTests
     public async Task HandleRequirementAsync_AdminUser_ShouldSucceed()
     {
         // Arrange
-        var user = CreateUser("admin-user-id", SystemRole.Admin);
+        var adminUserId = Guid.NewGuid();
+        var user = CreateUser(adminUserId.ToString(), SystemRole.Admin);
         var project = CreateProject();
         var requirement = new ProjectAccessRequirement(ProjectAccessRequirement.Operations.Read);
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, project);
@@ -56,7 +61,8 @@ public class ProjectAccessHandlerTests
     public async Task HandleRequirementAsync_ManagerUser_ReadOperation_ShouldSucceed()
     {
         // Arrange
-        var user = CreateUser("manager-user-id", SystemRole.Manager);
+        var managerUserId = Guid.NewGuid();
+        var user = CreateUser(managerUserId.ToString(), SystemRole.Manager);
         var project = CreateProject();
         var requirement = new ProjectAccessRequirement(ProjectAccessRequirement.Operations.Read);
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, project);
@@ -79,13 +85,9 @@ public class ProjectAccessHandlerTests
         var requirement = new ProjectAccessRequirement(ProjectAccessRequirement.Operations.Read);
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, project);
 
-        _projectRepositoryMock
-            .Setup(x => x.GetByIdAsync(project.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(project);
-
         _teamMemberRepositoryMock
-            .Setup(x => x.GetTeamMemberByUserIdAndTeamIdAsync(userId, project.TeamId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(teamMember);
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<TeamMember, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[] { teamMember });
 
         // Act
         await _handler.HandleAsync(context);
@@ -109,7 +111,7 @@ public class ProjectAccessHandlerTests
             .ReturnsAsync(project);
 
         _teamMemberRepositoryMock
-            .Setup(x => x.GetTeamMemberByUserIdAndTeamIdAsync(userId, project.TeamId, It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetTeamMemberAsync(project.TeamId, userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((TeamMember?)null);
 
         // Act
@@ -130,13 +132,9 @@ public class ProjectAccessHandlerTests
         var requirement = new ProjectAccessRequirement(ProjectAccessRequirement.Operations.ManageTasks);
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, project);
 
-        _projectRepositoryMock
-            .Setup(x => x.GetByIdAsync(project.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(project);
-
         _teamMemberRepositoryMock
-            .Setup(x => x.GetTeamMemberByUserIdAndTeamIdAsync(userId, project.TeamId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(teamMember);
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<TeamMember, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[] { teamMember });
 
         // Act
         await _handler.HandleAsync(context);
@@ -163,11 +161,10 @@ public class ProjectAccessHandlerTests
             Description = "Test Description",
             TeamId = Guid.NewGuid(),
             Status = ProjectStatus.Active,
-            StartDate = DateTime.UtcNow,
-            EndDate = DateTime.UtcNow.AddMonths(3),
-            CreatedBy = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedBy = "system",
+            CreatedOn = DateTime.UtcNow,
+            LastModifiedBy = "system",
+            LastModifiedOn = DateTime.UtcNow
         };
     }
 
@@ -178,12 +175,13 @@ public class ProjectAccessHandlerTests
             Id = Guid.NewGuid(),
             TeamId = teamId,
             UserId = userId,
-            Role = role,
+            TeamRole = role,
             Status = MemberStatus.Active,
             JoinedDate = DateTime.UtcNow,
-            CreatedBy = userId,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedBy = "system",
+            CreatedOn = DateTime.UtcNow,
+            LastModifiedBy = "system",
+            LastModifiedOn = DateTime.UtcNow
         };
     }
 }

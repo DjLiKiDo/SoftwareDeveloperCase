@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Security.Claims;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
@@ -6,8 +7,10 @@ using Moq;
 using SoftwareDeveloperCase.Api.Authorization.Handlers;
 using SoftwareDeveloperCase.Api.Authorization.Requirements;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Domain.Entities;
-using SoftwareDeveloperCase.Domain.Enums;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
+using SoftwareDeveloperCase.Domain.Entities.Team;
+using SoftwareDeveloperCase.Domain.Enums.Core;
+using SoftwareDeveloperCase.Domain.Enums.Identity;
 using Xunit;
 
 namespace SoftwareDeveloperCase.Test.Unit.Authorization.Handlers;
@@ -40,7 +43,8 @@ public class TeamAccessHandlerTests
     public async Task HandleRequirementAsync_AdminUser_ShouldSucceed()
     {
         // Arrange
-        var user = CreateUser("admin-user-id", SystemRole.Admin);
+        var adminUserId = Guid.NewGuid();
+        var user = CreateUser(adminUserId.ToString(), SystemRole.Admin);
         var team = CreateTeam();
         var requirement = new TeamAccessRequirement(TeamAccessRequirement.Operations.Read);
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, team);
@@ -56,7 +60,8 @@ public class TeamAccessHandlerTests
     public async Task HandleRequirementAsync_ManagerUser_ReadOperation_ShouldSucceed()
     {
         // Arrange
-        var user = CreateUser("manager-user-id", SystemRole.Manager);
+        var managerUserId = Guid.NewGuid();
+        var user = CreateUser(managerUserId.ToString(), SystemRole.Manager);
         var team = CreateTeam();
         var requirement = new TeamAccessRequirement(TeamAccessRequirement.Operations.Read);
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, team);
@@ -80,8 +85,8 @@ public class TeamAccessHandlerTests
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, team);
 
         _teamMemberRepositoryMock
-            .Setup(x => x.GetTeamMemberByUserIdAndTeamIdAsync(userId, team.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(teamMember);
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<TeamMember, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[] { teamMember });
 
         // Act
         await _handler.HandleAsync(context);
@@ -102,7 +107,7 @@ public class TeamAccessHandlerTests
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, team);
 
         _teamMemberRepositoryMock
-            .Setup(x => x.GetTeamMemberByUserIdAndTeamIdAsync(userId, team.Id, It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetTeamMemberAsync(team.Id, userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(teamMember);
 
         // Act
@@ -123,7 +128,7 @@ public class TeamAccessHandlerTests
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, team);
 
         _teamMemberRepositoryMock
-            .Setup(x => x.GetTeamMemberByUserIdAndTeamIdAsync(userId, team.Id, It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetTeamMemberAsync(team.Id, userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((TeamMember?)null);
 
         // Act
@@ -149,9 +154,10 @@ public class TeamAccessHandlerTests
             Id = Guid.NewGuid(),
             Name = "Test Team",
             Description = "Test Description",
-            CreatedBy = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedBy = "system",
+            CreatedOn = DateTime.UtcNow,
+            LastModifiedBy = "system",
+            LastModifiedOn = DateTime.UtcNow
         };
     }
 
@@ -162,12 +168,13 @@ public class TeamAccessHandlerTests
             Id = Guid.NewGuid(),
             TeamId = teamId,
             UserId = userId,
-            Role = role,
+            TeamRole = role,
             Status = MemberStatus.Active,
             JoinedDate = DateTime.UtcNow,
-            CreatedBy = userId,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedBy = "system",
+            CreatedOn = DateTime.UtcNow,
+            LastModifiedBy = "system",
+            LastModifiedOn = DateTime.UtcNow
         };
     }
 }
