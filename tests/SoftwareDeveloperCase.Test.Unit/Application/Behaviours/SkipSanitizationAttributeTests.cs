@@ -1,6 +1,5 @@
 using System.Reflection;
 using FluentAssertions;
-using SoftwareDeveloperCase.Application.Behaviours;
 using SoftwareDeveloperCase.Application.Attributes;
 using Xunit;
 

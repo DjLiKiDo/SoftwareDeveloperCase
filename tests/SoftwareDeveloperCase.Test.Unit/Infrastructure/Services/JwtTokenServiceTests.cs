@@ -4,7 +4,6 @@ using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Domain.Entities;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
-using SoftwareDeveloperCase.Domain.ValueObjects;
 using SoftwareDeveloperCase.Infrastructure.Services;
 using Moq;
 using Xunit;

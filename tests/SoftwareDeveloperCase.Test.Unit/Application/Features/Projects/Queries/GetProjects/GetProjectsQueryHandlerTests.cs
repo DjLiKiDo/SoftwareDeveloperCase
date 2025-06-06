@@ -6,10 +6,8 @@ using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
 using SoftwareDeveloperCase.Application.Features.Projects.DTOs;
 using SoftwareDeveloperCase.Application.Features.Projects.Queries.GetProjects;
-using SoftwareDeveloperCase.Application.Mappings;
 using SoftwareDeveloperCase.Domain.Entities.Project;
 using SoftwareDeveloperCase.Domain.Enums.Core;
-using System.Linq.Expressions;
 using Xunit;
 
 namespace SoftwareDeveloperCase.Test.Unit.Application.Features.Projects.Queries.GetProjects;

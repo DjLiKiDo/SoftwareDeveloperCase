@@ -62,28 +62,28 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("9a6ae1d8-0688-43d4-b1ce-2a13608fa68c"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3111),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(4990),
                             Name = "Read"
                         },
                         new
                         {
                             Id = new Guid("d2e69e18-e1a5-48c2-b5b5-eb888c13d46b"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3117),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(4997),
                             Name = "Add"
                         },
                         new
                         {
                             Id = new Guid("5162e7da-6b87-424a-a08d-fdd6e3c6b4b2"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3120),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5001),
                             Name = "Update"
                         },
                         new
                         {
                             Id = new Guid("4a03f568-69e4-4548-85b6-8100cad15631"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3122),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5005),
                             Name = "Delete"
                         });
                 });
@@ -193,7 +193,7 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("9e89d8f2-c8dd-474c-b7fa-267a9570488a"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3298),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5282),
                             PermissionId = new Guid("9a6ae1d8-0688-43d4-b1ce-2a13608fa68c"),
                             RoleId = new Guid("2d7aa3b0-f221-4753-b77f-ff261858a13a")
                         },
@@ -201,7 +201,7 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("00aeb653-9bfd-46bd-98e8-631c080a7cd3"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3301),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5286),
                             PermissionId = new Guid("9a6ae1d8-0688-43d4-b1ce-2a13608fa68c"),
                             RoleId = new Guid("9eca8d57-f7ca-4f8d-9c83-73b659225ae4")
                         },
@@ -209,7 +209,7 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("265e22e5-2252-432e-b6d2-e994740f6f08"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3304),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5289),
                             PermissionId = new Guid("d2e69e18-e1a5-48c2-b5b5-eb888c13d46b"),
                             RoleId = new Guid("9eca8d57-f7ca-4f8d-9c83-73b659225ae4")
                         },
@@ -217,7 +217,7 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("5b953aa8-6bde-4f47-b984-d3622a8e0550"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3306),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5295),
                             PermissionId = new Guid("5162e7da-6b87-424a-a08d-fdd6e3c6b4b2"),
                             RoleId = new Guid("9eca8d57-f7ca-4f8d-9c83-73b659225ae4")
                         },
@@ -225,7 +225,7 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("0754e6c4-4e12-42b1-845b-21ad1fc2f6b0"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3309),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5299),
                             PermissionId = new Guid("4a03f568-69e4-4548-85b6-8100cad15631"),
                             RoleId = new Guid("9eca8d57-f7ca-4f8d-9c83-73b659225ae4")
                         });
@@ -274,7 +274,7 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("47175080-a8c0-4d4f-bf88-85cd5cbff45b"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3481),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5549),
                             RoleId = new Guid("2d7aa3b0-f221-4753-b77f-ff261858a13a"),
                             UserId = new Guid("2d7aa3b0-f221-4753-b77f-ff261858a13a")
                         },
@@ -282,7 +282,7 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("cf61c58c-e416-4b84-a195-dd7b77ef96dd"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3484),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5553),
                             RoleId = new Guid("2d7aa3b0-f221-4753-b77f-ff261858a13a"),
                             UserId = new Guid("64a19c7d-a7a9-4481-a498-7df87f341da4")
                         },
@@ -290,7 +290,7 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("8e49f3ba-11f1-4256-a195-91f9a8f3a41b"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3487),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5558),
                             RoleId = new Guid("9eca8d57-f7ca-4f8d-9c83-73b659225ae4"),
                             UserId = new Guid("64a19c7d-a7a9-4481-a498-7df87f341da4")
                         },
@@ -298,7 +298,7 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("5562714c-a186-439f-a0df-25321703cf7e"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3489),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5562),
                             RoleId = new Guid("2d7aa3b0-f221-4753-b77f-ff261858a13a"),
                             UserId = new Guid("29d6cf7d-2335-4329-91ad-4a7ec437d73c")
                         },
@@ -306,7 +306,7 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("4dc7a2ea-5e37-4038-8810-79fd9df7ac0a"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3492),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5565),
                             RoleId = new Guid("2d7aa3b0-f221-4753-b77f-ff261858a13a"),
                             UserId = new Guid("94651e82-5fc3-43d0-9c64-5a16ac517d43")
                         },
@@ -314,7 +314,7 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("07a59e4e-ead7-4597-bb36-96a06ee3a847"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3494),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5569),
                             RoleId = new Guid("9eca8d57-f7ca-4f8d-9c83-73b659225ae4"),
                             UserId = new Guid("94651e82-5fc3-43d0-9c64-5a16ac517d43")
                         });
@@ -421,14 +421,14 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("2d7aa3b0-f221-4753-b77f-ff261858a13a"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3257),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5223),
                             Name = "Employee"
                         },
                         new
                         {
                             Id = new Guid("9eca8d57-f7ca-4f8d-9c83-73b659225ae4"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3264),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5231),
                             Name = "Manager",
                             ParentRoleId = new Guid("2d7aa3b0-f221-4753-b77f-ff261858a13a")
                         });
@@ -693,6 +693,9 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<int>("FailedLoginAttempts")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -702,6 +705,12 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LockedOutAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LockoutExpiresAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -733,8 +742,9 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("2d7aa3b0-f221-4753-b77f-ff261858a13a"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3426),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5463),
                             Email = "hremployee@sdc.com",
+                            FailedLoginAttempts = 0,
                             IsActive = true,
                             Name = "HR Employee",
                             Password = "sdc"
@@ -743,8 +753,9 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("64a19c7d-a7a9-4481-a498-7df87f341da4"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3434),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5475),
                             Email = "hrmanager@sdc.com",
+                            FailedLoginAttempts = 0,
                             IsActive = true,
                             Name = "HR Manager",
                             Password = "sdc"
@@ -753,8 +764,9 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("29d6cf7d-2335-4329-91ad-4a7ec437d73c"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3441),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5486),
                             Email = "itemployee@sdc.com",
+                            FailedLoginAttempts = 0,
                             IsActive = true,
                             Name = "IT Employee",
                             Password = "sdc"
@@ -763,8 +775,9 @@ namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Migrations
                         {
                             Id = new Guid("94651e82-5fc3-43d0-9c64-5a16ac517d43"),
                             CreatedBy = "InitialSeed",
-                            CreatedOn = new DateTime(2025, 6, 4, 22, 2, 11, 742, DateTimeKind.Utc).AddTicks(3445),
+                            CreatedOn = new DateTime(2025, 6, 6, 20, 28, 37, 861, DateTimeKind.Utc).AddTicks(5494),
                             Email = "itmanager@sdc.com",
+                            FailedLoginAttempts = 0,
                             IsActive = true,
                             Name = "IT Manager",
                             Password = "sdc"

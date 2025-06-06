@@ -4,8 +4,6 @@ using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Features.Projects.DTOs;
 using SoftwareDeveloperCase.Application.Models;
-using SoftwareDeveloperCase.Domain.Entities.Project;
-using System.Linq.Expressions;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Queries.GetProjects;
 

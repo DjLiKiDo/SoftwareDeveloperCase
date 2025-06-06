@@ -7,7 +7,6 @@ using SoftwareDeveloperCase.Domain.Enums.Core;
 using SoftwareDeveloperCase.Domain.ValueObjects;
 using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
 using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Repositories;
-using SoftwareDeveloperCase.Infrastructure.Persistence.Extensions;
 using SoftwareDeveloperCase.Infrastructure.Persistence;
 using Xunit;
 using TaskEntity = SoftwareDeveloperCase.Domain.Entities.Task.Task;

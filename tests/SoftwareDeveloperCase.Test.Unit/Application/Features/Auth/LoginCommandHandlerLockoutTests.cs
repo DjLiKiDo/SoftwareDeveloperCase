@@ -8,11 +8,12 @@ using SoftwareDeveloperCase.Application.Exceptions;
 using SoftwareDeveloperCase.Application.Features.Auth.Commands.Login;
 using SoftwareDeveloperCase.Domain.Entities;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
+using SoftwareDeveloperCase.Domain.ValueObjects;
 using Xunit;
 
 namespace SoftwareDeveloperCase.Test.Unit.Application.Features.Auth;
 
-public class LoginCommandHandlerTests
+public class LoginCommandHandlerLockoutTests
 {
     private readonly Mock<IUserRepository> _userRepositoryMock;
     private readonly Mock<IRefreshTokenRepository> _refreshTokenRepositoryMock;
@@ -22,8 +23,9 @@ public class LoginCommandHandlerTests
     private readonly Mock<IDateTimeService> _dateTimeServiceMock;
     private readonly Mock<ILogger<LoginCommandHandler>> _loggerMock;
     private readonly LoginCommandHandler _handler;
+    private readonly DateTime _currentTime = new(2023, 1, 1, 12, 0, 0, DateTimeKind.Utc);
 
-    public LoginCommandHandlerTests()
+    public LoginCommandHandlerLockoutTests()
     {
         _userRepositoryMock = new Mock<IUserRepository>();
         _refreshTokenRepositoryMock = new Mock<IRefreshTokenRepository>();
@@ -42,19 +44,39 @@ public class LoginCommandHandlerTests
             _dateTimeServiceMock.Object,
             _loggerMock.Object);
 
-        _dateTimeServiceMock.Setup(x => x.Now).Returns(new DateTime(2023, 1, 1, 12, 0, 0, DateTimeKind.Utc));
+        _dateTimeServiceMock.Setup(x => x.Now).Returns(_currentTime);
     }
 
     [Fact]
-    public async Task Handle_WithValidCredentials_ShouldReturnAuthenticationResponse()
+    public async Task Handle_WithLockedOutAccount_ShouldThrowAuthenticationException()
     {
         // Arrange
         var email = "test@example.com";
         var password = "password123";
         var user = CreateTestUser(email);
-        var accessToken = "access-token";
-        var refreshToken = "refresh-token";
-        var jwtId = Guid.NewGuid().ToString();
+        user.LockoutExpiresAt = _currentTime.AddMinutes(10); // Locked out for 10 more minutes
+
+        var command = new LoginCommand(email, password);
+
+        _userRepositoryMock.Setup(x => x.GetByEmailWithRolesAsync(email, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<AuthenticationException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        exception.Message.Should().Be("Account is temporarily locked due to too many failed login attempts. Please try again later.");
+    }
+
+    [Fact]
+    public async Task Handle_WithExpiredLockout_ShouldAllowLogin()
+    {
+        // Arrange
+        var email = "test@example.com";
+        var password = "password123";
+        var user = CreateTestUser(email);
+        user.LockoutExpiresAt = _currentTime.AddMinutes(-10); // Lockout expired 10 minutes ago
+        user.FailedLoginAttempts = 5;
 
         var command = new LoginCommand(email, password);
 
@@ -63,68 +85,30 @@ public class LoginCommandHandlerTests
         _passwordServiceMock.Setup(x => x.VerifyPassword(password, user.Password))
             .Returns(true);
         _jwtTokenServiceMock.Setup(x => x.GenerateAccessTokenAsync(user, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(accessToken);
+            .ReturnsAsync("access-token");
         _jwtTokenServiceMock.Setup(x => x.GenerateRefreshToken())
-            .Returns(refreshToken);
-        _jwtTokenServiceMock.Setup(x => x.GetJwtIdFromToken(accessToken))
-            .Returns(jwtId);
+            .Returns("refresh-token");
+        _jwtTokenServiceMock.Setup(x => x.GetJwtIdFromToken("access-token"))
+            .Returns("jwt-id");
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
-        result.AccessToken.Should().Be(accessToken);
-        result.RefreshToken.Should().Be(refreshToken);
-        result.User.Email.Should().Be(email);
-        result.User.Id.Should().Be(user.Id);
-
-        _refreshTokenRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<RefreshToken>(), It.IsAny<CancellationToken>()), Times.Once);
-        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        user.FailedLoginAttempts.Should().Be(0); // Reset after successful login
+        user.LockoutExpiresAt.Should().BeNull();
+        user.LockedOutAt.Should().BeNull();
     }
 
     [Fact]
-    public async Task Handle_WithInvalidEmail_ShouldThrowAuthenticationException()
-    {
-        // Arrange
-        var email = "nonexistent@example.com";
-        var password = "password123";
-        var command = new LoginCommand(email, password);
-
-        _userRepositoryMock.Setup(x => x.GetByEmailWithRolesAsync(email, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((User?)null);
-
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<AuthenticationException>(() => _handler.Handle(command, CancellationToken.None));
-        exception.Message.Should().Be("Invalid email or password");
-    }
-
-    [Fact]
-    public async Task Handle_WithInactiveUser_ShouldThrowAuthenticationException()
-    {
-        // Arrange
-        var email = "test@example.com";
-        var password = "password123";
-        var user = CreateTestUser(email);
-        user.IsActive = false;
-
-        var command = new LoginCommand(email, password);
-
-        _userRepositoryMock.Setup(x => x.GetByEmailWithRolesAsync(email, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(user);
-
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<AuthenticationException>(() => _handler.Handle(command, CancellationToken.None));
-        exception.Message.Should().Be("Account is inactive");
-    }
-
-    [Fact]
-    public async Task Handle_WithInvalidPassword_ShouldThrowAuthenticationException()
+    public async Task Handle_WithIncorrectPassword_ShouldRecordFailedAttempt()
     {
         // Arrange
         var email = "test@example.com";
         var password = "wrongpassword";
         var user = CreateTestUser(email);
+        user.FailedLoginAttempts = 2; // Already has 2 failed attempts
 
         var command = new LoginCommand(email, password);
 
@@ -134,8 +118,71 @@ public class LoginCommandHandlerTests
             .Returns(false);
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<AuthenticationException>(() => _handler.Handle(command, CancellationToken.None));
+        var exception = await Assert.ThrowsAsync<AuthenticationException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
         exception.Message.Should().Be("Invalid email or password");
+        user.FailedLoginAttempts.Should().Be(3); // Incremented from 2 to 3
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_WithIncorrectPasswordReachingThreshold_ShouldLockAccount()
+    {
+        // Arrange
+        var email = "test@example.com";
+        var password = "wrongpassword";
+        var user = CreateTestUser(email);
+        user.FailedLoginAttempts = 4; // One attempt away from lockout
+
+        var command = new LoginCommand(email, password);
+
+        _userRepositoryMock.Setup(x => x.GetByEmailWithRolesAsync(email, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+        _passwordServiceMock.Setup(x => x.VerifyPassword(password, user.Password))
+            .Returns(false);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<AuthenticationException>(() =>
+            _handler.Handle(command, CancellationToken.None));
+
+        exception.Message.Should().Be("Invalid email or password");
+        user.FailedLoginAttempts.Should().Be(5);
+        user.LockedOutAt.Should().Be(_currentTime);
+        user.LockoutExpiresAt.Should().Be(_currentTime.AddMinutes(15)); // Default 15 minutes
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_WithSuccessfulLogin_ShouldResetFailedAttempts()
+    {
+        // Arrange
+        var email = "test@example.com";
+        var password = "correctpassword";
+        var user = CreateTestUser(email);
+        user.FailedLoginAttempts = 3; // Had some failed attempts
+
+        var command = new LoginCommand(email, password);
+
+        _userRepositoryMock.Setup(x => x.GetByEmailWithRolesAsync(email, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(user);
+        _passwordServiceMock.Setup(x => x.VerifyPassword(password, user.Password))
+            .Returns(true);
+        _jwtTokenServiceMock.Setup(x => x.GenerateAccessTokenAsync(user, It.IsAny<CancellationToken>()))
+            .ReturnsAsync("access-token");
+        _jwtTokenServiceMock.Setup(x => x.GenerateRefreshToken())
+            .Returns("refresh-token");
+        _jwtTokenServiceMock.Setup(x => x.GetJwtIdFromToken("access-token"))
+            .Returns("jwt-id");
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        user.FailedLoginAttempts.Should().Be(0); // Reset after successful login
+        user.LockedOutAt.Should().BeNull();
+        user.LockoutExpiresAt.Should().BeNull();
     }
 
     private static User CreateTestUser(string email)
@@ -165,9 +212,10 @@ public class LoginCommandHandlerTests
         {
             Id = userId,
             Name = "Test User",
-            Email = new SoftwareDeveloperCase.Domain.ValueObjects.Email(email),
+            Email = new Email(email),
             Password = "hashedpassword",
             IsActive = true,
+            FailedLoginAttempts = 0,
             UserRoles = new List<UserRole> { userRole },
             CreatedBy = "Test",
             CreatedOn = DateTime.UtcNow

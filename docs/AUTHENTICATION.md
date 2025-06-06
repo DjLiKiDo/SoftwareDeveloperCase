@@ -9,6 +9,7 @@ The application implements a comprehensive JWT Bearer token authentication syste
 ## Architecture Decisions
 
 ### Token Strategy
+
 - **Access Tokens**: 15-minute expiration with HMAC-SHA256 signing
 - **Refresh Tokens**: 7-day expiration with automatic rotation
 - **Signing Algorithm**: HMAC-SHA256 for performance and security balance
@@ -17,11 +18,13 @@ The application implements a comprehensive JWT Bearer token authentication syste
 **Rationale**: Short-lived access tokens minimize security exposure while refresh tokens provide seamless user experience. HMAC-SHA256 offers excellent performance with strong security guarantees.
 
 ### Domain Model Design
+
 - `RefreshToken` entity with proper domain relationships
 - User entity enhanced with refresh token collection
 - Clean separation between authentication concerns and core domain
 
 ### Security Implementation
+
 - **Input Sanitization Protection**: Passwords and tokens bypass automatic sanitization to prevent corruption
 - **Role-Based Authorization**: Admin, Manager, Developer roles with proper claims
 - **Token Validation**: Comprehensive validation including expiration, signature, and issuer verification
@@ -30,9 +33,11 @@ The application implements a comprehensive JWT Bearer token authentication syste
 ## API Endpoints
 
 ### POST /api/v1/auth/login
+
 Authenticates user credentials and returns JWT tokens.
 
 **Request**:
+
 ```json
 {
   "email": "user@example.com",
@@ -41,6 +46,7 @@ Authenticates user credentials and returns JWT tokens.
 ```
 
 **Response**:
+
 ```json
 {
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -57,9 +63,11 @@ Authenticates user credentials and returns JWT tokens.
 ```
 
 ### POST /api/v1/auth/refresh
+
 Exchanges refresh token for new access token with automatic refresh token rotation.
 
 **Request**:
+
 ```json
 {
   "refreshToken": "b8a9f5e3-d2c1-4b6a-8f7e-1c9d8e7f6a5b"
@@ -67,6 +75,7 @@ Exchanges refresh token for new access token with automatic refresh token rotati
 ```
 
 **Response**:
+
 ```json
 {
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -76,6 +85,7 @@ Exchanges refresh token for new access token with automatic refresh token rotati
 ```
 
 ### POST /api/v1/auth/logout
+
 Revokes all refresh tokens for the authenticated user.
 
 **Headers**: `Authorization: Bearer {access_token}`
@@ -83,11 +93,13 @@ Revokes all refresh tokens for the authenticated user.
 **Response**: `204 No Content`
 
 ### GET /api/v1/auth/me
+
 Returns current authenticated user information.
 
 **Headers**: `Authorization: Bearer {access_token}`
 
 **Response**:
+
 ```json
 {
   "id": 1,
@@ -101,17 +113,18 @@ Returns current authenticated user information.
 ## JWT Token Structure
 
 ### Access Token Claims
+
 ```json
 {
-  "sub": "1",                           // User ID
-  "email": "user@example.com",          // User email
-  "given_name": "John",                 // First name
-  "family_name": "Doe",                 // Last name
-  "role": ["Developer"],                // User roles
-  "jti": "unique-token-id",             // Token unique identifier
-  "iat": 1642248600,                    // Issued at timestamp
-  "exp": 1642249500,                    // Expiration timestamp
-  "iss": "SoftwareDeveloperCase.Api",   // Issuer
+  "sub": "1", // User ID
+  "email": "user@example.com", // User email
+  "given_name": "John", // First name
+  "family_name": "Doe", // Last name
+  "role": ["Developer"], // User roles
+  "jti": "unique-token-id", // Token unique identifier
+  "iat": 1642248600, // Issued at timestamp
+  "exp": 1642249500, // Expiration timestamp
+  "iss": "SoftwareDeveloperCase.Api", // Issuer
   "aud": "SoftwareDeveloperCase.Client" // Audience
 }
 ```
@@ -119,6 +132,7 @@ Returns current authenticated user information.
 ## Configuration
 
 ### Required Settings
+
 ```json
 {
   "Jwt": {
@@ -132,6 +146,7 @@ Returns current authenticated user information.
 ```
 
 ### Environment Variables
+
 - `JWT_SECRET`: Override JWT signing secret (required in production)
 - `JWT_ISSUER`: Override token issuer
 - `JWT_AUDIENCE`: Override token audience
@@ -141,24 +156,29 @@ Returns current authenticated user information.
 ## Implementation Details
 
 ### Clean Architecture Compliance
+
 - **Domain Layer**: `RefreshToken` entity with business rules
 - **Application Layer**: Authentication commands/queries, `IJwtTokenService` contract
 - **Infrastructure Layer**: `JwtTokenService` implementation, refresh token repository
 - **API Layer**: `AuthController` with proper HTTP concerns
 
 ### Dependency Injection
+
 ```csharp
 services.AddScoped<IJwtTokenService, JwtTokenService>();
 services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 ```
 
 ### Input Sanitization Integration
+
 Authentication-specific fields are protected from automatic sanitization:
+
 - Passwords: `[SkipSanitization]` to prevent corruption
 - Tokens: `[SkipSanitization]` to maintain integrity
 - Emails: Sanitized using `InputSanitizer.SanitizeEmail()`
 
 ### Error Handling
+
 - `AuthenticationException`: Domain-specific authentication errors
 - Structured error responses with appropriate HTTP status codes
 - Secure error logging without exposing sensitive information
@@ -166,40 +186,111 @@ Authentication-specific fields are protected from automatic sanitization:
 ## Security Considerations
 
 ### Token Security
+
 - **Secret Key**: Minimum 32 characters for HMAC-SHA256
 - **Token Rotation**: Refresh tokens are rotated on each use
 - **Expiration**: Short-lived access tokens minimize exposure window
 - **Revocation**: Immediate refresh token revocation on logout
 
 ### Input Validation
+
 - Email format validation before authentication processing
 - Password complexity requirements (if implemented)
 - Refresh token format and existence validation
 
 ### Logging Security
+
 - User inputs sanitized before logging using `InputSanitizer.SanitizeForLogging()`
 - Sensitive data (passwords, tokens) never logged
 - Authentication attempts logged for security monitoring
 
+## Password Security
+
+### Password Hashing
+
+The system uses BCrypt.Net-Next for secure password storage with the following features:
+
+- **Work Factor**: 12 (recommended for 2025 security standards)
+- **Automatic Salt Generation**: Each password gets a unique salt
+- **Rehash Detection**: Automatic detection of passwords needing security upgrades
+
+```csharp
+// Password hashing example
+var hashedPassword = _passwordService.HashPassword("userPassword123!");
+var isValid = _passwordService.VerifyPassword("userPassword123!", hashedPassword);
+var needsRehash = _passwordService.NeedsRehash(hashedPassword);
+```
+
+### Password Complexity Requirements
+
+All passwords must meet the following criteria:
+
+- **Minimum Length**: 8 characters
+- **Maximum Length**: 128 characters
+- **Character Requirements**:
+  - At least one uppercase letter (A-Z)
+  - At least one lowercase letter (a-z)
+  - At least one number (0-9)
+  - At least one special character (!@#$%^&\*()\_+-=[]{}|;:,.<>?)
+- **Common Password Protection**: Rejection of common/weak passwords
+
+### Account Lockout Protection
+
+The system implements account lockout to prevent brute force attacks:
+
+- **Failed Attempt Threshold**: 5 consecutive failed login attempts
+- **Lockout Duration**: 15 minutes
+- **Automatic Reset**: Successful login resets failed attempt counter
+- **Lockout Tracking**: `FailedLoginAttempts`, `LockedOutAt`, `LockoutExpiresAt` fields
+
+```csharp
+// Account lockout flow example
+if (user.IsLockedOut(DateTime.UtcNow))
+{
+    throw new AuthenticationException("Account is temporarily locked due to too many failed login attempts");
+}
+
+if (!_passwordService.VerifyPassword(password, user.Password))
+{
+    user.RecordFailedLogin(DateTime.UtcNow);
+    await _unitOfWork.SaveChangesAsync();
+    throw new AuthenticationException("Invalid email or password");
+}
+
+// Reset on successful login
+user.ResetFailedLoginAttempts();
+```
+
+### Password Migration Strategy
+
+For existing systems with plain text passwords:
+
+- **Automatic Migration**: Database migration automatically hashes existing passwords
+- **Transparent Process**: No user action required during migration
+- **Backup Strategy**: Migration includes rollback capabilities
+- **Zero Downtime**: Migration designed for production environments
+
 ## Testing Strategy
 
 ### Unit Tests Coverage
+
 - **JWT Token Service**: Token generation, validation, claim extraction
 - **Login Command Handler**: Authentication flow with various scenarios
 - **Error Handling**: Invalid credentials, inactive users, expired tokens
 - **Input Sanitization**: Protection of sensitive authentication data
 
 ### Test Examples
+
 ```csharp
 [Fact]
 public async Task GenerateAccessToken_ValidUser_ReturnsValidToken()
 {
     // Arrange
     var user = CreateTestUser();
-    
+
     // Act
     var token = await _jwtTokenService.GenerateAccessTokenAsync(user);
-    
+
     // Assert
     token.Should().NotBeNullOrEmpty();
     var principal = _jwtTokenService.ValidateToken(token);
@@ -210,38 +301,40 @@ public async Task GenerateAccessToken_ValidUser_ReturnsValidToken()
 ## Usage Examples
 
 ### Client-Side Token Management
+
 ```javascript
 // Login and store tokens
-const loginResponse = await fetch('/api/v1/auth/login', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password })
+const loginResponse = await fetch("/api/v1/auth/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email, password }),
 });
 
 const { accessToken, refreshToken, expiresAt } = await loginResponse.json();
-localStorage.setItem('accessToken', accessToken);
-localStorage.setItem('refreshToken', refreshToken);
+localStorage.setItem("accessToken", accessToken);
+localStorage.setItem("refreshToken", refreshToken);
 
 // Automatic token refresh
 async function makeAuthenticatedRequest(url, options = {}) {
-  let token = localStorage.getItem('accessToken');
-  
+  let token = localStorage.getItem("accessToken");
+
   // Check if token needs refresh
   if (isTokenExpired(token)) {
     token = await refreshAccessToken();
   }
-  
+
   return fetch(url, {
     ...options,
     headers: {
       ...options.headers,
-      'Authorization': `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    },
   });
 }
 ```
 
 ### Server-Side Authorization
+
 ```csharp
 [Authorize(Roles = "Admin,Manager")]
 [HttpPost("teams")]
@@ -257,11 +350,13 @@ public async Task<IActionResult> CreateTeam([FromBody] CreateTeamCommand command
 ### Common Issues
 
 1. **Token Invalid/Expired**
+
    - Verify token format and expiration
    - Check system clock synchronization
    - Ensure secret key matches between environments
 
 2. **Refresh Token Not Found**
+
    - Token may have expired (7-day limit)
    - User may have logged out (tokens revoked)
    - Check database connectivity
@@ -272,6 +367,7 @@ public async Task<IActionResult> CreateTeam([FromBody] CreateTeamCommand command
    - Ensure proper `[Authorize]` attribute usage
 
 ### Debug Configuration
+
 ```json
 {
   "Logging": {

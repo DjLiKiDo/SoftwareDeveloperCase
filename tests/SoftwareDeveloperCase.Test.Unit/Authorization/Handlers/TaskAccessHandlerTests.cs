@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Security.Claims;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
@@ -6,8 +7,11 @@ using Moq;
 using SoftwareDeveloperCase.Api.Authorization.Handlers;
 using SoftwareDeveloperCase.Api.Authorization.Requirements;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Domain.Entities;
-using SoftwareDeveloperCase.Domain.Enums;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
+using SoftwareDeveloperCase.Domain.Entities.Project;
+using SoftwareDeveloperCase.Domain.Entities.Team;
+using SoftwareDeveloperCase.Domain.Enums.Core;
+using SoftwareDeveloperCase.Domain.Enums.Identity;
 using Xunit;
 using TaskEntity = SoftwareDeveloperCase.Domain.Entities.Task.Task;
 
@@ -23,6 +27,7 @@ public class TaskAccessHandlerTests
     private readonly TaskAccessHandler _handler;
     private readonly Mock<ITaskRepository> _taskRepositoryMock;
     private readonly Mock<ITeamMemberRepository> _teamMemberRepositoryMock;
+    private readonly Mock<IProjectRepository> _projectRepositoryMock;
 
     public TaskAccessHandlerTests()
     {
@@ -30,9 +35,11 @@ public class TaskAccessHandlerTests
         _loggerMock = new Mock<ILogger<TaskAccessHandler>>();
         _taskRepositoryMock = new Mock<ITaskRepository>();
         _teamMemberRepositoryMock = new Mock<ITeamMemberRepository>();
+        _projectRepositoryMock = new Mock<IProjectRepository>();
 
         _unitOfWorkMock.Setup(x => x.TaskRepository).Returns(_taskRepositoryMock.Object);
         _unitOfWorkMock.Setup(x => x.TeamMemberRepository).Returns(_teamMemberRepositoryMock.Object);
+        _unitOfWorkMock.Setup(x => x.ProjectRepository).Returns(_projectRepositoryMock.Object);
 
         _handler = new TaskAccessHandler(_unitOfWorkMock.Object, _loggerMock.Object);
     }
@@ -41,7 +48,8 @@ public class TaskAccessHandlerTests
     public async Task HandleRequirementAsync_AdminUser_ShouldSucceed()
     {
         // Arrange
-        var user = CreateUser("admin-user-id", SystemRole.Admin);
+        var adminUserId = Guid.NewGuid();
+        var user = CreateUser(adminUserId.ToString(), SystemRole.Admin);
         var task = CreateTask();
         var requirement = new TaskAccessRequirement(TaskAccessRequirement.Operations.Read);
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, task);
@@ -63,9 +71,14 @@ public class TaskAccessHandlerTests
         var requirement = new TaskAccessRequirement(TaskAccessRequirement.Operations.UpdateStatus);
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, task);
 
-        _taskRepositoryMock
-            .Setup(x => x.GetByIdAsync(task.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(task);
+        _projectRepositoryMock
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<Project, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[] { task.Project });
+
+        var teamMember = CreateTeamMember(task.Project.TeamId, userId, TeamRole.Member);
+        _teamMemberRepositoryMock
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<TeamMember, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[] { teamMember });
 
         // Act
         await _handler.HandleAsync(context);
@@ -85,13 +98,13 @@ public class TaskAccessHandlerTests
         var requirement = new TaskAccessRequirement(TaskAccessRequirement.Operations.Read);
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, task);
 
-        _taskRepositoryMock
-            .Setup(x => x.GetByIdAsync(task.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(task);
+        _projectRepositoryMock
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<Project, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[] { task.Project });
 
         _teamMemberRepositoryMock
-            .Setup(x => x.GetTeamMemberByUserIdAndTeamIdAsync(userId, task.Project.TeamId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(teamMember);
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<TeamMember, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[] { teamMember });
 
         // Act
         await _handler.HandleAsync(context);
@@ -112,13 +125,13 @@ public class TaskAccessHandlerTests
         var requirement = new TaskAccessRequirement(TaskAccessRequirement.Operations.UpdateStatus);
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, task);
 
-        _taskRepositoryMock
-            .Setup(x => x.GetByIdAsync(task.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(task);
+        _projectRepositoryMock
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<Project, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[] { task.Project });
 
         _teamMemberRepositoryMock
-            .Setup(x => x.GetTeamMemberByUserIdAndTeamIdAsync(userId, task.Project.TeamId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(teamMember);
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<TeamMember, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[] { teamMember });
 
         // Act
         await _handler.HandleAsync(context);
@@ -138,13 +151,13 @@ public class TaskAccessHandlerTests
         var requirement = new TaskAccessRequirement(TaskAccessRequirement.Operations.Assign);
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, task);
 
-        _taskRepositoryMock
-            .Setup(x => x.GetByIdAsync(task.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(task);
+        _projectRepositoryMock
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<Project, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[] { task.Project });
 
         _teamMemberRepositoryMock
-            .Setup(x => x.GetTeamMemberByUserIdAndTeamIdAsync(userId, task.Project.TeamId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(teamMember);
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<TeamMember, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[] { teamMember });
 
         // Act
         await _handler.HandleAsync(context);
@@ -163,13 +176,13 @@ public class TaskAccessHandlerTests
         var requirement = new TaskAccessRequirement(TaskAccessRequirement.Operations.Read);
         var context = new AuthorizationHandlerContext(new[] { requirement }, user, task);
 
-        _taskRepositoryMock
-            .Setup(x => x.GetByIdAsync(task.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(task);
+        _projectRepositoryMock
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<Project, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new[] { task.Project });
 
         _teamMemberRepositoryMock
-            .Setup(x => x.GetTeamMemberByUserIdAndTeamIdAsync(userId, task.Project.TeamId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((TeamMember?)null);
+            .Setup(x => x.GetAsync(It.IsAny<Expression<Func<TeamMember, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Array.Empty<TeamMember>());
 
         // Act
         await _handler.HandleAsync(context);
@@ -184,7 +197,7 @@ public class TaskAccessHandlerTests
         {
             new Claim(ClaimTypes.NameIdentifier, userId),
             new Claim(ClaimTypes.Role, role.ToString())
-        }));
+        }, "Test"));
     }
 
     private static TaskEntity CreateTask(Guid? assignedTo = null)
@@ -196,11 +209,10 @@ public class TaskAccessHandlerTests
             Description = "Test Description",
             TeamId = Guid.NewGuid(),
             Status = ProjectStatus.Active,
-            StartDate = DateTime.UtcNow,
-            EndDate = DateTime.UtcNow.AddMonths(3),
-            CreatedBy = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedBy = "system",
+            CreatedOn = DateTime.UtcNow,
+            LastModifiedBy = "system",
+            LastModifiedOn = DateTime.UtcNow
         };
 
         return new TaskEntity
@@ -210,12 +222,13 @@ public class TaskAccessHandlerTests
             Description = "Test Description",
             ProjectId = project.Id,
             Project = project,
-            AssignedTo = assignedTo,
-            Status = TaskStatus.Todo,
+            AssignedToId = assignedTo,
+            Status = SoftwareDeveloperCase.Domain.Enums.Core.TaskStatus.Todo,
             Priority = Priority.Medium,
-            CreatedBy = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedBy = "system",
+            CreatedOn = DateTime.UtcNow,
+            LastModifiedBy = "system",
+            LastModifiedOn = DateTime.UtcNow
         };
     }
 
@@ -226,12 +239,13 @@ public class TaskAccessHandlerTests
             Id = Guid.NewGuid(),
             TeamId = teamId,
             UserId = userId,
-            Role = role,
+            TeamRole = role,
             Status = MemberStatus.Active,
             JoinedDate = DateTime.UtcNow,
-            CreatedBy = userId,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedBy = "system",
+            CreatedOn = DateTime.UtcNow,
+            LastModifiedBy = "system",
+            LastModifiedOn = DateTime.UtcNow
         };
     }
 }
