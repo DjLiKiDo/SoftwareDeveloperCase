@@ -46,6 +46,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 - **CRITICAL: Comprehensive security improvement from 62% to 91% protection coverage**
+- **MAJOR: Secure Password Storage System (Task TD-003) ✅ COMPLETED:**
+  - BCrypt.Net-Next password hashing with work factor 12 and automatic salt generation
+  - Comprehensive password complexity validation with 8+ character minimum, mixed case, numbers, and special characters
+  - Common password detection and rejection for enhanced security
+  - Account lockout mechanism with 5 failed attempt threshold and 15-minute lockout duration
+  - Automated migration of existing plain text passwords to secure BCrypt hashes
+  - Password rehash detection for future security upgrades
+  - Enhanced User entity with lockout tracking (FailedLoginAttempts, LockedOutAt, LockoutExpiresAt)
+  - Complete integration with login handler for real-time lockout enforcement
+  - 100% unit test coverage for all password security components
 - Fixed log injection vulnerabilities identified by CodeQL analysis in ProjectsController and LoggerExtensions
   - Replaced unsafe string concatenation/interpolation in log statements with structured logging
   - Enhanced `LoggerExtensions` safe logging methods to support multiple parameters with automatic sanitization

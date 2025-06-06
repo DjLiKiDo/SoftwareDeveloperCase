@@ -242,6 +242,15 @@ https://localhost:7001/swagger
   - 15-minute access tokens with HMAC-SHA256 signing
   - 7-day refresh tokens with automatic rotation
   - Secure token storage and validation
+- **Secure Password Storage**: BCrypt.Net-Next implementation with work factor 12
+  - Automatic salt generation for each password
+  - Password complexity validation (8+ chars, mixed case, numbers, special characters)
+  - Common password detection and rejection
+  - Automatic migration of existing plain text passwords
+- **Account Lockout Protection**: Brute force attack prevention
+  - 5 failed attempt threshold with 15-minute lockout duration
+  - Automatic reset on successful login
+  - Real-time lockout enforcement during authentication
 - **Role-Based Authorization**: Admin, Manager, Developer roles with granular permissions
 - **Input Sanitization**: Comprehensive protection against injection attacks
 - **Rate Limiting**: Per user/IP request throttling
