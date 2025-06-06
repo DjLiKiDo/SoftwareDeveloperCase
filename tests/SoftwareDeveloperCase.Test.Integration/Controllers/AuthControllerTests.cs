@@ -1,17 +1,15 @@
-using System.Net;
-using System.Net.Http.Headers;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Application.DTOs.Auth;
 using SoftwareDeveloperCase.Domain.Entities;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
-using SoftwareDeveloperCase.Domain.ValueObjects;
 using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
 using SoftwareDeveloperCase.Test.Integration.Common;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using Xunit;
 
 namespace SoftwareDeveloperCase.Test.Integration.Controllers;

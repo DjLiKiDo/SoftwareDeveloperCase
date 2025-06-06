@@ -8,7 +8,6 @@ using SoftwareDeveloperCase.Application.Exceptions;
 using SoftwareDeveloperCase.Application.Features.Auth.Commands.Login;
 using SoftwareDeveloperCase.Domain.Entities;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
-using SoftwareDeveloperCase.Domain.ValueObjects;
 using Xunit;
 
 namespace SoftwareDeveloperCase.Test.Unit.Application.Features.Auth;

@@ -5,7 +5,6 @@ using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Application.DTOs.Auth;
 using SoftwareDeveloperCase.Application.Exceptions;
-using SoftwareDeveloperCase.Domain.Entities.Identity;
 
 namespace SoftwareDeveloperCase.Application.Features.Auth.Commands.RefreshToken;
 

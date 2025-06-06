@@ -47,7 +47,7 @@ public static class PasswordComplexityValidator
         };
 
         // Check for exact matches (case insensitive) or if password contains common password
-        return !commonPasswords.Any(common => 
+        return !commonPasswords.Any(common =>
             password.Contains(common, StringComparison.OrdinalIgnoreCase));
     }
 }

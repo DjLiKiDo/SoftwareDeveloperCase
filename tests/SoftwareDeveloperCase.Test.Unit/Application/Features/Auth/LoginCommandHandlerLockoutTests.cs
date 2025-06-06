@@ -62,9 +62,9 @@ public class LoginCommandHandlerLockoutTests
             .ReturnsAsync(user);
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<AuthenticationException>(() => 
+        var exception = await Assert.ThrowsAsync<AuthenticationException>(() =>
             _handler.Handle(command, CancellationToken.None));
-        
+
         exception.Message.Should().Be("Account is temporarily locked due to too many failed login attempts. Please try again later.");
     }
 
@@ -118,9 +118,9 @@ public class LoginCommandHandlerLockoutTests
             .Returns(false);
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<AuthenticationException>(() => 
+        var exception = await Assert.ThrowsAsync<AuthenticationException>(() =>
             _handler.Handle(command, CancellationToken.None));
-        
+
         exception.Message.Should().Be("Invalid email or password");
         user.FailedLoginAttempts.Should().Be(3); // Incremented from 2 to 3
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -143,9 +143,9 @@ public class LoginCommandHandlerLockoutTests
             .Returns(false);
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<AuthenticationException>(() => 
+        var exception = await Assert.ThrowsAsync<AuthenticationException>(() =>
             _handler.Handle(command, CancellationToken.None));
-        
+
         exception.Message.Should().Be("Invalid email or password");
         user.FailedLoginAttempts.Should().Be(5);
         user.LockedOutAt.Should().Be(_currentTime);

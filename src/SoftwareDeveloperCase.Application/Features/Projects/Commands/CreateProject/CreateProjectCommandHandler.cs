@@ -5,7 +5,6 @@ using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Services;
 using SoftwareDeveloperCase.Domain.Entities.Project;
 using SoftwareDeveloperCase.Domain.Enums.Core;
-using SoftwareDeveloperCase.Domain.Events.Core;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Commands.CreateProject;
 

@@ -1,7 +1,5 @@
 using FluentValidation;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Application.Validation.Common;
-using SoftwareDeveloperCase.Domain.Enums.Core;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Commands.CreateProject;
 

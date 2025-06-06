@@ -90,7 +90,7 @@ public class User : BaseEntity
     public void RecordFailedLogin(DateTime currentTime, int maxFailedAttempts = 5, int lockoutDurationMinutes = 15)
     {
         FailedLoginAttempts++;
-        
+
         if (FailedLoginAttempts >= maxFailedAttempts)
         {
             LockedOutAt = currentTime;

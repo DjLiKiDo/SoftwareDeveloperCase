@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using SoftwareDeveloperCase.Api.Authorization.Requirements;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Domain.Entities;
 
 namespace SoftwareDeveloperCase.Api.Authorization.Services;
 

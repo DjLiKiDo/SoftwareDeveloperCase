@@ -208,7 +208,7 @@ public class AuthController : ControllerBase
                 NewPassword = request.NewPassword,
                 ConfirmPassword = request.ConfirmPassword
             };
-            
+
             await _mediator.Send(command, cancellationToken);
             _logger.SafeInformation("Password changed successfully for user: {UserId}", userId);
             return NoContent();

@@ -5,7 +5,6 @@ using SoftwareDeveloperCase.Domain.Entities.Task;
 using SoftwareDeveloperCase.Domain.Entities.Team;
 using SoftwareDeveloperCase.Domain.Entities.Project;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
-using SoftwareDeveloperCase.Domain.ValueObjects;
 using SoftwareDeveloperCase.Infrastructure.Persistence.Extensions;
 using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Configurations;
 

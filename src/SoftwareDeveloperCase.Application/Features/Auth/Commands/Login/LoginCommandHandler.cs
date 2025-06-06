@@ -6,7 +6,6 @@ using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Application.DTOs.Auth;
 using SoftwareDeveloperCase.Application.Exceptions;
 using SoftwareDeveloperCase.Application.Services;
-using SoftwareDeveloperCase.Domain.Entities.Identity;
 
 namespace SoftwareDeveloperCase.Application.Features.Auth.Commands.Login;
 
@@ -85,11 +84,11 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationR
         if (!_passwordService.VerifyPassword(request.Password, user.Password))
         {
             _logger.LogWarning("Login failed: Invalid password for email: {Email}", logSafeEmail);
-            
+
             // Record failed login attempt
             user.RecordFailedLogin(_dateTimeService.Now);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            
+
             throw new AuthenticationException("Invalid email or password");
         }
 

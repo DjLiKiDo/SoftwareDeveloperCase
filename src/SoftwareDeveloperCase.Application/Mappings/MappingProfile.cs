@@ -9,7 +9,6 @@ using SoftwareDeveloperCase.Application.Features.Projects.DTOs;
 using SoftwareDeveloperCase.Domain.Entities;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
 using SoftwareDeveloperCase.Domain.Entities.Project;
-using SoftwareDeveloperCase.Domain.Entities.Team;
 
 namespace SoftwareDeveloperCase.Application.Mappings;
 

@@ -3,7 +3,6 @@ using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
 using SoftwareDeveloperCase.Application.Features.Projects.Commands.CreateProject;
-using SoftwareDeveloperCase.Domain.Entities.Project;
 using SoftwareDeveloperCase.Domain.Entities.Team;
 using SoftwareDeveloperCase.Domain.Enums.Core;
 using Xunit;

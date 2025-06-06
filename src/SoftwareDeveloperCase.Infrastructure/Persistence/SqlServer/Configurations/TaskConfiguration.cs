@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SoftwareDeveloperCase.Domain.Entities.Task;
 
 namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Configurations;
 
