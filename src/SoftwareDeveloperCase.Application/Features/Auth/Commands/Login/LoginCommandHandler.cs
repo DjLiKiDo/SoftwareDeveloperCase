@@ -74,12 +74,27 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationR
             throw new AuthenticationException("Account is inactive");
         }
 
+        // Check if user account is locked out
+        if (user.IsLockedOut(_dateTimeService.Now))
+        {
+            _logger.LogWarning("Login failed: User account is locked out for email: {Email}", logSafeEmail);
+            throw new AuthenticationException("Account is temporarily locked due to too many failed login attempts. Please try again later.");
+        }
+
         // Verify password (use original password, not sanitized)
         if (!_passwordService.VerifyPassword(request.Password, user.Password))
         {
             _logger.LogWarning("Login failed: Invalid password for email: {Email}", logSafeEmail);
+            
+            // Record failed login attempt
+            user.RecordFailedLogin(_dateTimeService.Now);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            
             throw new AuthenticationException("Invalid email or password");
         }
+
+        // Reset failed login attempts on successful authentication
+        user.ResetFailedLoginAttempts();
 
         // Generate tokens
         var accessToken = await _jwtTokenService.GenerateAccessTokenAsync(user, cancellationToken);

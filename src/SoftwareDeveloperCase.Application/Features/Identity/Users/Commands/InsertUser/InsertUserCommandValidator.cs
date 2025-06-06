@@ -1,5 +1,6 @@
 using FluentValidation;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Validators;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.InsertUser;
 
@@ -28,8 +29,7 @@ public class InsertUserCommandValidator : AbstractValidator<InsertUserCommand>
             .MustAsync(NotExistingEmail).WithMessage("{PropertyName} already registered."); ;
 
         RuleFor(x => x.Password)
-            .NotEmpty().WithMessage("{PropertyName} cannot be empty")
-            .NotNull().WithMessage("{PropertyName} cannot be null");
+            .PasswordComplexity();
     }
 
     private async Task<bool> NotExistingEmail(string? emailAddress, CancellationToken cancellationToken)

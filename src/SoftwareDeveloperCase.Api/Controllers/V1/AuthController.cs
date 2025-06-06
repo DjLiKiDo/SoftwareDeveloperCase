@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SoftwareDeveloperCase.Api.Extensions;
 using SoftwareDeveloperCase.Application.DTOs.Auth;
+using SoftwareDeveloperCase.Application.Exceptions;
 using SoftwareDeveloperCase.Application.Features.Auth.Commands.Login;
 using SoftwareDeveloperCase.Application.Features.Auth.Commands.Logout;
 using SoftwareDeveloperCase.Application.Features.Auth.Commands.RefreshToken;
+using SoftwareDeveloperCase.Application.Features.Auth.Commands.ChangePassword;
 
 namespace SoftwareDeveloperCase.Api.Controllers.V1;
 
@@ -171,5 +173,55 @@ public class AuthController : ControllerBase
         };
 
         return Ok(userInfo);
+    }
+
+    /// <summary>
+    /// Changes the password for the currently authenticated user
+    /// </summary>
+    /// <param name="request">The change password request</param>
+    /// <param name="cancellationToken">The cancellation token</param>
+    /// <returns>No content if successful</returns>
+    [HttpPost("change-password")]
+    [Authorize]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
+    public async Task<IActionResult> ChangePassword(
+        [FromBody] ChangePasswordRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (!Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        _logger.SafeInformation("Password change request for user: {UserId}", userId);
+
+        try
+        {
+            // Create command from request and set user ID
+            var command = new ChangePasswordCommand
+            {
+                UserId = userId,
+                CurrentPassword = request.CurrentPassword,
+                NewPassword = request.NewPassword,
+                ConfirmPassword = request.ConfirmPassword
+            };
+            
+            await _mediator.Send(command, cancellationToken);
+            _logger.SafeInformation("Password changed successfully for user: {UserId}", userId);
+            return NoContent();
+        }
+        catch (AuthenticationException ex)
+        {
+            _logger.SafeWarning("Password change failed for user: {UserId}. Error: {Error}", userId, ex.Message);
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.SafeError("Unexpected error during password change for user: {UserId}. Error: {Error}", userId, ex.Message);
+            return BadRequest(new { message = "An error occurred during password change" });
+        }
     }
 }
