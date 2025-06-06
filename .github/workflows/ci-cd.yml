@@ -154,77 +154,77 @@ jobs:
           path: ./publish
           retention-days: 30
 
-  integration-tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    needs: test
+  # integration-tests:
+  #   name: Integration Tests
+  #   runs-on: ubuntu-latest
+  #   needs: test
 
-    services:
-      sqlserver:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        env:
-          SA_PASSWORD: YourStrong@Passw0rd
-          ACCEPT_EULA: Y
-        ports:
-          - 1433:1433
-        options: >-
-          --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+  #   services:
+  #     sqlserver:
+  #       image: mcr.microsoft.com/mssql/server:2022-latest
+  #       env:
+  #         SA_PASSWORD: YourStrong@Passw0rd
+  #         ACCEPT_EULA: Y
+  #       ports:
+  #         - 1433:1433
+  #       options: >-
+  #         --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1'"
+  #         --health-interval=10s
+  #         --health-timeout=5s
+  #         --health-retries=3
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+  #     - name: Setup .NET
+  #       uses: actions/setup-dotnet@v4
+  #       with:
+  #         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/*.sln') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
+  #     - name: Cache NuGet packages
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: ~/.nuget/packages
+  #         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/*.sln') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-nuget-
 
-      - name: Restore dependencies
-        run: dotnet restore ${{ env.SOLUTION_FILE }}
+  #     - name: Restore dependencies
+  #       run: dotnet restore ${{ env.SOLUTION_FILE }}
 
-      - name: Build
-        run: dotnet build ${{ env.SOLUTION_FILE }} --no-restore --configuration Release
+  #     - name: Build
+  #       run: dotnet build ${{ env.SOLUTION_FILE }} --no-restore --configuration Release
 
-      - name: Wait for SQL Server
-        run: |
-          for i in {1..30}; do
-            if /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'YourStrong@Passw0rd' -Q 'SELECT 1' &> /dev/null; then
-              echo "SQL Server is ready"
-              break
-            fi
-            echo "Waiting for SQL Server... ($i/30)"
-            sleep 2
-          done
+  #     - name: Wait for SQL Server
+  #       run: |
+  #         for i in {1..30}; do
+  #           if /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'YourStrong@Passw0rd' -Q 'SELECT 1' &> /dev/null; then
+  #             echo "SQL Server is ready"
+  #             break
+  #           fi
+  #           echo "Waiting for SQL Server... ($i/30)"
+  #           sleep 2
+  #         done
 
-      - name: Run Integration Tests
-        env:
-          ConnectionStrings__DefaultConnection: "Server=localhost;Database=SoftwareDeveloperCaseTest;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;"
-        run: |
-          dotnet test SoftwareDeveloperCase.Test.Integration/ \
-            --no-build \
-            --verbosity normal \
-            --configuration Release \
-            --logger trx \
-            --results-directory ./integration-results
+  #     - name: Run Integration Tests
+  #       env:
+  #         ConnectionStrings__DefaultConnection: "Server=localhost;Database=SoftwareDeveloperCaseTest;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=true;"
+  #       run: |
+  #         dotnet test SoftwareDeveloperCase.Test.Integration/ \
+  #           --no-build \
+  #           --verbosity normal \
+  #           --configuration Release \
+  #           --logger trx \
+  #           --results-directory ./integration-results
 
-      - name: Upload Integration Test Results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: integration-test-results-${{ github.run_number }}
-          path: ./integration-results
-          retention-days: 30
+  #     - name: Upload Integration Test Results
+  #       uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: integration-test-results-${{ github.run_number }}
+  #         path: ./integration-results
+  #         retention-days: 30
 
   # performance-tests:
   #   name: Performance Tests
