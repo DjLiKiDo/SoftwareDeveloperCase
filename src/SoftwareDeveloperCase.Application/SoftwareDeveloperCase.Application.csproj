@@ -1,25 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Project Configuration -->
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>12</LangVersion>
+    <LangVersion>13</LangVersion>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors />
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <!-- Internal Project References -->
   <ItemGroup>
     <ProjectReference Include="..\SoftwareDeveloperCase.Domain\SoftwareDeveloperCase.Domain.csproj" />
   </ItemGroup>
 
+  <!-- External Package Dependencies -->
   <ItemGroup>
+    <!-- Object Mapping -->
     <PackageReference Include="AutoMapper" Version="14.0.0" />
+    
+    <!-- Cryptography & Security -->
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="HtmlSanitizer" Version="9.0.884" />
+    
+    <!-- Validation -->
     <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
-    <PackageReference Include="HtmlSanitizer" Version="9.0.884" />
+    
+    <!-- CQRS & Mediator Pattern -->
     <PackageReference Include="MediatR" Version="12.5.0" />
+    
+    <!-- Logging Abstractions -->
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.3" />
   </ItemGroup>
 
