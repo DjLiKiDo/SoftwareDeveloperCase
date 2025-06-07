@@ -82,4 +82,54 @@ public interface IUnitOfWork : IDisposable
     /// <param name="cancellationToken">A token to observe while waiting for the task to complete</param>
     /// <returns>The number of affected rows</returns>
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+    #region Transaction Management
+    /// <summary>
+    /// Begins a new database transaction
+    /// </summary>
+    /// <param name="cancellationToken">A token to observe while waiting for the task to complete</param>
+    /// <returns>A task representing the asynchronous operation</returns>
+    Task BeginTransactionAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Commits the current transaction and saves all changes
+    /// </summary>
+    /// <param name="cancellationToken">A token to observe while waiting for the task to complete</param>
+    /// <returns>The number of affected rows</returns>
+    Task<int> CommitTransactionAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Rolls back the current transaction and discards all changes
+    /// </summary>
+    /// <param name="cancellationToken">A token to observe while waiting for the task to complete</param>
+    /// <returns>A task representing the asynchronous operation</returns>
+    Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Executes a function within a database transaction with automatic rollback on exceptions
+    /// </summary>
+    /// <typeparam name="T">The return type of the function</typeparam>
+    /// <param name="operation">The operation to execute within the transaction</param>
+    /// <param name="cancellationToken">A token to observe while waiting for the task to complete</param>
+    /// <returns>The result of the operation</returns>
+    Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> operation, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Executes an action within a database transaction with automatic rollback on exceptions
+    /// </summary>
+    /// <param name="operation">The operation to execute within the transaction</param>
+    /// <param name="cancellationToken">A token to observe while waiting for the task to complete</param>
+    /// <returns>A task representing the asynchronous operation</returns>
+    Task ExecuteInTransactionAsync(Func<Task> operation, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets a value indicating whether a transaction is currently active
+    /// </summary>
+    bool HasActiveTransaction { get; }
+
+    /// <summary>
+    /// Gets the current transaction identifier, or null if no transaction is active
+    /// </summary>
+    Guid? CurrentTransactionId { get; }
+    #endregion
 }

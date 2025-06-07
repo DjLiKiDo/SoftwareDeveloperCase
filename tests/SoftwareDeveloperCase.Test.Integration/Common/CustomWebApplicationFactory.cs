@@ -4,14 +4,27 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer;
+using Testcontainers.MsSql;
+using Xunit;
 
 namespace SoftwareDeveloperCase.Test.Integration.Common;
 
 /// <summary>
-/// Custom WebApplicationFactory for integration tests
+/// Custom WebApplicationFactory for integration tests using real SQL Server in container
 /// </summary>
-public class CustomWebApplicationFactory : WebApplicationFactory<Program>
+public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
+    private readonly MsSqlContainer _msSqlContainer;
+
+    public CustomWebApplicationFactory()
+    {
+        _msSqlContainer = new MsSqlBuilder()
+            .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+            .WithPassword("TestPassword123!")
+            .WithCleanUp(true)
+            .Build();
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
@@ -22,10 +35,10 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             if (descriptor != null)
                 services.Remove(descriptor);
 
-            // Add in-memory database for testing
+            // Add SQL Server database for testing with Testcontainers
             services.AddDbContext<SoftwareDeveloperCaseDbContext>(options =>
             {
-                options.UseInMemoryDatabase("TestDatabase");
+                options.UseSqlServer(_msSqlContainer.GetConnectionString());
                 options.EnableSensitiveDataLogging();
             });
 
@@ -42,7 +55,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
             try
             {
-                // Ensure the database is created
+                // Ensure the database is created and migrations applied
                 context.Database.EnsureCreated();
             }
             catch (Exception ex)
@@ -54,5 +67,16 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         });
 
         builder.UseEnvironment("Testing");
+    }
+
+    public async Task InitializeAsync()
+    {
+        await _msSqlContainer.StartAsync();
+    }
+
+    public new async Task DisposeAsync()
+    {
+        await _msSqlContainer.DisposeAsync();
+        await base.DisposeAsync();
     }
 }

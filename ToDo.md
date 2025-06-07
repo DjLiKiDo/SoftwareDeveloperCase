@@ -9,7 +9,6 @@
 [ ]
 [ ]
 [ ]
-[ ]
 [ ] Review authentication structure and organization
 [ ] Add integration tests to pipeline
 [ ] Semantic Versioning when merging to main

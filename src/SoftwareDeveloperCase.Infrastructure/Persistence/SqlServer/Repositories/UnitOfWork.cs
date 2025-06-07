@@ -1,9 +1,10 @@
-using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
-using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
-using SoftwareDeveloperCase.Domain.Common;
 using System.Collections;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
+using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
+using SoftwareDeveloperCase.Domain.Common;
 
 namespace SoftwareDeveloperCase.Infrastructure.Persistence.SqlServer.Repositories;
 
@@ -15,6 +16,7 @@ internal class UnitOfWork : IUnitOfWork
     private Hashtable? _repositories;
     private readonly SoftwareDeveloperCaseDbContext _context;
     private readonly ILogger<UnitOfWork> _logger;
+    private IDbContextTransaction? _currentTransaction;
 
     // Identity repositories
     private readonly IPermissionRepository _permissionRepository;
@@ -84,6 +86,16 @@ internal class UnitOfWork : IUnitOfWork
     /// Gets the database context
     /// </summary>
     public SoftwareDeveloperCaseDbContext SoftwareDeveloperCaseDbContext => _context;
+
+    /// <summary>
+    /// Gets a value indicating whether a transaction is currently active
+    /// </summary>
+    public bool HasActiveTransaction => _currentTransaction != null;
+
+    /// <summary>
+    /// Gets the current transaction identifier, or null if no transaction is active
+    /// </summary>
+    public Guid? CurrentTransactionId => _currentTransaction?.TransactionId;
 
     /// <summary>
     /// Initializes a new instance of the UnitOfWork class with all required repositories
@@ -175,13 +187,192 @@ internal class UnitOfWork : IUnitOfWork
         }
     }
 
+    #region Transaction Management
+
     /// <summary>
-    /// Disposes the context when the unit of work is disposed
+    /// Begins a new database transaction
     /// </summary>
-    public void Dispose()
+    /// <param name="cancellationToken">A token to observe while waiting for the task to complete</param>
+    /// <returns>A task representing the asynchronous operation</returns>
+    public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
     {
-        _context.Dispose();
+        if (_currentTransaction != null)
+        {
+            _logger.LogWarning("Transaction already active. Transaction ID: {TransactionId}", _currentTransaction.TransactionId);
+            throw new InvalidOperationException("A transaction is already active. Only one transaction is supported at a time.");
+        }
+
+        _logger.LogDebug("Beginning new database transaction");
+        _currentTransaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+        _logger.LogInformation("Database transaction started. Transaction ID: {TransactionId}", _currentTransaction.TransactionId);
     }
+
+    /// <summary>
+    /// Commits the current transaction and saves all changes
+    /// </summary>
+    /// <param name="cancellationToken">A token to observe while waiting for the task to complete</param>
+    /// <returns>The number of affected rows</returns>
+    public async Task<int> CommitTransactionAsync(CancellationToken cancellationToken = default)
+    {
+        if (_currentTransaction == null)
+        {
+            _logger.LogWarning("Attempted to commit transaction but no active transaction found");
+            throw new InvalidOperationException("No active transaction to commit");
+        }
+
+        try
+        {
+            _logger.LogDebug("Committing transaction. Transaction ID: {TransactionId}", _currentTransaction.TransactionId);
+
+            var result = await _context.SaveChangesAsync(cancellationToken);
+            await _currentTransaction.CommitAsync(cancellationToken);
+
+            _logger.LogInformation("Transaction committed successfully. Transaction ID: {TransactionId}, Affected rows: {AffectedRows}",
+                _currentTransaction.TransactionId, result);
+
+            await _currentTransaction.DisposeAsync();
+            _currentTransaction = null;
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            var transactionId = _currentTransaction?.TransactionId;
+            _logger.LogError(ex, "Error occurred while committing transaction. Transaction ID: {TransactionId}", transactionId);
+            await RollbackTransactionAsync(cancellationToken);
+            throw new ApplicationException("An error occurred while committing the transaction", ex);
+        }
+    }
+
+    /// <summary>
+    /// Rolls back the current transaction and discards all changes
+    /// </summary>
+    /// <param name="cancellationToken">A token to observe while waiting for the task to complete</param>
+    /// <returns>A task representing the asynchronous operation</returns>
+    public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
+    {
+        if (_currentTransaction == null)
+        {
+            _logger.LogWarning("Attempted to rollback transaction but no active transaction found");
+            return;
+        }
+
+        try
+        {
+            _logger.LogDebug("Rolling back transaction. Transaction ID: {TransactionId}", _currentTransaction.TransactionId);
+            await _currentTransaction.RollbackAsync(cancellationToken);
+            _logger.LogInformation("Transaction rolled back successfully. Transaction ID: {TransactionId}", _currentTransaction.TransactionId);
+
+            await _currentTransaction.DisposeAsync();
+            _currentTransaction = null;
+        }
+        catch (Exception ex)
+        {
+            var transactionId = _currentTransaction?.TransactionId;
+            _logger.LogError(ex, "Error occurred while rolling back transaction. Transaction ID: {TransactionId}", transactionId);
+
+            // If rollback fails, dispose the transaction to clean up
+            try
+            {
+                await _currentTransaction!.DisposeAsync();
+            }
+            catch
+            {
+                // Ignore dispose errors
+            }
+            finally
+            {
+                _currentTransaction = null;
+            }
+
+            throw new ApplicationException("An error occurred while rolling back the transaction", ex);
+        }
+    }
+
+    /// <summary>
+    /// Executes a function within a database transaction with automatic rollback on exceptions
+    /// </summary>
+    /// <typeparam name="T">The return type of the function</typeparam>
+    /// <param name="operation">The operation to execute within the transaction</param>
+    /// <param name="cancellationToken">A token to observe while waiting for the task to complete</param>
+    /// <returns>The result of the operation</returns>
+    public async Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> operation, CancellationToken cancellationToken = default)
+    {
+        if (operation == null)
+            throw new ArgumentNullException(nameof(operation));
+
+        var wasTransactionStartedHere = !HasActiveTransaction;
+
+        try
+        {
+            if (wasTransactionStartedHere)
+            {
+                await BeginTransactionAsync(cancellationToken);
+            }
+
+            _logger.LogDebug("Executing operation within transaction. Transaction ID: {TransactionId}", CurrentTransactionId);
+            var result = await operation();
+
+            if (wasTransactionStartedHere)
+            {
+                await CommitTransactionAsync(cancellationToken);
+                _logger.LogDebug("Operation completed and transaction committed successfully. Transaction ID: {TransactionId}", CurrentTransactionId);
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            if (wasTransactionStartedHere)
+            {
+                _logger.LogError(ex, "Operation failed, rolling back transaction. Transaction ID: {TransactionId}", CurrentTransactionId);
+                await RollbackTransactionAsync(cancellationToken);
+            }
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Executes an action within a database transaction with automatic rollback on exceptions
+    /// </summary>
+    /// <param name="operation">The operation to execute within the transaction</param>
+    /// <param name="cancellationToken">A token to observe while waiting for the task to complete</param>
+    /// <returns>A task representing the asynchronous operation</returns>
+    public async Task ExecuteInTransactionAsync(Func<Task> operation, CancellationToken cancellationToken = default)
+    {
+        if (operation == null)
+            throw new ArgumentNullException(nameof(operation));
+
+        var wasTransactionStartedHere = !HasActiveTransaction;
+
+        try
+        {
+            if (wasTransactionStartedHere)
+            {
+                await BeginTransactionAsync(cancellationToken);
+            }
+
+            _logger.LogDebug("Executing operation within transaction. Transaction ID: {TransactionId}", CurrentTransactionId);
+            await operation();
+
+            if (wasTransactionStartedHere)
+            {
+                await CommitTransactionAsync(cancellationToken);
+                _logger.LogDebug("Operation completed and transaction committed successfully. Transaction ID: {TransactionId}", CurrentTransactionId);
+            }
+        }
+        catch (Exception ex)
+        {
+            if (wasTransactionStartedHere)
+            {
+                _logger.LogError(ex, "Operation failed, rolling back transaction. Transaction ID: {TransactionId}", CurrentTransactionId);
+                await RollbackTransactionAsync(cancellationToken);
+            }
+            throw;
+        }
+    }
+
+    #endregion
 
     /// <summary>
     /// Retrieves a generic repository for the specified entity type
@@ -203,5 +394,21 @@ internal class UnitOfWork : IUnitOfWork
         }
 
         return (IRepository<TEntity>?)_repositories[type];
+    }
+
+    /// <summary>
+    /// Disposes the context when the unit of work is disposed
+    /// </summary>
+    public void Dispose()
+    {
+        if (_currentTransaction != null)
+        {
+            _logger.LogWarning("Disposing UnitOfWork with active transaction. Rolling back transaction. Transaction ID: {TransactionId}", _currentTransaction.TransactionId);
+            _currentTransaction.Rollback();
+            _currentTransaction.Dispose();
+            _currentTransaction = null;
+        }
+
+        _context.Dispose();
     }
 }
