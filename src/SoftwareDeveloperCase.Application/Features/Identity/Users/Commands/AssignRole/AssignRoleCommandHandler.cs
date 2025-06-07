@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.AssignRole;
@@ -9,7 +10,7 @@ namespace SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.Ass
 /// <summary>
 /// Handler for processing assign role to user commands
 /// </summary>
-public class AssignRoleCommandHandler : IRequestHandler<AssignRoleCommand, Guid>
+public class AssignRoleCommandHandler : IRequestHandler<AssignRoleCommand, Result<Guid>>
 {
     private readonly ILogger<AssignRoleCommandHandler> _logger;
     private readonly IMapper _mapper;
@@ -33,9 +34,11 @@ public class AssignRoleCommandHandler : IRequestHandler<AssignRoleCommand, Guid>
     /// </summary>
     /// <param name="request">The assign role command</param>
     /// <param name="cancellationToken">Cancellation token for the operation</param>
-    /// <returns>The identifier of the created user role assignment</returns>
-    public async Task<Guid> Handle(AssignRoleCommand request, CancellationToken cancellationToken)
+    /// <returns>Result containing the identifier of the created user role assignment</returns>
+    public async Task<Result<Guid>> Handle(AssignRoleCommand request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Assigning role {RoleId} to user {UserId}", request.RoleId, request.UserId);
+
         var userRole = _mapper.Map<UserRole>(request);
 
         _unitOfWork.UserRoleRepository.Insert(userRole);
@@ -44,12 +47,12 @@ public class AssignRoleCommandHandler : IRequestHandler<AssignRoleCommand, Guid>
 
         if (result <= 0)
         {
-            _logger.LogError("The role has not been assigned");
-            throw new Exception("The role has not been assigned");
+            _logger.LogError("The role has not been assigned to user {UserId}", request.UserId);
+            return Result<Guid>.Failure("The role has not been assigned");
         }
 
-        _logger.LogInformation($"Role assigned (Id: {userRole.Id})");
+        _logger.LogInformation("Role assigned successfully with ID: {UserRoleId}", userRole.Id);
 
-        return userRole.Id;
+        return Result<Guid>.Success(userRole.Id);
     }
 }

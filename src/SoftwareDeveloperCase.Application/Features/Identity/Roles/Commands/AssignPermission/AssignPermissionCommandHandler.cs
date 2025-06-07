@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Roles.Commands.AssignPermission;
@@ -9,7 +10,7 @@ namespace SoftwareDeveloperCase.Application.Features.Identity.Roles.Commands.Ass
 /// <summary>
 /// Handler for processing assign permission to role commands
 /// </summary>
-public class AssignPermissionCommandHandler : IRequestHandler<AssignPermissionCommand, Guid>
+public class AssignPermissionCommandHandler : IRequestHandler<AssignPermissionCommand, Result<Guid>>
 {
     private readonly ILogger<AssignPermissionCommandHandler> _logger;
     private readonly IMapper _mapper;
@@ -33,9 +34,11 @@ public class AssignPermissionCommandHandler : IRequestHandler<AssignPermissionCo
     /// </summary>
     /// <param name="request">The assign permission command</param>
     /// <param name="cancellationToken">Cancellation token for the operation</param>
-    /// <returns>The identifier of the created role permission assignment</returns>
-    public async Task<Guid> Handle(AssignPermissionCommand request, CancellationToken cancellationToken)
+    /// <returns>Result containing the identifier of the created role permission assignment</returns>
+    public async Task<Result<Guid>> Handle(AssignPermissionCommand request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Assigning permission {PermissionId} to role {RoleId}", request.PermissionId, request.RoleId);
+
         var rolePermission = _mapper.Map<RolePermission>(request);
 
         _unitOfWork.RolePermissionRepository.Insert(rolePermission);
@@ -44,12 +47,12 @@ public class AssignPermissionCommandHandler : IRequestHandler<AssignPermissionCo
 
         if (result <= 0)
         {
-            _logger.LogError("The permission has not been assigned");
-            throw new Exception("The permission has not been assigned");
+            _logger.LogError("The permission has not been assigned to role {RoleId}", request.RoleId);
+            return Result<Guid>.Failure("The permission has not been assigned");
         }
 
-        _logger.LogInformation($"Permission assigned (Id: {rolePermission.Id})");
+        _logger.LogInformation("Permission assigned successfully with ID: {RolePermissionId}", rolePermission.Id);
 
-        return rolePermission.Id;
+        return Result<Guid>.Success(rolePermission.Id);
     }
 }

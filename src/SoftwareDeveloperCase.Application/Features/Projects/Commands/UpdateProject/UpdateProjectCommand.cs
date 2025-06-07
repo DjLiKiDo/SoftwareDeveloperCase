@@ -1,4 +1,5 @@
 using MediatR;
+using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Domain.Enums.Core;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Commands.UpdateProject;
@@ -6,7 +7,7 @@ namespace SoftwareDeveloperCase.Application.Features.Projects.Commands.UpdatePro
 /// <summary>
 /// Command to update an existing project
 /// </summary>
-public class UpdateProjectCommand : IRequest<bool>
+public class UpdateProjectCommand : IRequest<Result<bool>>
 {
     /// <summary>
     /// Gets or sets the project ID.

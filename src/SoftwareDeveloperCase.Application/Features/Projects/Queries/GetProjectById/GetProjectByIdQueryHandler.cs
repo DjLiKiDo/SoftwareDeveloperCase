@@ -2,15 +2,16 @@ using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
-using SoftwareDeveloperCase.Application.Features.Projects.DTOs;
 using SoftwareDeveloperCase.Application.Exceptions;
+using SoftwareDeveloperCase.Application.Features.Projects.DTOs;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Queries.GetProjectById;
 
 /// <summary>
 /// Handler for processing get project by ID queries
 /// </summary>
-public class GetProjectByIdQueryHandler : IRequestHandler<GetProjectByIdQuery, ProjectDto>
+public class GetProjectByIdQueryHandler : IRequestHandler<GetProjectByIdQuery, Result<ProjectDto>>
 {
     private readonly ILogger<GetProjectByIdQueryHandler> _logger;
     private readonly IMapper _mapper;
@@ -37,8 +38,8 @@ public class GetProjectByIdQueryHandler : IRequestHandler<GetProjectByIdQuery, P
     /// </summary>
     /// <param name="request">The get project by ID query</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The project DTO</returns>
-    public async Task<ProjectDto> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
+    /// <returns>The project DTO wrapped in a Result</returns>
+    public async Task<Result<ProjectDto>> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Getting project with ID: {ProjectId}", request.Id);
 
@@ -46,7 +47,7 @@ public class GetProjectByIdQueryHandler : IRequestHandler<GetProjectByIdQuery, P
         if (project == null)
         {
             _logger.LogWarning("Project not found with ID: {ProjectId}", request.Id);
-            throw new NotFoundException($"Project with ID {request.Id} not found");
+            return Result<ProjectDto>.NotFound($"Project with ID {request.Id} not found");
         }
 
         var projectDto = _mapper.Map<ProjectDto>(project);
@@ -61,6 +62,6 @@ public class GetProjectByIdQueryHandler : IRequestHandler<GetProjectByIdQuery, P
             }
         }
 
-        return projectDto;
+        return Result<ProjectDto>.Success(projectDto);
     }
 }

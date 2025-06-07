@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Persistence.Core;
-using SoftwareDeveloperCase.Application.Exceptions;
 using SoftwareDeveloperCase.Application.Features.Projects.Commands.CreateProject;
 using SoftwareDeveloperCase.Domain.Entities.Project;
 using SoftwareDeveloperCase.Domain.Entities.Team;
@@ -82,7 +81,8 @@ public class CreateProjectCommandHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.Should().Be(projectId);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(projectId);
 
         _mockProjectRepository.Verify(x => x.InsertAsync(It.Is<Project>(p =>
             p.Name == command.Name &&
@@ -95,7 +95,7 @@ public class CreateProjectCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WithNonExistentTeam_ShouldThrowNotFoundException()
+    public async Task Handle_WithNonExistentTeam_ShouldReturnNotFoundResult()
     {
         // Arrange
         var teamId = Guid.NewGuid();
@@ -108,18 +108,19 @@ public class CreateProjectCommandHandlerTests
         _mockTeamRepository.Setup(x => x.GetAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Team, bool>>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<Team>()); // No teams found
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<NotFoundException>(() =>
-            _handler.Handle(command, CancellationToken.None));
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-        exception.Message.Should().Contain($"Team with ID {teamId} not found");
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Contain($"Team with ID {teamId} not found");
 
         _mockProjectRepository.Verify(x => x.InsertAsync(It.IsAny<Project>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
-    public async Task Handle_WithDuplicateProjectName_ShouldThrowBusinessRuleViolationException()
+    public async Task Handle_WithDuplicateProjectName_ShouldReturnFailureResult()
     {
         // Arrange
         var teamId = Guid.NewGuid();
@@ -136,11 +137,12 @@ public class CreateProjectCommandHandlerTests
         _mockProjectRepository.Setup(x => x.IsProjectNameExistsInTeamAsync(teamId, command.Name, null, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true); // Project name exists
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<BusinessRuleViolationException>(() =>
-            _handler.Handle(command, CancellationToken.None));
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-        exception.Message.Should().Contain($"Project name '{command.Name}' already exists in the specified team");
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Contain($"Project name '{command.Name}' already exists in the specified team");
 
         _mockProjectRepository.Verify(x => x.InsertAsync(It.IsAny<Project>(), It.IsAny<CancellationToken>()), Times.Never);
         _mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);

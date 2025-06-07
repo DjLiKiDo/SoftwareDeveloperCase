@@ -2,13 +2,14 @@ using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Users.Queries.GetUserPermissions;
 
 /// <summary>
 /// Handler for processing get user permissions queries
 /// </summary>
-public class GetUserPermissionsQueryHandler : IRequestHandler<GetUserPermissionsQuery, List<PermissionDto>>
+public class GetUserPermissionsQueryHandler : IRequestHandler<GetUserPermissionsQuery, Result<List<PermissionDto>>>
 {
     private readonly ILogger<GetUserPermissionsQueryHandler> _logger;
     private readonly IMapper _mapper;
@@ -32,11 +33,19 @@ public class GetUserPermissionsQueryHandler : IRequestHandler<GetUserPermissions
     /// </summary>
     /// <param name="request">The get user permissions query</param>
     /// <param name="cancellationToken">Cancellation token for the operation</param>
-    /// <returns>A list of permissions assigned to the user</returns>
-    public async Task<List<PermissionDto>> Handle(GetUserPermissionsQuery request, CancellationToken cancellationToken)
+    /// <returns>Result containing a list of permissions assigned to the user</returns>
+    public async Task<Result<List<PermissionDto>>> Handle(GetUserPermissionsQuery request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Getting permissions for user with ID: {UserId}", request.UserId);
+
         var user = await _unitOfWork.UserRepository
             .GetByIdAsync(request.UserId, cancellationToken);
+
+        if (user == null)
+        {
+            _logger.LogWarning("User not found with ID: {UserId}", request.UserId);
+            return Result<List<PermissionDto>>.NotFound($"User with ID {request.UserId} not found");
+        }
 
         var userRoles = await _unitOfWork.UserRoleRepository
             .GetAsync(ur => ur.UserId.Equals(request.UserId), cancellationToken);
@@ -54,6 +63,7 @@ public class GetUserPermissionsQueryHandler : IRequestHandler<GetUserPermissions
         var userPermissions = await _unitOfWork.PermissionRepository
             .GetAsync(p => permissionIds.Contains(p.Id), cancellationToken);
 
-        return _mapper.Map<List<PermissionDto>>(userPermissions);
+        var permissionDtos = _mapper.Map<List<PermissionDto>>(userPermissions);
+        return Result<List<PermissionDto>>.Success(permissionDtos);
     }
 }

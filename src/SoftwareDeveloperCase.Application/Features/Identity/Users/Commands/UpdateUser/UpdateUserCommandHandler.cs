@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Services;
-using SoftwareDeveloperCase.Application.Exceptions;
+using SoftwareDeveloperCase.Application.Models;
 using UserEntity = SoftwareDeveloperCase.Domain.Entities.User;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.UpdateUser;
@@ -11,7 +11,7 @@ namespace SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.Upd
 /// <summary>
 /// Handler for processing update user commands
 /// </summary>
-public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Guid>
+public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result<bool>>
 {
     private readonly ILogger<UpdateUserCommandHandler> _logger;
     private readonly IMapper _mapper;
@@ -38,15 +38,17 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Guid>
     /// </summary>
     /// <param name="request">The update user command</param>
     /// <param name="cancellationToken">Cancellation token for the operation</param>
-    /// <returns>The identifier of the updated user</returns>
-    public async Task<Guid> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    /// <returns>Result indicating success or failure</returns>
+    public async Task<Result<bool>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Updating user with ID: {UserId}", request.Id);
+
         var userToUpdate = await _unitOfWork.UserRepository.GetByIdAsync(request.Id);
 
         if (userToUpdate is null)
         {
-            _logger.LogError($"Error retrieving entity from database. Entity not found --> Id: {request.Id}");
-            throw new NotFoundException("User", request.Id);
+            _logger.LogWarning("User not found with ID: {UserId}", request.Id);
+            return Result<bool>.NotFound($"User with ID {request.Id} not found");
         }
 
         // Handle password update separately to ensure it gets hashed
@@ -65,8 +67,8 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Guid>
 
         await _unitOfWork.SaveChanges();
 
-        _logger.LogInformation($"Entity updated successfully --> Id: {userToUpdate.Id}");
+        _logger.LogInformation("User updated successfully with ID: {UserId}", userToUpdate.Id);
 
-        return userToUpdate.Id;
+        return Result<bool>.Success(true);
     }
 }

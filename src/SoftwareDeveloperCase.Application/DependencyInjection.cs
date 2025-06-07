@@ -1,8 +1,8 @@
+using System.Reflection;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using SoftwareDeveloperCase.Application.Behaviours;
-using System.Reflection;
 
 namespace SoftwareDeveloperCase.Application;
 
@@ -26,6 +26,7 @@ public static class DependencyInjection
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(SanitizationBehaviour<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ResultValidationBehaviour<,>));
 
         return services;
     }

@@ -1,11 +1,12 @@
 using MediatR;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Commands.CreateProject;
 
 /// <summary>
 /// Command to create a new project
 /// </summary>
-public class CreateProjectCommand : IRequest<Guid>
+public class CreateProjectCommand : IRequest<Result<Guid>>
 {
     /// <summary>
     /// Gets or sets the name of the project.

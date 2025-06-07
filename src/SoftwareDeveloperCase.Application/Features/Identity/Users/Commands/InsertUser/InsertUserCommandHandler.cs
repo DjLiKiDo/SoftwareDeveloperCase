@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Services;
+using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
 using UserEntity = SoftwareDeveloperCase.Domain.Entities.User;
 
@@ -11,7 +12,7 @@ namespace SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.Ins
 /// <summary>
 /// Handler for processing insert user commands
 /// </summary>
-public class InsertUserCommandHandler : IRequestHandler<InsertUserCommand, Guid>
+public class InsertUserCommandHandler : IRequestHandler<InsertUserCommand, Result<Guid>>
 {
     private readonly ILogger<InsertUserCommandHandler> _logger;
     private readonly IMapper _mapper;
@@ -41,9 +42,11 @@ public class InsertUserCommandHandler : IRequestHandler<InsertUserCommand, Guid>
     /// </summary>
     /// <param name="request">The insert user command</param>
     /// <param name="cancellationToken">Cancellation token for the operation</param>
-    /// <returns>The identifier of the created user</returns>
-    public async Task<Guid> Handle(InsertUserCommand request, CancellationToken cancellationToken)
+    /// <returns>Result containing the identifier of the created user</returns>
+    public async Task<Result<Guid>> Handle(InsertUserCommand request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Creating new user with email: {Email}", request.Email);
+
         var user = _mapper.Map<UserEntity>(request);
 
         // Hash the password before saving
@@ -61,12 +64,12 @@ public class InsertUserCommandHandler : IRequestHandler<InsertUserCommand, Guid>
         if (result <= 0)
         {
             _logger.LogError("The user was not inserted");
-            throw new Exception("The user was not inserted");
+            return Result<Guid>.Failure("Failed to create user");
         }
 
-        _logger.LogInformation($"New user registered (Id: {user.Id})");
+        _logger.LogInformation("New user registered with ID: {UserId}", user.Id);
 
-        return user.Id;
+        return Result<Guid>.Success(user.Id);
     }
 
     private async Task AssignDefaultRoleAsync(Guid userId)

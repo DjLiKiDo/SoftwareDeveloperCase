@@ -4,7 +4,6 @@ using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Application.Contracts.Services;
-using SoftwareDeveloperCase.Application.Exceptions;
 using SoftwareDeveloperCase.Application.Features.Auth.Commands.Login;
 using SoftwareDeveloperCase.Domain.Entities;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
@@ -74,17 +73,19 @@ public class LoginCommandHandlerTests
 
         // Assert
         result.Should().NotBeNull();
-        result.AccessToken.Should().Be(accessToken);
-        result.RefreshToken.Should().Be(refreshToken);
-        result.User.Email.Should().Be(email);
-        result.User.Id.Should().Be(user.Id);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value!.AccessToken.Should().Be(accessToken);
+        result.Value.RefreshToken.Should().Be(refreshToken);
+        result.Value.User.Email.Should().Be(email);
+        result.Value.User.Id.Should().Be(user.Id);
 
         _refreshTokenRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<RefreshToken>(), It.IsAny<CancellationToken>()), Times.Once);
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
-    public async Task Handle_WithInvalidEmail_ShouldThrowAuthenticationException()
+    public async Task Handle_WithInvalidEmail_ShouldReturnFailureResult()
     {
         // Arrange
         var email = "nonexistent@example.com";
@@ -94,13 +95,16 @@ public class LoginCommandHandlerTests
         _userRepositoryMock.Setup(x => x.GetByEmailWithRolesAsync(email, It.IsAny<CancellationToken>()))
             .ReturnsAsync((User?)null);
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<AuthenticationException>(() => _handler.Handle(command, CancellationToken.None));
-        exception.Message.Should().Be("Invalid email or password");
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be("Invalid email or password");
     }
 
     [Fact]
-    public async Task Handle_WithInactiveUser_ShouldThrowAuthenticationException()
+    public async Task Handle_WithInactiveUser_ShouldReturnFailureResult()
     {
         // Arrange
         var email = "test@example.com";
@@ -113,13 +117,16 @@ public class LoginCommandHandlerTests
         _userRepositoryMock.Setup(x => x.GetByEmailWithRolesAsync(email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<AuthenticationException>(() => _handler.Handle(command, CancellationToken.None));
-        exception.Message.Should().Be("Account is inactive");
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be("Account is inactive");
     }
 
     [Fact]
-    public async Task Handle_WithInvalidPassword_ShouldThrowAuthenticationException()
+    public async Task Handle_WithInvalidPassword_ShouldReturnFailureResult()
     {
         // Arrange
         var email = "test@example.com";
@@ -133,9 +140,12 @@ public class LoginCommandHandlerTests
         _passwordServiceMock.Setup(x => x.VerifyPassword(password, user.Password))
             .Returns(false);
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<AuthenticationException>(() => _handler.Handle(command, CancellationToken.None));
-        exception.Message.Should().Be("Invalid email or password");
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be("Invalid email or password");
     }
 
     private static User CreateTestUser(string email)

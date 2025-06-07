@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Models;
 using RoleEntity = SoftwareDeveloperCase.Domain.Entities.Role;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Roles.Commands.InsertRole;
@@ -9,7 +10,7 @@ namespace SoftwareDeveloperCase.Application.Features.Identity.Roles.Commands.Ins
 /// <summary>
 /// Handler for processing insert role commands
 /// </summary>
-public class InsertRoleCommandHandler : IRequestHandler<InsertRoleCommand, Guid>
+public class InsertRoleCommandHandler : IRequestHandler<InsertRoleCommand, Result<Guid>>
 {
     private readonly ILogger<InsertRoleCommandHandler> _logger;
     private readonly IMapper _mapper;
@@ -33,9 +34,11 @@ public class InsertRoleCommandHandler : IRequestHandler<InsertRoleCommand, Guid>
     /// </summary>
     /// <param name="request">The insert role command</param>
     /// <param name="cancellationToken">Cancellation token for the operation</param>
-    /// <returns>The identifier of the created role</returns>
-    public async Task<Guid> Handle(InsertRoleCommand request, CancellationToken cancellationToken)
+    /// <returns>Result containing the identifier of the created role</returns>
+    public async Task<Result<Guid>> Handle(InsertRoleCommand request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Creating new role with name: {RoleName}", request.Name);
+
         var role = _mapper.Map<RoleEntity>(request);
 
         _unitOfWork.RoleRepository.Insert(role);
@@ -45,11 +48,11 @@ public class InsertRoleCommandHandler : IRequestHandler<InsertRoleCommand, Guid>
         if (result <= 0)
         {
             _logger.LogError("The role was not inserted");
-            throw new Exception("The role was not inserted");
+            return Result<Guid>.Failure("Failed to create role");
         }
 
-        _logger.LogInformation($"New role registered (Id: {role.Id})");
+        _logger.LogInformation("New role registered with ID: {RoleId}", role.Id);
 
-        return role.Id;
+        return Result<Guid>.Success(role.Id);
     }
 }

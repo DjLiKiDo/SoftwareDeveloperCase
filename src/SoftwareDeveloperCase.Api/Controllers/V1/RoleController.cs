@@ -1,8 +1,9 @@
+using System.Net;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SoftwareDeveloperCase.Api.Controllers;
 using SoftwareDeveloperCase.Application.Features.Identity.Roles.Commands.AssignPermission;
 using SoftwareDeveloperCase.Application.Features.Identity.Roles.Commands.InsertRole;
-using System.Net;
 
 namespace SoftwareDeveloperCase.Api.Controllers.V1;
 
@@ -11,7 +12,7 @@ namespace SoftwareDeveloperCase.Api.Controllers.V1;
 /// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]
-public class RoleController : ControllerBase
+public class RoleController : BaseController
 {
     private readonly IMediator _mediator;
 
@@ -33,7 +34,8 @@ public class RoleController : ControllerBase
     [ProducesResponseType((int)HttpStatusCode.OK)]
     public async Task<ActionResult<Guid>> InsertRole([FromBody] InsertRoleCommand command)
     {
-        return await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+        return HandleResult(result);
     }
 
     /// <summary>
@@ -45,6 +47,7 @@ public class RoleController : ControllerBase
     [ProducesResponseType((int)HttpStatusCode.OK)]
     public async Task<ActionResult<Guid>> AssignPermission([FromBody] AssignPermissionCommand command)
     {
-        return await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+        return Ok(result);
     }
 }

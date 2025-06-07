@@ -1,13 +1,14 @@
 using MediatR;
-using SoftwareDeveloperCase.Application.DTOs.Auth;
 using SoftwareDeveloperCase.Application.Attributes;
+using SoftwareDeveloperCase.Application.DTOs.Auth;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Auth.Commands.RefreshToken;
 
 /// <summary>
 /// Command for refreshing authentication tokens
 /// </summary>
-public class RefreshTokenCommand : IRequest<AuthenticationResponse>
+public class RefreshTokenCommand : IRequest<Result<AuthenticationResponse>>
 {
     /// <summary>
     /// Gets or sets the refresh token

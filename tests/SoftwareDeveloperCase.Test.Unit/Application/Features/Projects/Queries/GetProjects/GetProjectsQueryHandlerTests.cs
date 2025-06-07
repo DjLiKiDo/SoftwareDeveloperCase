@@ -62,10 +62,12 @@ public class GetProjectsQueryHandlerTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Items.Should().HaveCount(2);
-        result.PageNumber.Should().Be(1);
-        result.PageSize.Should().Be(10);
-        result.TotalCount.Should().Be(2);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value.Items.Should().HaveCount(2);
+        result.Value.PageNumber.Should().Be(1);
+        result.Value.PageSize.Should().Be(10);
+        result.Value.TotalCount.Should().Be(2);
     }
 
     [Fact]
@@ -96,7 +98,9 @@ public class GetProjectsQueryHandlerTests
 
         // Assert
         result.Should().NotBeNull();
-        result.TotalCount.Should().Be(1);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value.TotalCount.Should().Be(1);
 
         // Verify that the repository was called with the correct parameters
         _mockProjectRepository.Verify(r => r.CountAsync(
@@ -129,8 +133,10 @@ public class GetProjectsQueryHandlerTests
 
         // Assert
         result.Should().NotBeNull();
-        result.TotalCount.Should().Be(1);
-        result.Items.First().Status.Should().Be(ProjectStatus.Active);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value.TotalCount.Should().Be(1);
+        result.Value.Items.First().Status.Should().Be(ProjectStatus.Active);
     }
 
     [Fact]
@@ -159,7 +165,9 @@ public class GetProjectsQueryHandlerTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Items.Should().HaveCount(3);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value.Items.Should().HaveCount(3);
 
         // Verify that ordering is applied correctly
         _mockProjectRepository.Verify(r => r.GetPagedAsync(

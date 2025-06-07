@@ -1,12 +1,13 @@
 using MediatR;
 using SoftwareDeveloperCase.Application.Features.Projects.DTOs;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Queries.GetProjectById;
 
 /// <summary>
 /// Query to get a project by its ID
 /// </summary>
-public class GetProjectByIdQuery : IRequest<ProjectDto>
+public class GetProjectByIdQuery : IRequest<Result<ProjectDto>>
 {
     /// <summary>
     /// Gets or sets the project ID

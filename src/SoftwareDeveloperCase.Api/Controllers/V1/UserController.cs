@@ -1,11 +1,12 @@
+using System.Net;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SoftwareDeveloperCase.Api.Controllers;
 using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.AssignRole;
 using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.DeleteUser;
 using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.InsertUser;
 using SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.UpdateUser;
 using SoftwareDeveloperCase.Application.Features.Identity.Users.Queries.GetUserPermissions;
-using System.Net;
 
 namespace SoftwareDeveloperCase.Api.Controllers.V1;
 
@@ -14,7 +15,7 @@ namespace SoftwareDeveloperCase.Api.Controllers.V1;
 /// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]
-public class UserController : ControllerBase
+public class UserController : BaseController
 {
     private readonly IMediator _mediator;
 
@@ -36,7 +37,8 @@ public class UserController : ControllerBase
     [ProducesResponseType((int)HttpStatusCode.OK)]
     public async Task<ActionResult<Guid>> InsertUser([FromBody] InsertUserCommand command)
     {
-        return await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+        return HandleResult(result);
     }
 
     /// <summary>
@@ -48,11 +50,10 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult> UpdateUser([FromBody] UpdateUserCommand command)
+    public async Task<IActionResult> UpdateUser([FromBody] UpdateUserCommand command)
     {
-        await _mediator.Send(command);
-
-        return NoContent();
+        var result = await _mediator.Send(command);
+        return HandleResultAsAction(result);
     }
 
     /// <summary>
@@ -64,16 +65,15 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult> DeleteUser(Guid userId)
+    public async Task<IActionResult> DeleteUser(Guid userId)
     {
         var command = new DeleteUserCommand
         {
             Id = userId
         };
 
-        await _mediator.Send(command);
-
-        return NoContent();
+        var result = await _mediator.Send(command);
+        return HandleResultAsAction(result);
     }
 
     /// <summary>
@@ -83,12 +83,11 @@ public class UserController : ControllerBase
     /// <returns>A collection of permissions assigned to the user.</returns>
     [HttpGet("GetUserPermissions/{userId}", Name = "GetUserPermissions")]
     [ProducesResponseType(typeof(IEnumerable<PermissionDto>), (int)HttpStatusCode.OK)]
-    public async Task<ActionResult<IEnumerable<PermissionDto>>> GetUserPermissions(Guid userId)
+    public async Task<ActionResult<List<PermissionDto>>> GetUserPermissions(Guid userId)
     {
         var query = new GetUserPermissionsQuery(userId);
-        var userPermissions = await _mediator.Send(query);
-
-        return Ok(userPermissions);
+        var result = await _mediator.Send(query);
+        return HandleResult(result);
     }
 
     /// <summary>
@@ -100,6 +99,7 @@ public class UserController : ControllerBase
     [ProducesResponseType((int)HttpStatusCode.OK)]
     public async Task<ActionResult<Guid>> AssignRole([FromBody] AssignRoleCommand command)
     {
-        return await _mediator.Send(command);
+        var result = await _mediator.Send(command);
+        return Ok(result);
     }
 }

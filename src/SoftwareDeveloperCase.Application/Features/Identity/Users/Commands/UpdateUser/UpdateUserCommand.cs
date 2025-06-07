@@ -1,11 +1,12 @@
 using MediatR;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Users.Commands.UpdateUser;
 
 /// <summary>
 /// Command to update an existing user
 /// </summary>
-public class UpdateUserCommand : IRequest<Guid>
+public class UpdateUserCommand : IRequest<Result<bool>>
 {
     /// <summary>
     /// Gets or sets the user identifier

@@ -10,7 +10,7 @@ namespace SoftwareDeveloperCase.Application.Features.Projects.Queries.GetProject
 /// <summary>
 /// Handler for processing get projects queries with pagination and filtering
 /// </summary>
-public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, PagedResult<ProjectDto>>
+public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, Result<PagedResult<ProjectDto>>>
 {
     private readonly ILogger<GetProjectsQueryHandler> _logger;
     private readonly IMapper _mapper;
@@ -37,8 +37,8 @@ public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, PagedRe
     /// </summary>
     /// <param name="request">The get projects query</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>A paged result containing project DTOs</returns>
-    public async Task<PagedResult<ProjectDto>> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
+    /// <returns>A paged result containing project DTOs wrapped in a Result</returns>
+    public async Task<Result<PagedResult<ProjectDto>>> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Getting projects with pageNumber: {PageNumber}, pageSize: {PageSize}, searchTerm: {SearchTerm}, status: {Status}, teamId: {TeamId}, createdFrom: {CreatedFrom}, createdTo: {CreatedTo}",
             request.PageNumber, request.PageSize, request.SearchTerm, request.Status, request.TeamId, request.CreatedFrom, request.CreatedTo);
@@ -90,6 +90,7 @@ public class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, PagedRe
         var projectDtos = _mapper.Map<IEnumerable<ProjectDto>>(projects);
 
         // Create and return the paged result
-        return new PagedResult<ProjectDto>(projectDtos, request.PageNumber, request.PageSize, totalCount);
+        var pagedResult = new PagedResult<ProjectDto>(projectDtos, request.PageNumber, request.PageSize, totalCount);
+        return Result<PagedResult<ProjectDto>>.Success(pagedResult);
     }
 }

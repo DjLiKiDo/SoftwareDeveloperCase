@@ -1,12 +1,13 @@
 using MediatR;
 using SoftwareDeveloperCase.Application.Attributes;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Auth.Commands.ChangePassword;
 
 /// <summary>
 /// Command for changing user password
 /// </summary>
-public class ChangePasswordCommand : IRequest
+public class ChangePasswordCommand : IRequest<Result<bool>>
 {
     /// <summary>
     /// Gets or sets the user ID (populated by controller)

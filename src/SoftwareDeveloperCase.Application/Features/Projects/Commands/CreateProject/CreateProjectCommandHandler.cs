@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Application.Services;
 using SoftwareDeveloperCase.Domain.Entities.Project;
 using SoftwareDeveloperCase.Domain.Enums.Core;
@@ -11,7 +12,7 @@ namespace SoftwareDeveloperCase.Application.Features.Projects.Commands.CreatePro
 /// <summary>
 /// Handler for processing create project commands
 /// </summary>
-public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, Guid>
+public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, Result<Guid>>
 {
     private readonly ILogger<CreateProjectCommandHandler> _logger;
     private readonly IMapper _mapper;
@@ -36,7 +37,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
     /// <param name="request">The create project command</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The ID of the created project</returns>
-    public async Task<Guid> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Creating new project with name: {ProjectName}", InputSanitizer.SanitizeForLogging(request.Name));
 
@@ -44,7 +45,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
         var teams = await _unitOfWork.TeamRepository.GetAsync(t => t.Id == request.TeamId, cancellationToken);
         if (!teams.Any())
         {
-            throw new Application.Exceptions.NotFoundException($"Team with ID {request.TeamId} not found");
+            return Result<Guid>.NotFound($"Team with ID {request.TeamId} not found");
         }
 
         // Validate unique project name within team (this is also validated by the validator, but added here for safety)
@@ -52,7 +53,7 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
             .IsProjectNameExistsInTeamAsync(request.TeamId, request.Name, null, cancellationToken);
         if (nameExists)
         {
-            throw new Application.Exceptions.BusinessRuleViolationException($"Project name '{request.Name}' already exists in the specified team");
+            return Result<Guid>.Failure($"Project name '{request.Name}' already exists in the specified team");
         }
 
         var project = new Project
@@ -73,6 +74,6 @@ public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand,
         // TODO: Add user permission validation when current user service is available
         // TODO: Assign creator as project member when team membership logic is available
 
-        return createdProject.Id;
+        return Result<Guid>.Success(createdProject.Id);
     }
 }

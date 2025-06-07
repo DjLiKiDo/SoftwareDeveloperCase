@@ -1,11 +1,12 @@
 using MediatR;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Users.Queries.GetUserPermissions;
 
 /// <summary>
 /// Query to get all permissions for a specific user
 /// </summary>
-public class GetUserPermissionsQuery : IRequest<List<PermissionDto>>
+public class GetUserPermissionsQuery : IRequest<Result<List<PermissionDto>>>
 {
     /// <summary>
     /// Gets or sets the user identifier

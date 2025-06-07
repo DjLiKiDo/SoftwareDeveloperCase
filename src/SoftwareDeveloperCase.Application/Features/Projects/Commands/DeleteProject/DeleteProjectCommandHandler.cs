@@ -2,13 +2,14 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Exceptions;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Commands.DeleteProject;
 
 /// <summary>
 /// Handler for processing delete project commands
 /// </summary>
-public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand, bool>
+public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand, Result<bool>>
 {
     private readonly ILogger<DeleteProjectCommandHandler> _logger;
     private readonly IUnitOfWork _unitOfWork;
@@ -29,8 +30,8 @@ public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand,
     /// </summary>
     /// <param name="request">The delete project command</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>True if the project was deleted successfully</returns>
-    public async Task<bool> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
+    /// <returns>Result indicating success or failure</returns>
+    public async Task<Result<bool>> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Deleting project with ID: {ProjectId}", request.Id);
 
@@ -38,7 +39,7 @@ public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand,
         if (project == null)
         {
             _logger.LogWarning("Project not found with ID: {ProjectId}", request.Id);
-            throw new NotFoundException($"Project with ID {request.Id} not found");
+            return Result<bool>.NotFound($"Project with ID {request.Id} not found");
         }
 
         // Check if there are associated tasks
@@ -46,7 +47,7 @@ public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand,
         if (associatedTasks.Any())
         {
             _logger.LogWarning("Cannot delete project with ID: {ProjectId} as it has associated tasks", request.Id);
-            throw new BusinessRuleViolationException("Cannot delete project as it has associated tasks");
+            return Result<bool>.Failure("Cannot delete project as it has associated tasks");
         }
 
         await _unitOfWork.ProjectRepository.DeleteAsync(project, cancellationToken);
@@ -54,6 +55,6 @@ public class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectCommand,
 
         _logger.LogInformation("Project deleted successfully with ID: {ProjectId}", request.Id);
 
-        return true;
+        return Result<bool>.Success(true);
     }
 }

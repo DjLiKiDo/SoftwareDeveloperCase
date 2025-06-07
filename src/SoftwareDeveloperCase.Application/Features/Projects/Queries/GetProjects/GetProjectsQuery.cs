@@ -8,7 +8,7 @@ namespace SoftwareDeveloperCase.Application.Features.Projects.Queries.GetProject
 /// <summary>
 /// Query to get a paginated list of projects with optional filtering
 /// </summary>
-public class GetProjectsQuery : IRequest<PagedResult<ProjectDto>>
+public class GetProjectsQuery : IRequest<Result<PagedResult<ProjectDto>>>
 {
     /// <summary>
     /// Gets or sets the page number (1-based)

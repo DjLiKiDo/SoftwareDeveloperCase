@@ -1,17 +1,17 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Application.DTOs.Auth;
-using SoftwareDeveloperCase.Application.Exceptions;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Auth.Commands.RefreshToken;
 
 /// <summary>
 /// Handler for refresh token command
 /// </summary>
-public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, AuthenticationResponse>
+public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, Result<AuthenticationResponse>>
 {
     private readonly IUserRepository _userRepository;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
@@ -42,7 +42,7 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, A
     /// <summary>
     /// Handles the refresh token command
     /// </summary>
-    public async Task<AuthenticationResponse> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AuthenticationResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Processing refresh token request");
 
@@ -51,7 +51,7 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, A
         if (refreshToken == null)
         {
             _logger.LogWarning("Refresh token not found or expired");
-            throw new AuthenticationException("Invalid refresh token");
+            return Result<AuthenticationResponse>.Failure("Invalid refresh token");
         }
 
         // Get user with roles
@@ -59,7 +59,7 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, A
         if (user == null || !user.IsActive)
         {
             _logger.LogWarning("User not found or inactive for refresh token");
-            throw new AuthenticationException("User not found or inactive");
+            return Result<AuthenticationResponse>.Failure("User not found or inactive");
         }
 
         // Revoke the old refresh token
@@ -89,7 +89,7 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, A
         _logger.LogInformation("Refresh token successfully processed for user: {UserId}", user.Id);
 
         // Return authentication response
-        return new AuthenticationResponse
+        var response = new AuthenticationResponse
         {
             AccessToken = accessToken,
             RefreshToken = newRefreshTokenValue,
@@ -102,5 +102,7 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, A
                 Roles = user.UserRoles.Select(ur => ur.Role.Name).ToList()
             }
         };
+
+        return Result<AuthenticationResponse>.Success(response);
     }
 }

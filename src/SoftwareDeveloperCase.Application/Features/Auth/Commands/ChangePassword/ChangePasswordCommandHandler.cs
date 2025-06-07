@@ -1,16 +1,16 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Application.Contracts.Services;
-using SoftwareDeveloperCase.Application.Exceptions;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Auth.Commands.ChangePassword;
 
 /// <summary>
 /// Handler for change password command
 /// </summary>
-public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand>
+public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, Result<bool>>
 {
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -35,7 +35,7 @@ public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordComman
     /// <summary>
     /// Handles the change password command
     /// </summary>
-    public async Task Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Processing password change request for user: {UserId}", request.UserId);
 
@@ -44,21 +44,21 @@ public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordComman
         if (user == null)
         {
             _logger.LogWarning("Password change failed: User not found: {UserId}", request.UserId);
-            throw new NotFoundException("User not found");
+            return Result<bool>.NotFound("User not found");
         }
 
         // Check if user is active
         if (!user.IsActive)
         {
             _logger.LogWarning("Password change failed: User account is inactive: {UserId}", request.UserId);
-            throw new AuthenticationException("Account is inactive");
+            return Result<bool>.Failure("Account is inactive");
         }
 
         // Verify current password
         if (!_passwordService.VerifyPassword(request.CurrentPassword, user.Password))
         {
             _logger.LogWarning("Password change failed: Invalid current password for user: {UserId}", request.UserId);
-            throw new AuthenticationException("Current password is incorrect");
+            return Result<bool>.Failure("Current password is incorrect");
         }
 
         // Hash the new password
@@ -71,5 +71,7 @@ public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordComman
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation("Password changed successfully for user: {UserId}", request.UserId);
+
+        return Result<bool>.Success(true);
     }
 }

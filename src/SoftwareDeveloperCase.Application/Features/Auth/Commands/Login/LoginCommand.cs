@@ -1,13 +1,14 @@
 using MediatR;
-using SoftwareDeveloperCase.Application.DTOs.Auth;
 using SoftwareDeveloperCase.Application.Attributes;
+using SoftwareDeveloperCase.Application.DTOs.Auth;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Auth.Commands.Login;
 
 /// <summary>
 /// Command for user login
 /// </summary>
-public class LoginCommand : IRequest<AuthenticationResponse>
+public class LoginCommand : IRequest<Result<AuthenticationResponse>>
 {
     /// <summary>
     /// Gets or sets the user's email address

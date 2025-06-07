@@ -5,6 +5,7 @@ using SoftwareDeveloperCase.Api.Extensions;
 using SoftwareDeveloperCase.Application.Features.Projects.Commands.CreateProject;
 using SoftwareDeveloperCase.Application.Features.Projects.Commands.DeleteProject;
 using SoftwareDeveloperCase.Application.Features.Projects.Commands.UpdateProject;
+using SoftwareDeveloperCase.Application.Features.Projects.Queries.GetProjectById;
 using SoftwareDeveloperCase.Application.Features.Projects.Queries.GetProjects;
 using SoftwareDeveloperCase.Application.Models;
 using CreateTaskRequest = SoftwareDeveloperCase.Application.Features.Tasks.DTOs.CreateTaskRequest;
@@ -20,7 +21,7 @@ namespace SoftwareDeveloperCase.Api.Controllers.V1;
 [ApiController]
 [Route("api/v1/[controller]")]
 [Authorize]
-public class ProjectsController : ControllerBase
+public class ProjectsController : BaseController
 {
     private readonly ILogger<ProjectsController> _logger;
     private readonly IMediator _mediator;
@@ -76,7 +77,7 @@ public class ProjectsController : ControllerBase
         };
 
         var result = await _mediator.Send(query, cancellationToken);
-        return Ok(result);
+        return HandleResult(result);
     }
 
     /// <summary>
@@ -90,12 +91,14 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(typeof(ProjectDto), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]
-    public async Task<ActionResult<ProjectDto>> GetProject(Guid id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetProject(Guid id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting project with ID: {ProjectId}", id);
 
-        await Task.CompletedTask;
-        return NotFound($"Project with ID {id} not found");
+        var query = new GetProjectByIdQuery(id);
+        var result = await _mediator.Send(query, cancellationToken);
+
+        return HandleResultAsAction(result);
     }
 
     /// <summary>
@@ -110,19 +113,18 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
-    public async Task<ActionResult<Guid>> CreateProject(CreateProjectCommand request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> CreateProject(CreateProjectCommand request, CancellationToken cancellationToken = default)
     {
         _logger.SafeInformation("Creating new project: {ProjectName}", request.Name);
 
-        try
+        var result = await _mediator.Send(request, cancellationToken);
+
+        if (result.IsSuccess)
         {
-            var projectId = await _mediator.Send(request, cancellationToken);
-            return CreatedAtAction(nameof(GetProject), new { id = projectId }, projectId);
+            return CreatedAtAction(nameof(GetProject), new { id = result.Value }, result.Value);
         }
-        catch (Exception ex) when (ex is Application.Exceptions.ValidationException || ex is Application.Exceptions.BusinessRuleViolationException)
-        {
-            return BadRequest(ex.Message);
-        }
+
+        return HandleResultAsAction(result);
     }
 
     /// <summary>
@@ -139,7 +141,7 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(404)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
-    public async Task<ActionResult<bool>> UpdateProject(Guid id, UpdateProjectCommand request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> UpdateProject(Guid id, UpdateProjectCommand request, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Updating project with ID: {ProjectId}", id);
 
@@ -149,19 +151,8 @@ public class ProjectsController : ControllerBase
             return BadRequest("The project ID in the route must match the ID in the request body.");
         }
 
-        try
-        {
-            var result = await _mediator.Send(request, cancellationToken);
-            return Ok(result);
-        }
-        catch (Application.Exceptions.NotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (Exception ex) when (ex is Application.Exceptions.ValidationException || ex is Application.Exceptions.BusinessRuleViolationException)
-        {
-            return BadRequest(ex.Message);
-        }
+        var result = await _mediator.Send(request, cancellationToken);
+        return HandleResultAsAction(result);
     }
 
     /// <summary>
@@ -180,26 +171,15 @@ public class ProjectsController : ControllerBase
     {
         _logger.LogInformation("Deleting project with ID: {ProjectId}", id);
 
-        try
-        {
-            var command = new DeleteProjectCommand(id);
-            var result = await _mediator.Send(command, cancellationToken);
+        var command = new DeleteProjectCommand(id);
+        var result = await _mediator.Send(command, cancellationToken);
 
-            if (result)
-            {
-                return NoContent();
-            }
+        if (result.IsSuccess)
+        {
+            return NoContent();
+        }
 
-            return BadRequest("Failed to delete project");
-        }
-        catch (Application.Exceptions.NotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (Application.Exceptions.BusinessRuleViolationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        return HandleResultAsAction(result);
     }
 
     /// <summary>
@@ -325,7 +305,7 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(typeof(List<ProjectDto>), 200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]
-    public async Task<ActionResult<List<ProjectDto>>> SearchProjects(
+    public async Task<IActionResult> SearchProjects(
         [FromQuery] string keyword,
         CancellationToken cancellationToken = default)
     {
@@ -342,6 +322,12 @@ public class ProjectsController : ControllerBase
         };
 
         var result = await _mediator.Send(query, cancellationToken);
-        return Ok(result.Items);
+
+        if (result.IsSuccess && result.Value != null)
+        {
+            return Ok(result.Value.Items);
+        }
+
+        return HandleResultAsAction(result);
     }
 }

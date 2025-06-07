@@ -3,13 +3,14 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Exceptions;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Projects.Commands.UpdateProject;
 
 /// <summary>
 /// Handler for processing update project commands
 /// </summary>
-public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, bool>
+public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, Result<bool>>
 {
     private readonly ILogger<UpdateProjectCommandHandler> _logger;
     private readonly IMapper _mapper;
@@ -36,8 +37,8 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
     /// </summary>
     /// <param name="request">The update project command</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>True if the project was updated successfully</returns>
-    public async Task<bool> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
+    /// <returns>Result indicating success or failure</returns>
+    public async Task<Result<bool>> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Updating project with ID: {ProjectId}", request.Id);
 
@@ -45,7 +46,7 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
         if (project == null)
         {
             _logger.LogWarning("Project not found with ID: {ProjectId}", request.Id);
-            throw new NotFoundException($"Project with ID {request.Id} not found");
+            return Result<bool>.NotFound($"Project with ID {request.Id} not found");
         }
 
         // Update project properties
@@ -59,6 +60,6 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
 
         _logger.LogInformation("Project updated successfully with ID: {ProjectId}", project.Id);
 
-        return true;
+        return Result<bool>.Success(true);
     }
 }

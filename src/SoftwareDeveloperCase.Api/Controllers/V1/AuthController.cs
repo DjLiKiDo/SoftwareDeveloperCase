@@ -2,13 +2,13 @@ using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SoftwareDeveloperCase.Api.Controllers;
 using SoftwareDeveloperCase.Api.Extensions;
 using SoftwareDeveloperCase.Application.DTOs.Auth;
-using SoftwareDeveloperCase.Application.Exceptions;
+using SoftwareDeveloperCase.Application.Features.Auth.Commands.ChangePassword;
 using SoftwareDeveloperCase.Application.Features.Auth.Commands.Login;
 using SoftwareDeveloperCase.Application.Features.Auth.Commands.Logout;
 using SoftwareDeveloperCase.Application.Features.Auth.Commands.RefreshToken;
-using SoftwareDeveloperCase.Application.Features.Auth.Commands.ChangePassword;
 
 namespace SoftwareDeveloperCase.Api.Controllers.V1;
 
@@ -17,7 +17,7 @@ namespace SoftwareDeveloperCase.Api.Controllers.V1;
 /// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController : BaseController
 {
     private readonly IMediator _mediator;
     private readonly ILogger<AuthController> _logger;
@@ -50,24 +50,19 @@ public class AuthController : ControllerBase
     {
         _logger.SafeInformation("Login attempt for email: {Email}", request.Email);
 
-        try
-        {
-            var command = new LoginCommand(request.Email, request.Password);
-            var result = await _mediator.Send(command, cancellationToken);
+        var command = new LoginCommand(request.Email, request.Password);
+        var result = await _mediator.Send(command, cancellationToken);
 
-            _logger.SafeInformation("Login successful for user: {UserId}", result.User.Id);
-            return Ok(result);
-        }
-        catch (Application.Exceptions.AuthenticationException ex)
+        if (result.IsSuccess)
         {
-            _logger.SafeWarning("Login failed for email: {Email}. Error: {Error}", request.Email, ex.Message);
-            return Unauthorized(new { message = "Invalid credentials" });
+            _logger.SafeInformation("Login successful for user: {UserId}", result.Value?.User?.Id);
         }
-        catch (Exception ex)
+        else
         {
-            _logger.SafeError("Unexpected error during login for email: {Email}. Error: {Error}", request.Email, ex.Message);
-            return BadRequest(new { message = "An error occurred during login" });
+            _logger.SafeWarning("Login failed for email: {Email}. Error: {Error}", request.Email, result.Error);
         }
+
+        return HandleResult(result);
     }
 
     /// <summary>
@@ -87,24 +82,19 @@ public class AuthController : ControllerBase
     {
         _logger.LogInformation("Refresh token request received");
 
-        try
-        {
-            var command = new RefreshTokenCommand(request.RefreshToken);
-            var result = await _mediator.Send(command, cancellationToken);
+        var command = new RefreshTokenCommand(request.RefreshToken);
+        var result = await _mediator.Send(command, cancellationToken);
 
-            _logger.SafeInformation("Refresh token successful for user: {UserId}", result.User.Id);
-            return Ok(result);
-        }
-        catch (Application.Exceptions.AuthenticationException ex)
+        if (result.IsSuccess)
         {
-            _logger.SafeWarning("Refresh token failed. Error: {Error}", ex.Message);
-            return Unauthorized(new { message = "Invalid refresh token" });
+            _logger.SafeInformation("Refresh token successful for user: {UserId}", result.Value?.User?.Id);
         }
-        catch (Exception ex)
+        else
         {
-            _logger.SafeError("Unexpected error during token refresh. Error: {Error}", ex.Message);
-            return BadRequest(new { message = "An error occurred during token refresh" });
+            _logger.SafeWarning("Refresh token failed. Error: {Error}", result.Error);
         }
+
+        return HandleResult(result);
     }
 
     /// <summary>
@@ -198,30 +188,26 @@ public class AuthController : ControllerBase
 
         _logger.SafeInformation("Password change request for user: {UserId}", userId);
 
-        try
+        // Create command from request and set user ID
+        var command = new ChangePasswordCommand
         {
-            // Create command from request and set user ID
-            var command = new ChangePasswordCommand
-            {
-                UserId = userId,
-                CurrentPassword = request.CurrentPassword,
-                NewPassword = request.NewPassword,
-                ConfirmPassword = request.ConfirmPassword
-            };
+            UserId = userId,
+            CurrentPassword = request.CurrentPassword,
+            NewPassword = request.NewPassword,
+            ConfirmPassword = request.ConfirmPassword
+        };
 
-            await _mediator.Send(command, cancellationToken);
+        var result = await _mediator.Send(command, cancellationToken);
+
+        if (result.IsSuccess)
+        {
             _logger.SafeInformation("Password changed successfully for user: {UserId}", userId);
-            return NoContent();
         }
-        catch (AuthenticationException ex)
+        else
         {
-            _logger.SafeWarning("Password change failed for user: {UserId}. Error: {Error}", userId, ex.Message);
-            return BadRequest(new { message = ex.Message });
+            _logger.SafeWarning("Password change failed for user: {UserId}. Error: {Error}", userId, result.Error);
         }
-        catch (Exception ex)
-        {
-            _logger.SafeError("Unexpected error during password change for user: {UserId}. Error: {Error}", userId, ex.Message);
-            return BadRequest(new { message = "An error occurred during password change" });
-        }
+
+        return HandleResultAsAction(result);
     }
 }

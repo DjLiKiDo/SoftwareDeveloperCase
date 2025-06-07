@@ -4,12 +4,12 @@ using Moq;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
 using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Application.Contracts.Services;
-using SoftwareDeveloperCase.Application.Exceptions;
 using SoftwareDeveloperCase.Application.Features.Auth.Commands.Login;
+using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Domain.Entities;
 using SoftwareDeveloperCase.Domain.Entities.Identity;
-using SoftwareDeveloperCase.Domain.ValueObjects;
 using Xunit;
+using Email = SoftwareDeveloperCase.Domain.ValueObjects.Email;
 
 namespace SoftwareDeveloperCase.Test.Unit.Application.Features.Auth;
 
@@ -48,7 +48,7 @@ public class LoginCommandHandlerLockoutTests
     }
 
     [Fact]
-    public async Task Handle_WithLockedOutAccount_ShouldThrowAuthenticationException()
+    public async Task Handle_WithLockedOutAccount_ShouldReturnFailure()
     {
         // Arrange
         var email = "test@example.com";
@@ -61,11 +61,13 @@ public class LoginCommandHandlerLockoutTests
         _userRepositoryMock.Setup(x => x.GetByEmailWithRolesAsync(email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<AuthenticationException>(() =>
-            _handler.Handle(command, CancellationToken.None));
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-        exception.Message.Should().Be("Account is temporarily locked due to too many failed login attempts. Please try again later.");
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be("Account is temporarily locked due to too many failed login attempts. Please try again later.");
     }
 
     [Fact]
@@ -96,6 +98,8 @@ public class LoginCommandHandlerLockoutTests
 
         // Assert
         result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
         user.FailedLoginAttempts.Should().Be(0); // Reset after successful login
         user.LockoutExpiresAt.Should().BeNull();
         user.LockedOutAt.Should().BeNull();
@@ -117,11 +121,13 @@ public class LoginCommandHandlerLockoutTests
         _passwordServiceMock.Setup(x => x.VerifyPassword(password, user.Password))
             .Returns(false);
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<AuthenticationException>(() =>
-            _handler.Handle(command, CancellationToken.None));
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-        exception.Message.Should().Be("Invalid email or password");
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be("Invalid email or password");
         user.FailedLoginAttempts.Should().Be(3); // Incremented from 2 to 3
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -142,11 +148,13 @@ public class LoginCommandHandlerLockoutTests
         _passwordServiceMock.Setup(x => x.VerifyPassword(password, user.Password))
             .Returns(false);
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<AuthenticationException>(() =>
-            _handler.Handle(command, CancellationToken.None));
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-        exception.Message.Should().Be("Invalid email or password");
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be("Invalid email or password");
         user.FailedLoginAttempts.Should().Be(5);
         user.LockedOutAt.Should().Be(_currentTime);
         user.LockoutExpiresAt.Should().Be(_currentTime.AddMinutes(15)); // Default 15 minutes
@@ -180,6 +188,8 @@ public class LoginCommandHandlerLockoutTests
 
         // Assert
         result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
         user.FailedLoginAttempts.Should().Be(0); // Reset after successful login
         user.LockedOutAt.Should().BeNull();
         user.LockoutExpiresAt.Should().BeNull();

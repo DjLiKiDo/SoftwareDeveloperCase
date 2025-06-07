@@ -1,10 +1,10 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Application.Contracts.Persistence;
+using SoftwareDeveloperCase.Application.Contracts.Persistence.Identity;
 using SoftwareDeveloperCase.Application.Contracts.Services;
 using SoftwareDeveloperCase.Application.DTOs.Auth;
-using SoftwareDeveloperCase.Application.Exceptions;
+using SoftwareDeveloperCase.Application.Models;
 using SoftwareDeveloperCase.Application.Services;
 
 namespace SoftwareDeveloperCase.Application.Features.Auth.Commands.Login;
@@ -12,7 +12,7 @@ namespace SoftwareDeveloperCase.Application.Features.Auth.Commands.Login;
 /// <summary>
 /// Handler for login command
 /// </summary>
-public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationResponse>
+public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<AuthenticationResponse>>
 {
     private readonly IUserRepository _userRepository;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
@@ -46,13 +46,14 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationR
     /// <summary>
     /// Handles the login command
     /// </summary>
-    public async Task<AuthenticationResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AuthenticationResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         // Sanitize and validate email specifically for authentication
         var sanitizedEmail = InputSanitizer.SanitizeEmail(request.Email);
         if (sanitizedEmail == null)
         {
-            throw new AuthenticationException("Invalid email format");
+            _logger.LogWarning("Login failed: Invalid email format for email: {Email}", InputSanitizer.SanitizeForLogging(request.Email));
+            return Result<AuthenticationResponse>.Failure("Invalid email format");
         }
 
         var logSafeEmail = InputSanitizer.SanitizeForLogging(sanitizedEmail);
@@ -63,21 +64,21 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationR
         if (user == null)
         {
             _logger.LogWarning("Login failed: User not found for email: {Email}", logSafeEmail);
-            throw new AuthenticationException("Invalid email or password");
+            return Result<AuthenticationResponse>.Failure("Invalid email or password");
         }
 
         // Check if user is active
         if (!user.IsActive)
         {
             _logger.LogWarning("Login failed: User account is inactive for email: {Email}", logSafeEmail);
-            throw new AuthenticationException("Account is inactive");
+            return Result<AuthenticationResponse>.Failure("Account is inactive");
         }
 
         // Check if user account is locked out
         if (user.IsLockedOut(_dateTimeService.Now))
         {
             _logger.LogWarning("Login failed: User account is locked out for email: {Email}", logSafeEmail);
-            throw new AuthenticationException("Account is temporarily locked due to too many failed login attempts. Please try again later.");
+            return Result<AuthenticationResponse>.Failure("Account is temporarily locked due to too many failed login attempts. Please try again later.");
         }
 
         // Verify password (use original password, not sanitized)
@@ -89,7 +90,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationR
             user.RecordFailedLogin(_dateTimeService.Now);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            throw new AuthenticationException("Invalid email or password");
+            return Result<AuthenticationResponse>.Failure("Invalid email or password");
         }
 
         // Reset failed login attempts on successful authentication
@@ -117,7 +118,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationR
         _logger.LogInformation("Login successful for user: {UserId}", user.Id);
 
         // Return authentication response
-        return new AuthenticationResponse
+        var response = new AuthenticationResponse
         {
             AccessToken = accessToken,
             RefreshToken = refreshTokenValue,
@@ -130,5 +131,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthenticationR
                 Roles = user.UserRoles.Select(ur => ur.Role.Name).ToList()
             }
         };
+
+        return Result<AuthenticationResponse>.Success(response);
     }
 }

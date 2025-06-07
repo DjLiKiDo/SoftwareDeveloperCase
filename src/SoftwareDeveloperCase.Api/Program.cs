@@ -37,6 +37,7 @@ using (var scope = app.Services.CreateScope())
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseMiddleware<RateLimitingMiddleware>();
+app.UseMiddleware<ResultResponseMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.UseSanitizeRequestParameters(); // Add request parameter sanitization
 

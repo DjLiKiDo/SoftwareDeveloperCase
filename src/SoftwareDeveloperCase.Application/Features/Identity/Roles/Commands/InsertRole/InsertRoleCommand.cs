@@ -1,11 +1,12 @@
 using MediatR;
+using SoftwareDeveloperCase.Application.Models;
 
 namespace SoftwareDeveloperCase.Application.Features.Identity.Roles.Commands.InsertRole;
 
 /// <summary>
 /// Command to create a new role
 /// </summary>
-public class InsertRoleCommand : IRequest<Guid>
+public class InsertRoleCommand : IRequest<Result<Guid>>
 {
     /// <summary>
     /// Gets or sets the role name
