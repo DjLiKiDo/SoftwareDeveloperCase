@@ -3,6 +3,10 @@
 **/obj/
 **/out/
 **/TestResults/
+**/publish/
+**/artifacts/
+**/.nuget/
+**/packages/
 
 # Visual Studio / VS Code
 .vs/
@@ -14,10 +18,14 @@
 .git/
 .gitignore
 
-# Documentation
+# Documentation and task files
 README.md
 docs/
 *.md
+DockerizeTask.md
+TechnicalDebtAssessment.md
+TechnicalDebtBoard.md
+ToDo.md
 
 # CI/CD
 .github/
@@ -34,11 +42,30 @@ Thumbs.db
 # Logs
 logs/
 *.log
+**/logs/
 
 # Test coverage
 coverage/
 TestResults/
+**/*.coverage
+**/*.coveragexml
 
 # Temporary files
 tmp/
 temp/
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker related (when building)
+Dockerfile*
+docker-compose*
+.dockerignore

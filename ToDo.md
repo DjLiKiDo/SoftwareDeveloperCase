@@ -13,7 +13,7 @@
 [ ] Add integration tests to pipeline
 [ ] Semantic Versioning when merging to main
 [ ] Solution Properties
-[ ]
+[ ] Scripts for common tasks. Run in local, run in docker, test, etc...
 [ ]
 [ ]
 [ ]
